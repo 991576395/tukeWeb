@@ -22,7 +22,7 @@ public interface CvcCheckingAccountDao{
 	 * @param id
 	 * @return
 	 */
-	@Sql("SELECT * FROM cvc_checking_account WHERE checkingAccountId = :checkingAccountId")
+	@Sql("SELECT * FROM cvc_checking_account WHERE checking_account_id = :checkingAccountId")
 	CvcCheckingAccountEntity get(@Param("checkingAccountId") String checkingAccountId);
 	
 	/**
