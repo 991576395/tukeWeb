@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-
 import com.xuzy.hotel.checkingaccount.entity.CvcCheckingAccountEntity;
 import com.xuzy.hotel.checkingaccount.service.CvcCheckingAccountService;
 import com.xuzy.hotel.checkingaccountorder.entity.CvcCheckingAccountOrderEntity;
@@ -40,6 +39,7 @@ import com.xuzy.hotel.ylrequest.ConmentHttp;
 import com.xuzy.hotel.ylrequest.ResponseHead;
 import com.xuzy.hotel.ylrequest.TukeRequestBody;
 import com.xuzy.hotel.ylrequest.module.RequestCheckingAcccountInfoAddJson;
+import com.xuzy.hotel.ylrequest.module.RequestUpdateCheckingAccountInfoJson;
 import com.xuzy.hotel.ylrequest.module.ResponseCheckingAcccountInfoAddJson;
 
  /**
@@ -157,15 +157,116 @@ public class CvcCheckingAccountController extends BaseController{
 		return j;
 	}
 
-	
-	
-	 /**
-	  * 详情
+	/**
+	  * 重新生成对账明细
 	  * @return
 	  */
-	@RequestMapping(params="toDetail",method = RequestMethod.GET)
-	public void cvcCheckingAccountDetail(@RequestParam(required = true, value = "id" ) String id,HttpServletResponse response,HttpServletRequest request)throws Exception{
+	@RequestMapping(params="updateCheckingAccountOrder",method = RequestMethod.POST)
+	@ResponseBody
+	public AjaxJson updateCheckingAccountOrder(@RequestParam(required = true, value = "checkingAccountId" ) Integer checkingAccountId,HttpServletResponse response,HttpServletRequest request)throws Exception{
+		AjaxJson j = new AjaxJson();
+		try {
+			if(checkingAccountId == null) {
+				j.setSuccess(false);
+				j.setMsg("对账表头不存在");
+				return j;
+			}
+			CvcCheckingAccountEntity cvcCheckingAccount = cvcCheckingAccountService.get(checkingAccountId+"");
+			if(cvcCheckingAccount == null){
+				j.setSuccess(false);
+				j.setMsg("对账表头不存在");
+				return j;
+			}
+			String userName = ResourceUtil.searchAllTypesByCode(cvcCheckingAccount.getAccountType()+"","atType");
+			List<CvcOrderInfoEntity> cvcOrderInfoEntities = cvcOrderInfoService.getAccountOrderList(userName, cvcCheckingAccount.getStartTime(), cvcCheckingAccount.getEndTime());
+			if(CollectionUtils.isEmpty(cvcOrderInfoEntities)) {
+				j.setSuccess(false);
+				j.setMsg("该时间段内不存在已签收订单！");
+				return j;
+			}
+			cvcCheckingAccountService.update(cvcCheckingAccount,checkingAccountId,cvcOrderInfoEntities);
+			j.setMsg("生成成功");
+		} catch (Exception e) {
+		    log.info(e.getMessage());
+			j.setSuccess(false);
+			j.setMsg("生成失败");
+		}
+		return j;
 	
+	}
+
+	/**
+	  * 封帐
+	  * @return
+	  */
+	@RequestMapping(params="makeBalance",method = RequestMethod.POST)
+	@ResponseBody
+	public AjaxJson makeBalance(@RequestParam(required = true, value = "checkingAccountId" ) Integer checkingAccountId,HttpServletResponse response,HttpServletRequest request)throws Exception{
+		AjaxJson j = new AjaxJson();
+		try {
+			if(checkingAccountId == null) {
+				j.setSuccess(false);
+				j.setMsg("对账表头不存在");
+				return j;
+			}
+			CvcCheckingAccountEntity cvcCheckingAccount = cvcCheckingAccountService.get(checkingAccountId+"");
+			if(cvcCheckingAccount == null){
+				j.setSuccess(false);
+				j.setMsg("对账表头不存在");
+				return j;
+			}
+			int value = cvcCheckingAccountService.makeBalance(cvcCheckingAccount);
+			j.setMsg("成功标记："+value+"个已结算的订单！");
+		} catch (Exception e) {
+			e.printStackTrace();
+		    log.info(e.getMessage());
+			j.setSuccess(false);
+			j.setMsg("标记失败");
+		}
+		return j;
+	
+	}
+	 /**
+	  * 更新对账明细信息
+	  * @return
+	  */
+	@RequestMapping(params="updateCheckingAccount",method = RequestMethod.GET)
+	public AjaxJson updateCheckingAccount(@RequestParam(required = true, value = "checkAccountInfoID" ) Integer checkAccountInfoID,HttpServletResponse response,HttpServletRequest request)throws Exception{
+		AjaxJson j = new AjaxJson();
+		try {
+			if(checkAccountInfoID == null) {
+				j.setSuccess(false);
+				j.setMsg("对账表头不存在");
+				return j;
+			}
+			CvcCheckingAccountEntity cvcCheckingAccount = cvcCheckingAccountService.get(checkAccountInfoID+"");
+			if(cvcCheckingAccount == null){
+				j.setSuccess(false);
+				j.setMsg("对账表头不存在");
+				return j;
+			}
+			RequestUpdateCheckingAccountInfoJson moduleType = new RequestUpdateCheckingAccountInfoJson();
+			moduleType.setCheckAccountInfoID(checkAccountInfoID);
+			moduleType.setBeginDate(cvcCheckingAccount.getStartTime());
+			moduleType.setEndDate(cvcCheckingAccount.getEndTime());
+			moduleType.setTopic(cvcCheckingAccount.getTopic());
+			moduleType.setAccountType(cvcCheckingAccount.getAccountType());
+//			ResponseHead head = ConmentHttp.sendHttp(new TukeRequestBody.Builder().setParams(moduleType).setSequence(2)
+//					.setServiceCode("CRMIF.UpdateCheckingAccountInfoJson").builder(), null);
+//			if(head.getReturn() >= 0) {
+			
+				cvcCheckingAccountService.update(cvcCheckingAccount);
+				j.setMsg("保存成功");
+//			}else {
+//				j.setSuccess(false);
+//				j.setMsg("伊利接口调用失败！");
+//			}
+		} catch (Exception e) {
+		    log.info(e.getMessage());
+			j.setSuccess(false);
+			j.setMsg("保存失败");
+		}
+		return j;
 	
 	}
 

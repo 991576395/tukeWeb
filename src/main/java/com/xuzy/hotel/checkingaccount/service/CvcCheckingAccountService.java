@@ -27,4 +27,9 @@ public interface CvcCheckingAccountService {
 	public void batchDelete(String[] ids);
 	
 	int getCount(CvcCheckingAccountEntity cvcCheckingAccount);
+
+	public void update(CvcCheckingAccountEntity cvcCheckingAccount, Integer checkAccountInfoID,
+			List<CvcOrderInfoEntity> cvcOrderInfoEntities);
+
+	public int makeBalance(CvcCheckingAccountEntity cvcCheckingAccount);
 }

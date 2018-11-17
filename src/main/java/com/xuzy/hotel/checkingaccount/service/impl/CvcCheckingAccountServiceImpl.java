@@ -3,6 +3,8 @@ package com.xuzy.hotel.checkingaccount.service.impl;
 import java.util.List;
 
 import javax.annotation.Resource;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.jeecgframework.minidao.pojo.MiniDaoPage;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -95,4 +97,48 @@ public class CvcCheckingAccountServiceImpl implements CvcCheckingAccountService 
 		return cvcCheckingAccountDao.getCount(cvcCheckingAccount);
 	}
 
+	@Override
+	public void update(CvcCheckingAccountEntity cvcCheckingAccount, Integer checkAccountInfoID,
+			List<CvcOrderInfoEntity> cvcOrderInfoEntities) {
+		for(CvcOrderInfoEntity cvcOrderInfoEntity:cvcOrderInfoEntities) {
+			CvcCheckingAccountOrderEntity cvcCheckingAccountOrderEntity = cvcCheckingAccountOrderDao.get(checkAccountInfoID,cvcOrderInfoEntity.getId());
+			if(cvcCheckingAccountOrderEntity != null) {
+				continue;
+			}
+			CvcOrderGoodsEntity cvcOrderGoodsEntity = cvcOrderInfoDao.getOrderGood(cvcOrderInfoEntity.getId()+"");
+			CvcCheckingAccountOrderEntity cvcCheckingAccountOrder = new CvcCheckingAccountOrderEntity();
+			cvcCheckingAccountOrder.setCheckingAccountId(checkAccountInfoID);
+			cvcCheckingAccountOrder.setOrderId(cvcOrderInfoEntity.getId());
+			cvcCheckingAccountOrder.setInvoiceNo(cvcOrderInfoEntity.getInvoiceNo());
+			cvcCheckingAccountOrder.setShippingName(cvcOrderInfoEntity.getShippingName());
+			if(cvcOrderGoodsEntity != null) {
+				cvcCheckingAccountOrder.setGoodsSn(cvcOrderGoodsEntity.getGoodsSn());
+				cvcCheckingAccountOrder.setGoodsNumber(cvcOrderGoodsEntity.getGoodsNumber());
+			}
+			cvcCheckingAccountOrder.setIsAddCheckingAccount(0);
+			cvcCheckingAccountOrder.setAddress(cvcOrderInfoEntity.getAddress());
+			cvcCheckingAccountOrder.setConsignee(cvcOrderInfoEntity.getConsignee());
+			cvcCheckingAccountOrder.setMobile(cvcOrderInfoEntity.getMobile());
+			cvcCheckingAccountOrder.setSigninDate(cvcOrderInfoEntity.getSigninDate());
+			cvcCheckingAccountOrderDao.insert(cvcCheckingAccountOrder);
+		}
+	}
+
+	@Override
+	@Transactional
+	public int makeBalance(CvcCheckingAccountEntity cvcCheckingAccount) {
+		int count = 0;
+		List<CvcCheckingAccountOrderEntity> cvcCheckingAccountOrderEntities = cvcCheckingAccountOrderDao.getOrders(cvcCheckingAccount.getCheckingAccountId());
+		if(CollectionUtils.isNotEmpty(cvcCheckingAccountOrderEntities)) {
+			for (CvcCheckingAccountOrderEntity cvcCheckingAccountOrderEntity : cvcCheckingAccountOrderEntities) {
+				int res = cvcOrderInfoDao.updateIsBalance(cvcCheckingAccountOrderEntity.getOrderId());
+				if(res > 0) {
+					count++;
+				}
+			}
+			cvcCheckingAccount.setIsBalance(1);
+			cvcCheckingAccountDao.update(cvcCheckingAccount);
+		}
+		return count;
+	}
 }

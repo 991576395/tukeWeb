@@ -28,7 +28,7 @@ public interface CvcOrderInfoDao{
 	 * @param id
 	 * @return
 	 */
-	@Sql("SELECT * FROM cvc_order_info WHERE order_id = :id")
+	@Sql("SELECT d_o.shipping_name as shippingName,d_o.invoice_no as invoiceNo,d_o.pre_arrival_date as preArrivalDate FROM  cvc_order_info AS o LEFT JOIN cvc_delivery_order AS d_o  ON o.order_id=d_o.order_id WHERE o.order_id = :id")
 	CvcOrderInfoEntity get(@Param("id") int id);
 	
 	@Sql("UPDATE cvc_order_info SET handle_status=:handleStatus,handle_time=:handleTime,handle_user=:handleUser  WHERE order_id= :orderId LIMIT 1 ")
@@ -63,6 +63,11 @@ public interface CvcOrderInfoDao{
 	@Sql("UPDATE cvc_order_info SET yl_order_status= '1',tk_order_status='1' WHERE batch_no=:batchNo and tk_order_status='0'")
 	public void updateOrderRead(@Param("batchNo")  String batchNo);
 	
+	@Sql("UPDATE cvc_order_info SET yl_order_status= :status,tk_order_status=:status WHERE order_id=:orderId limit 1")
+	public void updateStatusByOrderId(@Param("orderId")  int orderId,@Param("status")int status);
+	
+	@Sql("UPDATE cvc_order_info SET is_balance=1 WHERE order_id= :orderId limit 1")
+	public int updateIsBalance(@Param("orderId")  Integer orderId);
 	
 	@ResultType(CvcOrderInfoEntity.class)
 	public MiniDaoPage<CvcOrderInfoEntity> getExceptionOrderListAll(@Param("cvcOrderInfo") CvcOrderInfoEntity cvcOrderInfo,@Param("page")  int page,@Param("rows") int rows);

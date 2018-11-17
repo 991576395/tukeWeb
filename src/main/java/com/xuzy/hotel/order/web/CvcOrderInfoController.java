@@ -52,6 +52,9 @@ import com.xuzy.hotel.shipping.service.CvcShippingService;
 import com.xuzy.hotel.ylrequest.ConmentHttp;
 import com.xuzy.hotel.ylrequest.ResponseHead;
 import com.xuzy.hotel.ylrequest.TukeRequestBody;
+import com.xuzy.hotel.ylrequest.module.RequestDeliveryExchangeOrderJson;
+import com.xuzy.hotel.ylrequest.module.RequestOFFHarbourExchangeOrderJson;
+import com.xuzy.hotel.ylrequest.module.RequestSignInExchangeOrderJson;
 
 /**
  * 描述：订单表
@@ -575,7 +578,101 @@ public class CvcOrderInfoController extends BaseController {
 		return new ModelAndView("com/xuzy/hotel/order/tOrderShip");
 	}
 	
-	
+	/**
+	 * 修改状态
+	 * 
+	 * @param ids
+	 * @return
+	 */
+	@RequestMapping(params = "orderStatusUpdate", method = RequestMethod.GET)
+	@ResponseBody
+	public AjaxJson orderStatusUpdate(@RequestParam(required = true, value = "id") int id,
+			@RequestParam(required = true, value = "tkOrderStatus") String tkOrderStatus) {
+		AjaxJson j = new AjaxJson();
+		try {
+			if(StringUtils.isEmpty(tkOrderStatus)) {
+				j.setSuccess(false);
+				j.setMsg("参数异常");
+				return j;
+			}
+			CvcOrderInfoEntity cvcOrderInfoEntity = cvcOrderInfoService.get(id);
+			if(cvcOrderInfoEntity == null) {
+				j.setSuccess(false);
+				j.setMsg("操作订单不存在");
+				return j;
+			}
+			if("offharbour".equals(tkOrderStatus)) {
+				//推送至离港 
+				RequestOFFHarbourExchangeOrderJson  requestBody = new RequestOFFHarbourExchangeOrderJson();
+				requestBody.setOrderID(id);
+				requestBody.setEMSCompany(cvcOrderInfoEntity.getShippingName());
+				requestBody.setEMSOdd(cvcOrderInfoEntity.getInvoiceNo());
+				requestBody.setPreArrivalDate(cvcOrderInfoEntity.getPreferDeliverdate());
+				ResponseHead responseHead = ConmentHttp.sendHttp(new TukeRequestBody.Builder()
+						.setSequence(2)
+						.setServiceCode("CRMIF.OFFHarbourExchangeOrderJson")
+						.setParams(requestBody).builder(), null);
+				if(responseHead.getReturn() >= 0) {
+					cvcOrderInfoService.updateStatusByOrderId(id, 3);
+					j.setMsg("订单离港成功");
+				}else {
+					j.setSuccess(false);
+					j.setMsg("订单离港失败 原因:"+responseHead.getReturnInfo());
+				}
+			} else if("send".equals(tkOrderStatus)) {
+				//推送至配送中 
+				RequestDeliveryExchangeOrderJson  requestBody = new RequestDeliveryExchangeOrderJson();
+				requestBody.setOrderID(id);
+				requestBody.setDeliveryingDate(DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
+				ResponseHead responseHead = ConmentHttp.sendHttp(new TukeRequestBody.Builder()
+						.setSequence(2)
+						.setServiceCode("CRMIF.DeliveryExchangeOrderJson")
+						.setParams(requestBody).builder(), null);
+				if(responseHead.getReturn() >= 0) {
+					cvcOrderInfoService.updateStatusByOrderId(id, 4);
+					j.setMsg("订单配送成功");
+				}else {
+					j.setSuccess(false);
+					j.setMsg("订单配送失败 原因:"+responseHead.getReturnInfo());
+				}
+			}else if("signin".equals(tkOrderStatus)) {
+				CvcDeliveryInfoEntity cvcDeliveryInfoEntity = cvcOrderInfoService.getDeliveryInfosByInvoiceNo(cvcOrderInfoEntity.getInvoiceNo());
+				if(cvcDeliveryInfoEntity == null) {
+					j.setSuccess(false);
+					j.setMsg("暂未查询到物流信息");
+					return j;
+				}
+				List<DelivetyJson> datas = PHPAndJavaSerialize.unserializePHParray(cvcDeliveryInfoEntity.getData(),DelivetyJson.class);
+				if(CollectionUtils.isEmpty(datas)) {
+					j.setSuccess(false);
+					j.setMsg("暂未查询到物流信息");
+					return j;
+				}
+				//推送至签收 
+				RequestSignInExchangeOrderJson  requestBody = new RequestSignInExchangeOrderJson();
+				requestBody.setOrderID(id);
+				requestBody.setSignInMan(datas.get(0).getContext());
+				requestBody.setSignInDate(datas.get(0).getFtime() );
+				ResponseHead responseHead = ConmentHttp.sendHttp(new TukeRequestBody.Builder()
+						.setSequence(2)
+						.setServiceCode("CRMIF.SignInExchangeOrderJson")
+						.setParams(requestBody).builder(), null);
+				if(responseHead.getReturn() >= 0) {
+					cvcOrderInfoService.updateStatusByOrderId(id, 5);
+					j.setMsg("订单签收成功");
+				}else {
+					j.setSuccess(false);
+					j.setMsg("订单签收失败 原因:"+responseHead.getReturnInfo());
+				}
+			}
+		} catch (Exception e) {
+			log.info(e.getMessage());
+			j.setSuccess(false);
+			j.setMsg("推送失败");
+		}
+		return j;
+	}
+
 	
 	
 	/**

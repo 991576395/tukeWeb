@@ -1,7 +1,8 @@
 package com.xuzy.hotel.checkingaccountorder.service.impl;
 
 import javax.annotation.Resource;
-import java.util.UUID;
+
+import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
@@ -24,10 +25,6 @@ public class CvcCheckingAccountOrderServiceImpl implements CvcCheckingAccountOrd
 	@Resource
 	private CvcCheckingAccountOrderDao cvcCheckingAccountOrderDao;
 
-	@Override
-	public CvcCheckingAccountOrderEntity get(String id) {
-		return cvcCheckingAccountOrderDao.get(id);
-	}
 
 	@Override
 	public int update(CvcCheckingAccountOrderEntity cvcCheckingAccountOrder) {
@@ -75,5 +72,38 @@ public class CvcCheckingAccountOrderServiceImpl implements CvcCheckingAccountOrd
 	@Override
 	public int getCount(CvcCheckingAccountOrderEntity query) {
 		return cvcCheckingAccountOrderDao.getCount(query);
+	}
+
+	@Override
+	public void updateAddCheckingAccount(int checkingAccountId, int orderId, long time) {
+		cvcCheckingAccountOrderDao.updateAddCheckingAccount(checkingAccountId, orderId, time);
+	}
+
+	@Override
+	public List<CvcCheckingAccountOrderEntity> getOrders(int checkingAccountId) {
+		List<CvcCheckingAccountOrderEntity> entitys = cvcCheckingAccountOrderDao.getOrders(checkingAccountId);
+		if(CollectionUtils.isNotEmpty(entitys)) {
+			for(CvcCheckingAccountOrderEntity accountOrderEntity:entitys) {
+				if(accountOrderEntity.getIsAddCheckingAccount() != null && accountOrderEntity.getIsAddCheckingAccount() == 1) {
+					accountOrderEntity.setStatueName("上传成功");
+				}else if(accountOrderEntity.getAddCheckingAccountTime() != 0) {
+					accountOrderEntity.setStatueName("上传失败");
+				}else {
+					accountOrderEntity.setStatueName("未上传");
+				}
+				accountOrderEntity.setAddCheckingAccountTimeFormat(DateFormatUtils.format(Long.parseLong(accountOrderEntity.getAddCheckingAccountTime()+"000"), "yyyy-MM-dd HH:mm:ss"));
+			}
+		}
+		return 	entitys;
+	}
+
+	@Override
+	public CvcCheckingAccountOrderEntity get(int checkingAccountId, int orderId) {
+		return cvcCheckingAccountOrderDao.get(checkingAccountId, orderId);
+	}
+
+	@Override
+	public void deleteByCheckingAccountId(String id) {
+		cvcCheckingAccountOrderDao.delete(id);
 	}
 }

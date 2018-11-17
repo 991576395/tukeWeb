@@ -15,26 +15,64 @@
    	<t:dgCol title="上传状态" field="isAddCheckingAccount" hidden="true" query="true" queryMode="single" dictionary="upstatus"  width="120"></t:dgCol>
    	
    	
-   	<t:dgToolBar title="上传对账明细" icon="icon-putout" url="cvcCheckingAccountOrder.do?addCheckingAccount" width="800" height="400" funname="add"></t:dgToolBar>
-   	<t:dgToolBar title="重新生成对账明细" icon="icon-search" url="cvcCheckingAccount.do?toDetail" width="1200" height="800" funname="goLook"></t:dgToolBar>
- 	<t:dgToolBar title="封账" icon="icon-add" url="cvcCheckingAccount.do?toAdd" width="800" height="400" funname="add"></t:dgToolBar>
- 	<t:dgToolBar title="导出EXCEL" icon="icon-add" url="cvcCheckingAccount.do?toAdd" width="800" height="400" funname="add"></t:dgToolBar>
+   	<t:dgToolBar title="上传对账明细" icon="icon-putint" url="cvcCheckingAccountOrder.do?addCheckingAccount&checkingAccountId=${checkingAccountId}"  funname="addCheckingAccount"></t:dgToolBar>
+   	<t:dgToolBar title="重新生成对账明细" icon="icon-edit"   onclick="doMyGo('cvcCheckingAccount.do?updateCheckingAccountOrder&checkingAccountId=${checkingAccountId}')"></t:dgToolBar>
+ 	<t:dgToolBar title="封账" icon="icon-add" onclick="doMyGo('cvcCheckingAccount.do?makeBalance&checkingAccountId=${checkingAccountId}')"></t:dgToolBar>
+ 	<t:dgToolBar title="导出" icon="icon-putout" onclick="exportEXCEL('cvcCheckingAccountOrder.do?exportXls&checkingAccountId=${checkingAccountId}')"></t:dgToolBar>
+ 	<t:dgToolBar title="删除" icon="icon-remove" url="cvcCheckingAccountOrder.do?doDelete&id=${checkingAccountId}" funname="deleteOrder" ></t:dgToolBar>
+ 
   </t:datagrid>
   </div>
   
+  
   <script type="text/javascript">
-			//单元格的格式化函数  value：字段的值 row：行的记录数据 index：行的索引
-			  function formatAgeFun(age,row,index){
-			  	if(age == 0){
-			  		return "";
-			  	}
-			  	return age;
-			  }		
+	  	function exportEXCEL(url) {
+			 window.location.href=url;
+		}
   
   
-			function goLook(title, url, id, width, height, isRestful) {
-				gridname = id;
-				var rowsData = $('#' + id).datagrid('getSelections');
+  		var sucSize = 0;
+  			function addCheckingAccount(title, url){
+  				/* $.dialog.setting.zIndex = getzIndex(true);
+  				$.dialog({
+  						title:'系统提示',
+  						zIndex: getzIndex(),
+  						icon:'tips.gif',
+  						content: 'msg'
+  					}); */
+  					requestall(url);
+  			}	
+  			
+  			function data(){
+  				$('.ui_content').html('haha');
+  			}
+
+  			 //请求
+			 function requestall(url){
+				 $.ajax({
+						url : url,
+						type : 'get',
+						cache : false,
+						success : function(data) {
+							var d = $.parseJSON(data);
+							var msg = d.msg;
+							if (d.success) {
+								sucSize += data.obj;
+			  					tip('已成功'+sucSize+'条');
+			  					if(data.msg != '上传完毕'){
+			  						request(url);
+			  					}else{
+			  						tip(msg);
+			  					}
+							}else{
+								tip(msg);
+							}
+						}
+					});
+			 }
+  			 
+  			 function deleteOrder(title, url, id, width, height, isRestful){
+  				var rowsData = $('#' + id).datagrid('getSelections');
 				if (!rowsData || rowsData.length == 0) {
 					tip('请选择查看项目');
 					return;
@@ -44,35 +82,48 @@
 					return;
 				}
 				if (isRestful != 'undefined' && isRestful) {
-					url += '/' + rowsData[0].id;
+					url += '/' + rowsData[0].orderId;
 				} else {
-					url += '&id=' + rowsData[0].id;
+					url += '&orderId=' + rowsData[0].orderId;
 				}
-// 				window.location.href= url;  
-// 				window.open(url,"_blank");
-				createMywindow(title, url, width, height);
-			}
-
-			function createMywindow(title, addurl, width, height) {
-				width = width ? width : 700;
-				height = height ? height : 400;
-				if (width == "100%" || height == "100%") {
-					width = window.top.document.body.offsetWidth;
-					height = window.top.document.body.offsetHeight - 100;
-				}
-				$.dialog({
-					content : 'url:' + addurl,
-					lock : true,
-					zIndex : getzIndex(),
-					width : width,
-					height : height,
-					title : title,
-					opacity : 0.3,
-					cache : false,
-					cancelVal : '关闭',
-					cancel : true
-				/*为true等价于function(){}*/
+  				layer.open({
+					title:"系统提示",
+					content:"确认删除订单？",
+					icon:7,
+					shade: 0.3,
+					yes:function(index){
+						request(url,function (d){
+							reloadTable();
+						});
+					},
+					btn:['确定','取消'],
+					btn2:function(index){
+						layer.close(index);
+					}
 				});
-			}
+  			 }
+  			 
+  			 function doMyGo(url){
+  				request(url,function(){
+  					
+  				});
+  			 }
+  			 
+			//请求
+			 function request(url,fn){
+				 $.ajax({
+						url : url,
+						type : 'post',
+						cache : false,
+						success : function(data) {
+							var d = $.parseJSON(data);
+							var msg = d.msg;
+							tip(msg);
+							if (d.success) {
+								fn.call(d);
+							}
+						}
+					});
+			 }
 		</script>
  </div>

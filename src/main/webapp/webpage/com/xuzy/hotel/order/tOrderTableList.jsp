@@ -20,17 +20,68 @@
 <%--    <c:if test="${orderStatus == 7}"> --%>
    		<t:dgCol title="退货原因" field="returnReason" queryMode="single" dictionary="rtReason"  query="true"  width="120"></t:dgCol>
 <%--    </c:if> --%>
-<%--    <t:dgCol title="操作" field="opt" url="go"  width="80"></t:dgCol> --%>
-   
-<%--    <t:dgDelOpt title="删除" url="tMenuTableController.do?del&id={id}" urlclass="ace_button"  urlfont="fa-trash-o"/> --%>
-<%--    <t:dgToolBar title="录入" icon="icon-add" url="tMenuTableController.do?addorupdate" funname="add"></t:dgToolBar> --%>
-<%--    <t:dgToolBar title="编辑" icon="icon-edit" url="tMenuTableController.do?addorupdate" funname="update"></t:dgToolBar> --%>
+
    <t:dgToolBar title="查看详情" icon="icon-search" url="cvcOrderInfo.do?toDetail" width="1200" height="800" funname="goLook"></t:dgToolBar>
+  <t:dgToolBar title="推送至离港" icon="icon-edit" url="cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=offharbour"  funname="toUpdate"></t:dgToolBar>
+   <t:dgToolBar title="推送至配送中" icon="icon-edit" url="cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=send"  funname="toUpdate"></t:dgToolBar>
+   <t:dgToolBar title="推送至签收" icon="icon-edit" url="cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=signin"  funname="toUpdate"></t:dgToolBar>
+  	
+  
   </t:datagrid>
   </div>
   
   <script type="text/javascript">
-
+		  
+		  function toUpdate(title, url, id, width, height, isRestful) {
+			  	var rowsData = $('#' + id).datagrid('getSelections');
+				if (!rowsData || rowsData.length == 0) {
+					tip('请选择操作订单');
+					return;
+				}
+				if (rowsData.length > 1) {
+					tip('请选择一条订单再操作');
+					return;
+				}
+				if (isRestful != 'undefined' && isRestful) {
+					url += '/' + rowsData[0].id;
+				} else {
+					url += '&id=' + rowsData[0].id;
+				} 
+			  
+				layer.open({
+					title:"系统提示",
+					content:"确认操作？",
+					icon:7,
+					shade: 0.3,
+					yes:function(index){
+						request(url,function (d){
+							reloadTable();
+						});
+					},
+					btn:['确定','取消'],
+					btn2:function(index){
+						layer.close(index);
+					}
+				}); 
+			}
+  			
+		  	//请求
+			function request(url,fn){
+				 $.ajax({
+						url : url,
+						type : 'get',
+						cache : false,
+						success : function(data) {
+							var d = $.parseJSON(data);
+							var msg = d.msg;
+							tip(msg);
+							if (d.success) {
+								fn.call(d);
+							}
+						}
+					});
+			 } 
+  
 			function goLook(title, url, id, width, height, isRestful) {
 				gridname = id;
 				var rowsData = $('#' + id).datagrid('getSelections');
@@ -47,8 +98,6 @@
 				} else {
 					url += '&id=' + rowsData[0].id;
 				}
-// 				window.location.href= url;  
-// 				window.open(url,"_blank");
 				createMywindow(title, url, width, height);
 			}
 

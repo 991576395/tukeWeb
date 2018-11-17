@@ -1,20 +1,28 @@
 package com.xuzy.hotel.checkingaccountorder.web;
 
+import java.util.Calendar;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.velocity.VelocityContext;
+import org.jeecgframework.core.common.hibernate.qbc.CriteriaQuery;
 import org.jeecgframework.core.common.model.json.DataGrid;
+import org.jeecgframework.core.util.ResourceUtil;
 import org.jeecgframework.minidao.pojo.MiniDaoPage;
 import org.jeecgframework.p3.core.common.utils.AjaxJson;
 import org.jeecgframework.p3.core.page.SystemTools;
 import org.jeecgframework.p3.core.util.plugin.ViewVelocity;
 import org.jeecgframework.p3.core.web.BaseController;
+import org.jeecgframework.poi.excel.entity.ExportParams;
+import org.jeecgframework.poi.excel.entity.vo.NormalExcelConstants;
 import org.jeecgframework.tag.core.easyui.TagUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -23,10 +31,17 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.xuzy.hotel.checkingaccount.entity.CvcCheckingAccountEntity;
+import com.xuzy.hotel.checkingaccount.service.CvcCheckingAccountService;
 import com.xuzy.hotel.checkingaccountorder.entity.CvcCheckingAccountOrderEntity;
 import com.xuzy.hotel.checkingaccountorder.service.CvcCheckingAccountOrderService;
+import com.xuzy.hotel.checkingaccountorder.service.impl.CheckAndUpdateRunable;
+import com.xuzy.hotel.company.entity.TSCompanyEntity;
 import com.xuzy.hotel.order.entity.CvcOrderInfoEntity;
 import com.xuzy.hotel.order.service.CvcOrderInfoService;
+import com.xuzy.hotel.ylrequest.ConmentHttp;
+import com.xuzy.hotel.ylrequest.ResponseHead;
+import com.xuzy.hotel.ylrequest.TukeRequestBody;
+import com.xuzy.hotel.ylrequest.module.RequestCheckingAccountDetailAddJson;
 
  /**
  * 描述：对账订单表
@@ -42,6 +57,13 @@ public class CvcCheckingAccountOrderController extends BaseController{
   
   @Autowired
   private CvcOrderInfoService cvcOrderInfoService;
+  
+  @Autowired
+  private CvcCheckingAccountService cvcCheckingAccountService;
+  
+
+  @Autowired
+  private CheckAndUpdateRunable checkAndUpdateRunable;
 	/**
 	 * 列表页面
 	 * @return
@@ -85,23 +107,72 @@ public class CvcCheckingAccountOrderController extends BaseController{
 				j.setMsg("该对账单不存在！");
 				return j;
 			}
-			CvcOrderInfoEntity  cvcOrderInfoEntity = cvcOrderInfoService.get(checkingAccountId);
+			CvcCheckingAccountEntity  cvcOrderInfoEntity = cvcCheckingAccountService.get(checkingAccountId+"");
 			if(cvcOrderInfoEntity == null) {
 				j.setSuccess(false);
 				j.setMsg("该对账单不存在！");
 				return j;
 			}
+			int sucSize = 0;
 			
-			
-			
-			
-			j.setMsg("上传成功");
+			int page = 1;
+			CvcCheckingAccountOrderEntity query = new CvcCheckingAccountOrderEntity();
+			query.setIsAddCheckingAccount(0);
+			query.setCheckingAccountId(checkingAccountId);
+			MiniDaoPage<CvcCheckingAccountOrderEntity> list = cvcCheckingAccountOrderService.getAll(query, page, 10);
+			if(CollectionUtils.isNotEmpty(list.getResults())) {
+				checkAndUpdateRunable.setCheckingAccountId(checkingAccountId);
+//				for (CvcCheckingAccountOrderEntity entity : list.getResults()) {
+//					RequestCheckingAccountDetailAddJson checkingAccountDetailAddJson = new RequestCheckingAccountDetailAddJson();
+//					checkingAccountDetailAddJson.setCheckAccountInfoID(checkingAccountId);
+//					checkingAccountDetailAddJson.setOrderID(entity.getOrderId());
+//					checkingAccountDetailAddJson.setProductCode(entity.getGoodsSn());
+//					checkingAccountDetailAddJson.setQuantity(entity.getGoodsNumber());
+//					checkingAccountDetailAddJson.setEMSCompany(entity.getShippingName());
+//					checkingAccountDetailAddJson.setDeliver(cvcOrderInfoEntity.getDeliver());
+//					checkingAccountDetailAddJson.setAccountType(cvcOrderInfoEntity.getAccountType());
+//					checkingAccountDetailAddJson.setOppStaff(cvcOrderInfoEntity.getOppstaff());
+//					
+//					//调用上传订单详情接口
+////					ResponseHead responseHead = ConmentHttp.sendHttp(new TukeRequestBody.Builder()
+////							.setSequence(2)
+////							.setServiceCode("CRMIF.CheckingAccountDetailAddJson")
+////							.setParams(checkingAccountDetailAddJson).builder(), null);
+////					if(responseHead.getReturn() >= 0) {
+//						cvcCheckingAccountOrderService.updateAddCheckingAccount(checkingAccountId, entity.getOrderId(), Calendar.getInstance().getTimeInMillis());
+//						sucSize++;
+////					}
+//				}
+			}else {
+				j.setMsg("上传完毕");
+				return j;
+			}
+			j.setMsg("本次成功！");
+			j.setObj(sucSize);
 		} catch (Exception e) {
 		    log.info(e.getMessage());
 			j.setSuccess(false);
 			j.setMsg("上传失败");
 		}
 		return j;
+	}
+	
+	/**
+	 * 导出excel
+	 * 
+	 * @param request
+	 * @param response
+	 */
+	@RequestMapping(params = "exportXls")
+	public String exportXls(@RequestParam(required = true, value = "checkingAccountId" )Integer checkingAccountId,HttpServletRequest request
+			,HttpServletResponse response,ModelMap modelMap) {
+		List<CvcCheckingAccountOrderEntity> entitys = cvcCheckingAccountOrderService.getOrders(checkingAccountId);
+		modelMap.put(NormalExcelConstants.FILE_NAME,"对账订单");
+		modelMap.put(NormalExcelConstants.CLASS,CvcCheckingAccountOrderEntity.class);
+		modelMap.put(NormalExcelConstants.PARAMS,new ExportParams("对账订单列表", "导出人:"+ResourceUtil.getSessionUser().getUserName(),
+			"导出信息"));
+		modelMap.put(NormalExcelConstants.DATA_LIST,entitys);
+		return NormalExcelConstants.JEECG_EXCEL_VIEW;
 	}
 
 	/**
@@ -123,18 +194,6 @@ public class CvcCheckingAccountOrderController extends BaseController{
 		return j;
 	}
 
-	/**
-	 * 跳转到编辑页面
-	 * @return
-	 */
-	@RequestMapping(params="toEdit",method = RequestMethod.GET)
-	public void toEdit(@RequestParam(required = true, value = "id" ) String id,HttpServletResponse response,HttpServletRequest request) throws Exception{
-			 VelocityContext velocityContext = new VelocityContext();
-			 CvcCheckingAccountOrderEntity cvcCheckingAccountOrder = cvcCheckingAccountOrderService.get(id);
-			 velocityContext.put("cvcCheckingAccountOrder",cvcCheckingAccountOrder);
-			 String viewName = "hotel/checkingaccountorder/cvcCheckingAccountOrder-edit.vm";
-			 ViewVelocity.view(request,response,viewName,velocityContext);
-	}
 
 	/**
 	 * 编辑
@@ -160,12 +219,35 @@ public class CvcCheckingAccountOrderController extends BaseController{
 	 * 删除
 	 * @return
 	 */
-	@RequestMapping(params="doDelete",method = RequestMethod.GET)
+	@RequestMapping(params="doDelete",method = RequestMethod.POST)
 	@ResponseBody
-	public AjaxJson doDelete(@RequestParam(required = true, value = "id" ) String id){
+	public AjaxJson doDelete(@RequestParam(required = false, value = "id" ) Integer id,@RequestParam(required = false, value = "orderId" ) Integer orderId){
 			AjaxJson j = new AjaxJson();
 			try {
-				cvcCheckingAccountOrderService.delete(id);
+				if(id == null || orderId == null) {
+					j.setSuccess(false);
+					j.setMsg("参数异常！");
+					return j;
+				}
+				CvcCheckingAccountOrderEntity  checkingAccountOrderEntity = cvcCheckingAccountOrderService.get(id,orderId);
+				if(checkingAccountOrderEntity == null) {
+					j.setSuccess(false);
+					j.setMsg("该订单不存在！");
+					return j;
+				}
+				
+				if(checkingAccountOrderEntity.getIsAddCheckingAccount() == 1) {
+					j.setSuccess(false);
+					j.setMsg("该订单已上传，不能删除！");
+					return j;
+				}
+				CvcCheckingAccountEntity cvcCheckingAccountEntity = cvcCheckingAccountService.get(id+"");
+				if(cvcCheckingAccountEntity.getIsBalance() == 1) {
+					j.setSuccess(false);
+					j.setMsg("该订单已结算，不能删除！");
+					return j;
+				}
+				cvcCheckingAccountOrderService.delete(orderId+"");
 				j.setMsg("删除成功");
 			} catch (Exception e) {
 			    log.info(e.getMessage());

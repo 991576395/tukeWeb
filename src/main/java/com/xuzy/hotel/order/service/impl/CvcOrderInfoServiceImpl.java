@@ -131,4 +131,9 @@ public class CvcOrderInfoServiceImpl implements CvcOrderInfoService {
 	public List<CvcOrderInfoEntity> getAccountOrderList(String userName, String startTime, String endTime) {
 		return cvcOrderInfoDao.getAccountOrders(userName, startTime, endTime);
 	}
+
+	@Override
+	public void updateStatusByOrderId(int orderId, int status) {
+		cvcOrderInfoDao.updateStatusByOrderId(orderId, status);
+	}
 }

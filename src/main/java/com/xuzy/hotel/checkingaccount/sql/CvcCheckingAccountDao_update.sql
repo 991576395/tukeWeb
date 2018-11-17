@@ -27,4 +27,4 @@ SET
 	   <#if cvcCheckingAccount.isBalance ?exists>
 		   is_balance = :cvcCheckingAccount.isBalance,
 		</#if>
-WHERE id = :cvcCheckingAccount.id
+WHERE checking_account_id = :cvcCheckingAccount.checkingAccountId

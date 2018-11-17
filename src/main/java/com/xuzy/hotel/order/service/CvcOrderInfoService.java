@@ -30,6 +30,12 @@ public interface CvcOrderInfoService {
 	public void delete(String id);
 	
 	public void batchDelete(String[] ids);
+	/**
+	 * 修改指定订单的状态
+	 * @param orderId
+	 * @param status
+	 */
+	public void updateStatusByOrderId(@Param("orderId")  int orderId,int status);
 	
 	/**
 	 * 获取订订单信息

@@ -1,5 +1,7 @@
 package com.xuzy.hotel.checkingaccountorder.service;
 
+import java.util.List;
+
 import org.jeecgframework.minidao.annotation.Param;
 import org.jeecgframework.minidao.pojo.MiniDaoPage;
 import com.xuzy.hotel.checkingaccountorder.entity.CvcCheckingAccountOrderEntity;
@@ -11,7 +13,8 @@ import com.xuzy.hotel.checkingaccountorder.entity.CvcCheckingAccountOrderEntity;
  * @version:1.0
  */
 public interface CvcCheckingAccountOrderService {
-	public CvcCheckingAccountOrderEntity get(String id);
+	
+	CvcCheckingAccountOrderEntity get(int checkingAccountId,int orderId);
 
 	public int update(CvcCheckingAccountOrderEntity cvcCheckingAccountOrder);
 
@@ -25,4 +28,10 @@ public interface CvcCheckingAccountOrderService {
 
 	public int getCount(CvcCheckingAccountOrderEntity query);
 	
+	public void updateAddCheckingAccount( int checkingAccountId
+			,int orderId,long time);
+	
+	public List<CvcCheckingAccountOrderEntity> getOrders(int checkingAccountId);
+	
+	public void deleteByCheckingAccountId(String id);
 }
