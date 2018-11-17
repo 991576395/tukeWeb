@@ -1,6 +1,5 @@
 package com.appinterface.app.base.core.entity.response;
 
-import org.aspectj.apache.bcel.classfile.Constant;
 
 import com.appinterface.app.base.core.contant.Contant;
 import com.appinterface.app.base.core.entity.base.UnipayBaseDto;

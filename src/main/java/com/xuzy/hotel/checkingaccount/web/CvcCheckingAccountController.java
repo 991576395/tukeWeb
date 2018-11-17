@@ -119,17 +119,17 @@ public class CvcCheckingAccountController extends BaseController{
 				j.setMsg("该时间段内不存在已签收订单！");
 				return j;
 			}
-//			RequestCheckingAcccountInfoAddJson moduleType = new RequestCheckingAcccountInfoAddJson();
-//			moduleType.setDeliver(Config.DELIVERER);
-//			moduleType.setBeginDate(cvcCheckingAccount.getStartTime());
-//			moduleType.setEndDate(cvcCheckingAccount.getEndTime());
-//			moduleType.setTopic(cvcCheckingAccount.getTopic());
-//			moduleType.setAccountType(cvcCheckingAccount.getAccountType());
-//			ResponseHead head = ConmentHttp.sendHttp(new TukeRequestBody.Builder().setParams(moduleType).setSequence(2)
-//					.setServiceCode("CRMIF.CheckingAcccountInfoAddJson").builder(), ResponseCheckingAcccountInfoAddJson.class);
-//			if(head.getReturn() >= 0) {
-			//String CheckAccountInfoID = 
-				int CheckAccountInfoID = 123456;	
+			RequestCheckingAcccountInfoAddJson moduleType = new RequestCheckingAcccountInfoAddJson();
+			moduleType.setDeliver(Config.DELIVERER);
+			moduleType.setBeginDate(cvcCheckingAccount.getStartTime());
+			moduleType.setEndDate(cvcCheckingAccount.getEndTime());
+			moduleType.setTopic(cvcCheckingAccount.getTopic());
+			moduleType.setAccountType(cvcCheckingAccount.getAccountType());
+			ResponseHead head = ConmentHttp.sendHttp(new TukeRequestBody.Builder().setParams(moduleType).setSequence(2)
+					.setServiceCode("CRMIF.CheckingAcccountInfoAddJson").builder(), ResponseCheckingAcccountInfoAddJson.class);
+			if(head.getReturn() >= 0) {
+				ResponseCheckingAcccountInfoAddJson responseCheckingAcccountInfoAddJson = (ResponseCheckingAcccountInfoAddJson) head.getBody();
+				int CheckAccountInfoID = responseCheckingAcccountInfoAddJson.getCheckAccountInfoID();	
 				if(CheckAccountInfoID > 0 && !CollectionUtils.isEmpty(cvcOrderInfoEntities)) {
 					CvcCheckingAccountEntity accountEntity = cvcCheckingAccountService.get(CheckAccountInfoID+"");
 					if(accountEntity == null) {
@@ -141,19 +141,21 @@ public class CvcCheckingAccountController extends BaseController{
 						accountEntity.setOppstaff(1);
 						accountEntity.setStartTime(cvcCheckingAccount.getStartTime());
 						accountEntity.setEndTime(cvcCheckingAccount.getEndTime());
-						accountEntity.setAddTime((int)Calendar.getInstance().getTimeInMillis());
-						cvcCheckingAccountService.insert(cvcCheckingAccount);
+						accountEntity.setAddTime(Calendar.getInstance().getTimeInMillis());
+						accountEntity.setIsBalance(0);
+						cvcCheckingAccountService.insert(accountEntity);
 						
 						for(CvcOrderInfoEntity cvcOrderInfoEntity:cvcOrderInfoEntities) {
 							CvcOrderGoodsEntity cvcOrderGoodsEntity = cvcOrderGoodsService.get(cvcOrderInfoEntity.getId()+"");
-							
 							CvcCheckingAccountOrderEntity cvcCheckingAccountOrder = new CvcCheckingAccountOrderEntity();
 							cvcCheckingAccountOrder.setCheckingAccountId(CheckAccountInfoID);
 							cvcCheckingAccountOrder.setOrderId(cvcOrderInfoEntity.getId());
 							cvcCheckingAccountOrder.setInvoiceNo(cvcOrderInfoEntity.getInvoiceNo());
 							cvcCheckingAccountOrder.setShippingName(cvcOrderInfoEntity.getShippingName());
-							cvcCheckingAccountOrder.setGoodsSn(cvcOrderGoodsEntity.getGoodsSn());
-							cvcCheckingAccountOrder.setGoodsNumber(cvcOrderGoodsEntity.getGoodsNumber());
+							if(cvcOrderGoodsEntity != null) {
+								cvcCheckingAccountOrder.setGoodsSn(cvcOrderGoodsEntity.getGoodsSn());
+								cvcCheckingAccountOrder.setGoodsNumber(cvcOrderGoodsEntity.getGoodsNumber());
+							}
 							cvcCheckingAccountOrder.setAddress(cvcOrderInfoEntity.getAddress());
 							cvcCheckingAccountOrder.setConsignee(cvcOrderInfoEntity.getConsignee());
 							cvcCheckingAccountOrder.setMobile(cvcOrderInfoEntity.getMobile());
@@ -163,10 +165,10 @@ public class CvcCheckingAccountController extends BaseController{
 					}
 				}
 				j.setMsg("保存成功");
-//			}else {
-//				j.setSuccess(false);
-//				j.setMsg("伊利接口调用失败！");
-//			}
+			}else {
+				j.setSuccess(false);
+				j.setMsg("伊利接口调用失败！");
+			}
 		} catch (Exception e) {
 		    log.info(e.getMessage());
 			j.setSuccess(false);

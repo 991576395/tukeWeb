@@ -12,7 +12,7 @@ import java.math.BigDecimal;
  */
 public class CvcCheckingAccountEntity implements Serializable{
 	private static final long serialVersionUID = 1L;
-		/**	 *id	 */	private Integer id;	/**	 *对账表头id	 */	private Integer checkingAccountId;	/**	 *对账明细主题	 */	private String topic;	/**	 *积分账号（1.金领冠账户；2.托菲尔账户）	 */	private Integer accountType;	/**	 *配货商id	 */	private Integer deliver;	/**	 *操作人id	 */	private Integer oppstaff;	/**	 *对账开始时间	 */	private String startTime;	/**	 *对账结束时间	 */	private String endTime;	/**	 *对账生成时间	 */	private Integer addTime;
+		/**	 *id	 */	private Integer id;	/**	 *对账表头id	 */	private Integer checkingAccountId;	/**	 *对账明细主题	 */	private String topic;	/**	 *积分账号（1.金领冠账户；2.托菲尔账户）	 */	private Integer accountType;	/**	 *配货商id	 */	private Integer deliver;	/**	 *操作人id	 */	private Integer oppstaff;	/**	 *对账开始时间	 */	private String startTime;	/**	 *对账结束时间	 */	private String endTime;	/**	 *对账生成时间	 */	private long addTime;
 	/**
 	 * 对账生成时间格式化
 	 */
@@ -25,6 +25,12 @@ public class CvcCheckingAccountEntity implements Serializable{
 	public void setAddTimeFormat(String addTimeFormat) {
 		this.addTimeFormat = addTimeFormat;
 	}
-	public Integer getId() {	    return this.id;	}	public void setId(Integer id) {	    this.id=id;	}	public Integer getCheckingAccountId() {	    return this.checkingAccountId;	}	public void setCheckingAccountId(Integer checkingAccountId) {	    this.checkingAccountId=checkingAccountId;	}	public String getTopic() {	    return this.topic;	}	public void setTopic(String topic) {	    this.topic=topic;	}	public Integer getAccountType() {	    return this.accountType;	}	public void setAccountType(Integer accountType) {	    this.accountType=accountType;	}	public Integer getDeliver() {	    return this.deliver;	}	public void setDeliver(Integer deliver) {	    this.deliver=deliver;	}	public Integer getOppstaff() {	    return this.oppstaff;	}	public void setOppstaff(Integer oppstaff) {	    this.oppstaff=oppstaff;	}	public String getStartTime() {	    return this.startTime;	}	public void setStartTime(String startTime) {	    this.startTime=startTime;	}	public String getEndTime() {	    return this.endTime;	}	public void setEndTime(String endTime) {	    this.endTime=endTime;	}	public Integer getAddTime() {	    return this.addTime;	}	public void setAddTime(Integer addTime) {	    this.addTime=addTime;	}	public Integer getIsBalance() {	    return this.isBalance;	}	public void setIsBalance(Integer isBalance) {	    this.isBalance=isBalance;	}
+	public Integer getId() {	    return this.id;	}	public void setId(Integer id) {	    this.id=id;	}	public Integer getCheckingAccountId() {	    return this.checkingAccountId;	}	public void setCheckingAccountId(Integer checkingAccountId) {	    this.checkingAccountId=checkingAccountId;	}	public String getTopic() {	    return this.topic;	}	public void setTopic(String topic) {	    this.topic=topic;	}	public Integer getAccountType() {	    return this.accountType;	}	public void setAccountType(Integer accountType) {	    this.accountType=accountType;	}	public Integer getDeliver() {	    return this.deliver;	}	public void setDeliver(Integer deliver) {	    this.deliver=deliver;	}	public Integer getOppstaff() {	    return this.oppstaff;	}	public void setOppstaff(Integer oppstaff) {	    this.oppstaff=oppstaff;	}	public String getStartTime() {	    return this.startTime;	}	public void setStartTime(String startTime) {	    this.startTime=startTime;	}	public String getEndTime() {	    return this.endTime;	}	public void setEndTime(String endTime) {	    this.endTime=endTime;	}		public long getAddTime() {
+		return addTime;
+	}
+	public void setAddTime(long addTime) {
+		this.addTime = addTime;
+	}
+	public Integer getIsBalance() {	    return this.isBalance;	}	public void setIsBalance(Integer isBalance) {	    this.isBalance=isBalance;	}
 }
 
