@@ -1,0 +1,27 @@
+INSERT  INTO
+	cvc_checking_account
+      ( 
+      id                            
+      ,checking_account_id            
+      ,topic                          
+      ,account_type                   
+      ,deliver                        
+      ,oppstaff                       
+      ,start_time                     
+      ,end_time                       
+      ,add_time                       
+      ,is_balance                     
+      ) 
+values
+      (
+      :cvcCheckingAccount.id                            
+      ,:cvcCheckingAccount.checkingAccountId             
+      ,:cvcCheckingAccount.topic                         
+      ,:cvcCheckingAccount.accountType                   
+      ,:cvcCheckingAccount.deliver                       
+      ,:cvcCheckingAccount.oppstaff                      
+      ,:cvcCheckingAccount.startTime                     
+      ,:cvcCheckingAccount.endTime                       
+      ,:cvcCheckingAccount.addTime                       
+      ,:cvcCheckingAccount.isBalance                     
+      )

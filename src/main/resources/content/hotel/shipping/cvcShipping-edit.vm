@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+#parse("content/base/back/common/head.vm")
+<body style='overflow:scroll;overflow-x:hidden'>
+	<div class="container bs-docs-container" style="width:100%;">
+		<div class="row">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+								<button type="button" class="btn btn-primary" id="formSubmit"><span class="fa fa-save"></span> 保存</button>
+				<button type="button" class="btn btn-default" id="formReturn" data-dismiss="modal" onclick="doUrl('$!{basePath}/hotel/cvcShipping.do?list')"><span class="fa fa-arrow-circle-left"></span> 返回</button>
+				</div>
+				<div class="panel-body">
+					<form class="form-horizontal" role="form" id="dailogForm" action="$!{basePath}/hotel/cvcShipping.do?doEdit" method="POST">
+						<input type="hidden" id="btn_sub" class="btn_sub" />
+						<input type="hidden" value="$!{cvcShipping.id}" name="id" id="id" />
+								<div class="form-group mno">
+								    <label for="inputEmail3" class="col-sm-2 control-label" style="text-align:left;">shipping_id</label>
+								    <div class="col-sm-8">
+								    	<input type="text" value="$!{cvcShipping.shippingId}" name="shippingId" id="shippingId" class="form-control"  datatype="*" />
+								    </div>
+								</div>
+								<div class="form-group mno">
+								    <label for="inputEmail3" class="col-sm-2 control-label" style="text-align:left;">shipping_code</label>
+								    <div class="col-sm-8">
+								    	<input type="text" value="$!{cvcShipping.shippingCode}" name="shippingCode" id="shippingCode" class="form-control"  datatype="*" />
+								    </div>
+								</div>
+								<div class="form-group mno">
+								    <label for="inputEmail3" class="col-sm-2 control-label" style="text-align:left;">shipping_name</label>
+								    <div class="col-sm-8">
+								    	<input type="text" value="$!{cvcShipping.shippingName}" name="shippingName" id="shippingName" class="form-control"  datatype="*" />
+								    </div>
+								</div>
+								<div class="form-group mno">
+								    <label for="inputEmail3" class="col-sm-2 control-label" style="text-align:left;">shipping_desc</label>
+								    <div class="col-sm-8">
+								    	<input type="text" value="$!{cvcShipping.shippingDesc}" name="shippingDesc" id="shippingDesc" class="form-control"  datatype="*" />
+								    </div>
+								</div>
+								<div class="form-group mno">
+								    <label for="inputEmail3" class="col-sm-2 control-label" style="text-align:left;">insure</label>
+								    <div class="col-sm-8">
+								    	<input type="text" value="$!{cvcShipping.insure}" name="insure" id="insure" class="form-control"  datatype="*" />
+								    </div>
+								</div>
+								<div class="form-group mno">
+								    <label for="inputEmail3" class="col-sm-2 control-label" style="text-align:left;">support_cod</label>
+								    <div class="col-sm-8">
+								    	<input type="text" value="$!{cvcShipping.supportCod}" name="supportCod" id="supportCod" class="form-control"  datatype="*" />
+								    </div>
+								</div>
+								<div class="form-group mno">
+								    <label for="inputEmail3" class="col-sm-2 control-label" style="text-align:left;">enabled</label>
+								    <div class="col-sm-8">
+								    	<input type="text" value="$!{cvcShipping.enabled}" name="enabled" id="enabled" class="form-control"  datatype="*" />
+								    </div>
+								</div>
+								<div class="form-group mno">
+								    <label for="inputEmail3" class="col-sm-2 control-label" style="text-align:left;">shipping_print</label>
+								    <div class="col-sm-8">
+								    	<input type="text" value="$!{cvcShipping.shippingPrint}" name="shippingPrint" id="shippingPrint" class="form-control"  datatype="*" />
+								    </div>
+								</div>
+								<div class="form-group mno">
+								    <label for="inputEmail3" class="col-sm-2 control-label" style="text-align:left;">print_bg</label>
+								    <div class="col-sm-8">
+								    	<input type="text" value="$!{cvcShipping.printBg}" name="printBg" id="printBg" class="form-control" />
+								    </div>
+								</div>
+								<div class="form-group mno">
+								    <label for="inputEmail3" class="col-sm-2 control-label" style="text-align:left;">config_lable</label>
+								    <div class="col-sm-8">
+								    	<input type="text" value="$!{cvcShipping.configLable}" name="configLable" id="configLable" class="form-control" />
+								    </div>
+								</div>
+								<div class="form-group mno">
+								    <label for="inputEmail3" class="col-sm-2 control-label" style="text-align:left;">print_model</label>
+								    <div class="col-sm-8">
+								    	<input type="text" value="$!{cvcShipping.printModel}" name="printModel" id="printModel" class="form-control" />
+								    </div>
+								</div>
+								<div class="form-group mno">
+								    <label for="inputEmail3" class="col-sm-2 control-label" style="text-align:left;">shipping_order</label>
+								    <div class="col-sm-8">
+								    	<input type="text" value="$!{cvcShipping.shippingOrder}" name="shippingOrder" id="shippingOrder" class="form-control"  datatype="*" />
+								    </div>
+								</div>
+								<div class="form-group mno">
+								    <label for="inputEmail3" class="col-sm-2 control-label" style="text-align:left;">供货商suppliers_id</label>
+								    <div class="col-sm-8">
+								    	<input type="text" value="$!{cvcShipping.suppliersId}" name="suppliersId" id="suppliersId" class="form-control"  datatype="*" />
+								    </div>
+								</div>
+								<div class="form-group mno">
+								    <label for="inputEmail3" class="col-sm-2 control-label" style="text-align:left;">是否为默认物流 0、否 1、是</label>
+								    <div class="col-sm-8">
+								    	<input type="text" value="$!{cvcShipping.isDefault}" name="isDefault" id="isDefault" class="form-control"  datatype="*" />
+								    </div>
+								</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
+<script type="text/javascript" src="$!{basePath}/plug-in-ui/js/Validform_v5.3.2.js"></script> 
+<script type="text/javascript" src="$!{basePath}/plug-in-ui/js/forminit.p3.js"></script>  

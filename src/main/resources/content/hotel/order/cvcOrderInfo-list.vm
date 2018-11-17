@@ -1,0 +1,826 @@
+#parse("content/base/back/common/macro.vm")
+<!DOCTYPE html>
+<html lang="en">
+#parse("content/base/back/common/head.vm")
+<body style='overflow:scroll;overflow-x:hidden'>
+	<div class="container bs-docs-container" style="width:100%;">
+		<div class="row">
+			<form role="form" class="form-inline" action="$!{basePath}/hotel/cvcOrderInfo.do?list" method="post"  id="formSubmit">
+				<div  class="col-md-10" style="width:100%">
+					<div class="panel panel-default">
+						<div class="panel-heading">列表</div>
+						<div class="panel-body">
+							<div class="search">
+										 <div class="form-group col-sm-3">
+											<label for="orderId" class="control-label col-sm-3 line34">order_id</label>
+											<div class="col-sm-8">
+												<input type="text" name="orderId" id="orderId" value="$!{cvcOrderInfo.orderId}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="orderSn" class="control-label col-sm-3 line34">order_sn</label>
+											<div class="col-sm-8">
+												<input type="text" name="orderSn" id="orderSn" value="$!{cvcOrderInfo.orderSn}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="userId" class="control-label col-sm-3 line34">user_id</label>
+											<div class="col-sm-8">
+												<input type="text" name="userId" id="userId" value="$!{cvcOrderInfo.userId}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="userName" class="control-label col-sm-3 line34">积分账户</label>
+											<div class="col-sm-8">
+												<input type="text" name="userName" id="userName" value="$!{cvcOrderInfo.userName}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="orderStatus" class="control-label col-sm-3 line34">order_status</label>
+											<div class="col-sm-8">
+												<input type="text" name="orderStatus" id="orderStatus" value="$!{cvcOrderInfo.orderStatus}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="tkOrderStatus" class="control-label col-sm-3 line34">tk订单状态</label>
+											<div class="col-sm-8">
+												<input type="text" name="tkOrderStatus" id="tkOrderStatus" value="$!{cvcOrderInfo.tkOrderStatus}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="shippingStatus" class="control-label col-sm-3 line34">shipping_status</label>
+											<div class="col-sm-8">
+												<input type="text" name="shippingStatus" id="shippingStatus" value="$!{cvcOrderInfo.shippingStatus}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="payStatus" class="control-label col-sm-3 line34">pay_status</label>
+											<div class="col-sm-8">
+												<input type="text" name="payStatus" id="payStatus" value="$!{cvcOrderInfo.payStatus}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="consignee" class="control-label col-sm-3 line34">consignee</label>
+											<div class="col-sm-8">
+												<input type="text" name="consignee" id="consignee" value="$!{cvcOrderInfo.consignee}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="country" class="control-label col-sm-3 line34">country</label>
+											<div class="col-sm-8">
+												<input type="text" name="country" id="country" value="$!{cvcOrderInfo.country}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="province" class="control-label col-sm-3 line34">province</label>
+											<div class="col-sm-8">
+												<input type="text" name="province" id="province" value="$!{cvcOrderInfo.province}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="city" class="control-label col-sm-3 line34">city</label>
+											<div class="col-sm-8">
+												<input type="text" name="city" id="city" value="$!{cvcOrderInfo.city}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="district" class="control-label col-sm-3 line34">district</label>
+											<div class="col-sm-8">
+												<input type="text" name="district" id="district" value="$!{cvcOrderInfo.district}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="address" class="control-label col-sm-3 line34">address</label>
+											<div class="col-sm-8">
+												<input type="text" name="address" id="address" value="$!{cvcOrderInfo.address}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="zipcode" class="control-label col-sm-3 line34">zipcode</label>
+											<div class="col-sm-8">
+												<input type="text" name="zipcode" id="zipcode" value="$!{cvcOrderInfo.zipcode}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="tel" class="control-label col-sm-3 line34">tel</label>
+											<div class="col-sm-8">
+												<input type="text" name="tel" id="tel" value="$!{cvcOrderInfo.tel}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="mobile" class="control-label col-sm-3 line34">mobile</label>
+											<div class="col-sm-8">
+												<input type="text" name="mobile" id="mobile" value="$!{cvcOrderInfo.mobile}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="email" class="control-label col-sm-3 line34">email</label>
+											<div class="col-sm-8">
+												<input type="text" name="email" id="email" value="$!{cvcOrderInfo.email}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="bestTime" class="control-label col-sm-3 line34">best_time</label>
+											<div class="col-sm-8">
+												<input type="text" name="bestTime" id="bestTime" value="$!{cvcOrderInfo.bestTime}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="signBuilding" class="control-label col-sm-3 line34">sign_building</label>
+											<div class="col-sm-8">
+												<input type="text" name="signBuilding" id="signBuilding" value="$!{cvcOrderInfo.signBuilding}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="postscript" class="control-label col-sm-3 line34">postscript</label>
+											<div class="col-sm-8">
+												<input type="text" name="postscript" id="postscript" value="$!{cvcOrderInfo.postscript}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="shippingId" class="control-label col-sm-3 line34">shipping_id</label>
+											<div class="col-sm-8">
+												<input type="text" name="shippingId" id="shippingId" value="$!{cvcOrderInfo.shippingId}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="shippingName" class="control-label col-sm-3 line34">shipping_name</label>
+											<div class="col-sm-8">
+												<input type="text" name="shippingName" id="shippingName" value="$!{cvcOrderInfo.shippingName}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="payId" class="control-label col-sm-3 line34">pay_id</label>
+											<div class="col-sm-8">
+												<input type="text" name="payId" id="payId" value="$!{cvcOrderInfo.payId}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="payName" class="control-label col-sm-3 line34">pay_name</label>
+											<div class="col-sm-8">
+												<input type="text" name="payName" id="payName" value="$!{cvcOrderInfo.payName}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="howOos" class="control-label col-sm-3 line34">how_oos</label>
+											<div class="col-sm-8">
+												<input type="text" name="howOos" id="howOos" value="$!{cvcOrderInfo.howOos}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="howSurplus" class="control-label col-sm-3 line34">how_surplus</label>
+											<div class="col-sm-8">
+												<input type="text" name="howSurplus" id="howSurplus" value="$!{cvcOrderInfo.howSurplus}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="packName" class="control-label col-sm-3 line34">pack_name</label>
+											<div class="col-sm-8">
+												<input type="text" name="packName" id="packName" value="$!{cvcOrderInfo.packName}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="cardName" class="control-label col-sm-3 line34">card_name</label>
+											<div class="col-sm-8">
+												<input type="text" name="cardName" id="cardName" value="$!{cvcOrderInfo.cardName}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="cardMessage" class="control-label col-sm-3 line34">card_message</label>
+											<div class="col-sm-8">
+												<input type="text" name="cardMessage" id="cardMessage" value="$!{cvcOrderInfo.cardMessage}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="invPayee" class="control-label col-sm-3 line34">inv_payee</label>
+											<div class="col-sm-8">
+												<input type="text" name="invPayee" id="invPayee" value="$!{cvcOrderInfo.invPayee}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="invContent" class="control-label col-sm-3 line34">inv_content</label>
+											<div class="col-sm-8">
+												<input type="text" name="invContent" id="invContent" value="$!{cvcOrderInfo.invContent}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="goodsAmount" class="control-label col-sm-3 line34">goods_amount</label>
+											<div class="col-sm-8">
+												<input type="text" name="goodsAmount" id="goodsAmount" value="$!{cvcOrderInfo.goodsAmount}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="shippingFee" class="control-label col-sm-3 line34">shipping_fee</label>
+											<div class="col-sm-8">
+												<input type="text" name="shippingFee" id="shippingFee" value="$!{cvcOrderInfo.shippingFee}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="insureFee" class="control-label col-sm-3 line34">insure_fee</label>
+											<div class="col-sm-8">
+												<input type="text" name="insureFee" id="insureFee" value="$!{cvcOrderInfo.insureFee}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="payFee" class="control-label col-sm-3 line34">pay_fee</label>
+											<div class="col-sm-8">
+												<input type="text" name="payFee" id="payFee" value="$!{cvcOrderInfo.payFee}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="packFee" class="control-label col-sm-3 line34">pack_fee</label>
+											<div class="col-sm-8">
+												<input type="text" name="packFee" id="packFee" value="$!{cvcOrderInfo.packFee}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="cardFee" class="control-label col-sm-3 line34">card_fee</label>
+											<div class="col-sm-8">
+												<input type="text" name="cardFee" id="cardFee" value="$!{cvcOrderInfo.cardFee}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="moneyPaid" class="control-label col-sm-3 line34">money_paid</label>
+											<div class="col-sm-8">
+												<input type="text" name="moneyPaid" id="moneyPaid" value="$!{cvcOrderInfo.moneyPaid}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="surplus" class="control-label col-sm-3 line34">surplus</label>
+											<div class="col-sm-8">
+												<input type="text" name="surplus" id="surplus" value="$!{cvcOrderInfo.surplus}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="integral" class="control-label col-sm-3 line34">integral</label>
+											<div class="col-sm-8">
+												<input type="text" name="integral" id="integral" value="$!{cvcOrderInfo.integral}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="integralMoney" class="control-label col-sm-3 line34">integral_money</label>
+											<div class="col-sm-8">
+												<input type="text" name="integralMoney" id="integralMoney" value="$!{cvcOrderInfo.integralMoney}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="bonus" class="control-label col-sm-3 line34">bonus</label>
+											<div class="col-sm-8">
+												<input type="text" name="bonus" id="bonus" value="$!{cvcOrderInfo.bonus}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="orderAmount" class="control-label col-sm-3 line34">order_amount</label>
+											<div class="col-sm-8">
+												<input type="text" name="orderAmount" id="orderAmount" value="$!{cvcOrderInfo.orderAmount}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="fromAd" class="control-label col-sm-3 line34">from_ad</label>
+											<div class="col-sm-8">
+												<input type="text" name="fromAd" id="fromAd" value="$!{cvcOrderInfo.fromAd}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="referer" class="control-label col-sm-3 line34">referer</label>
+											<div class="col-sm-8">
+												<input type="text" name="referer" id="referer" value="$!{cvcOrderInfo.referer}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="addTime" class="control-label col-sm-3 line34">add_time</label>
+											<div class="col-sm-8">
+												<input type="text" name="addTime" id="addTime" value="$!{cvcOrderInfo.addTime}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="confirmTime" class="control-label col-sm-3 line34">confirm_time</label>
+											<div class="col-sm-8">
+												<input type="text" name="confirmTime" id="confirmTime" value="$!{cvcOrderInfo.confirmTime}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="payTime" class="control-label col-sm-3 line34">pay_time</label>
+											<div class="col-sm-8">
+												<input type="text" name="payTime" id="payTime" value="$!{cvcOrderInfo.payTime}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="shippingTime" class="control-label col-sm-3 line34">shipping_time</label>
+											<div class="col-sm-8">
+												<input type="text" name="shippingTime" id="shippingTime" value="$!{cvcOrderInfo.shippingTime}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="cancelTime" class="control-label col-sm-3 line34">用户取消订单时间</label>
+											<div class="col-sm-8">
+												<input type="text" name="cancelTime" id="cancelTime" value="$!{cvcOrderInfo.cancelTime}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="refundTime" class="control-label col-sm-3 line34">管理员返款时间</label>
+											<div class="col-sm-8">
+												<input type="text" name="refundTime" id="refundTime" value="$!{cvcOrderInfo.refundTime}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="packId" class="control-label col-sm-3 line34">pack_id</label>
+											<div class="col-sm-8">
+												<input type="text" name="packId" id="packId" value="$!{cvcOrderInfo.packId}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="cardId" class="control-label col-sm-3 line34">card_id</label>
+											<div class="col-sm-8">
+												<input type="text" name="cardId" id="cardId" value="$!{cvcOrderInfo.cardId}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="bonusId" class="control-label col-sm-3 line34">bonus_id</label>
+											<div class="col-sm-8">
+												<input type="text" name="bonusId" id="bonusId" value="$!{cvcOrderInfo.bonusId}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="invoiceNo" class="control-label col-sm-3 line34">invoice_no</label>
+											<div class="col-sm-8">
+												<input type="text" name="invoiceNo" id="invoiceNo" value="$!{cvcOrderInfo.invoiceNo}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="extensionCode" class="control-label col-sm-3 line34">extension_code</label>
+											<div class="col-sm-8">
+												<input type="text" name="extensionCode" id="extensionCode" value="$!{cvcOrderInfo.extensionCode}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="extensionId" class="control-label col-sm-3 line34">extension_id</label>
+											<div class="col-sm-8">
+												<input type="text" name="extensionId" id="extensionId" value="$!{cvcOrderInfo.extensionId}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="toBuyer" class="control-label col-sm-3 line34">to_buyer</label>
+											<div class="col-sm-8">
+												<input type="text" name="toBuyer" id="toBuyer" value="$!{cvcOrderInfo.toBuyer}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="payNote" class="control-label col-sm-3 line34">pay_note</label>
+											<div class="col-sm-8">
+												<input type="text" name="payNote" id="payNote" value="$!{cvcOrderInfo.payNote}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="agencyId" class="control-label col-sm-3 line34">agency_id</label>
+											<div class="col-sm-8">
+												<input type="text" name="agencyId" id="agencyId" value="$!{cvcOrderInfo.agencyId}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="invType" class="control-label col-sm-3 line34">inv_type</label>
+											<div class="col-sm-8">
+												<input type="text" name="invType" id="invType" value="$!{cvcOrderInfo.invType}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="tax" class="control-label col-sm-3 line34">tax</label>
+											<div class="col-sm-8">
+												<input type="text" name="tax" id="tax" value="$!{cvcOrderInfo.tax}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="isSeparate" class="control-label col-sm-3 line34">is_separate</label>
+											<div class="col-sm-8">
+												<input type="text" name="isSeparate" id="isSeparate" value="$!{cvcOrderInfo.isSeparate}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="parentId" class="control-label col-sm-3 line34">parent_id</label>
+											<div class="col-sm-8">
+												<input type="text" name="parentId" id="parentId" value="$!{cvcOrderInfo.parentId}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="discount" class="control-label col-sm-3 line34">discount</label>
+											<div class="col-sm-8">
+												<input type="text" name="discount" id="discount" value="$!{cvcOrderInfo.discount}" class="form-control">
+											</div>
+										 </div>
+										<div class="form-group col-sm-3">
+											<label for="preferDeliverdate" class="control-label col-sm-3 line34">prefer_deliverdate</label>
+											<div class="col-sm-8">
+												<input type="text" name="preferDeliverdate" id="preferDeliverdate" value="$!dateTool.format('yyyy-MM-dd',$!{cvcOrderInfo.preferDeliverdate})" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="enterpriseId" class="control-label col-sm-3 line34">enterprise_id</label>
+											<div class="col-sm-8">
+												<input type="text" name="enterpriseId" id="enterpriseId" value="$!{cvcOrderInfo.enterpriseId}" class="form-control">
+											</div>
+										 </div>
+										<div class="form-group col-sm-3">
+											<label for="customDate" class="control-label col-sm-3 line34">送货时间</label>
+											<div class="col-sm-8">
+												<input type="text" name="customDate" id="customDate" value="$!dateTool.format('yyyy-MM-dd',$!{cvcOrderInfo.customDate})" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="bank" class="control-label col-sm-3 line34">支付银行code</label>
+											<div class="col-sm-8">
+												<input type="text" name="bank" id="bank" value="$!{cvcOrderInfo.bank}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="enterpriseDiscount" class="control-label col-sm-3 line34">enterprise_discount</label>
+											<div class="col-sm-8">
+												<input type="text" name="enterpriseDiscount" id="enterpriseDiscount" value="$!{cvcOrderInfo.enterpriseDiscount}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="giftCard" class="control-label col-sm-3 line34">gift_card</label>
+											<div class="col-sm-8">
+												<input type="text" name="giftCard" id="giftCard" value="$!{cvcOrderInfo.giftCard}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="cpsId" class="control-label col-sm-3 line34">cps_id</label>
+											<div class="col-sm-8">
+												<input type="text" name="cpsId" id="cpsId" value="$!{cvcOrderInfo.cpsId}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="isShow" class="control-label col-sm-3 line34">是否显示</label>
+											<div class="col-sm-8">
+												<input type="text" name="isShow" id="isShow" value="$!{cvcOrderInfo.isShow}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="pId" class="control-label col-sm-3 line34"> 父订单id</label>
+											<div class="col-sm-8">
+												<input type="text" name="pId" id="pId" value="$!{cvcOrderInfo.pId}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="ordernumber" class="control-label col-sm-3 line34">邮乐发货运单号</label>
+											<div class="col-sm-8">
+												<input type="text" name="ordernumber" id="ordernumber" value="$!{cvcOrderInfo.ordernumber}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="upcSuppliersId" class="control-label col-sm-3 line34">供应商id</label>
+											<div class="col-sm-8">
+												<input type="text" name="upcSuppliersId" id="upcSuppliersId" value="$!{cvcOrderInfo.upcSuppliersId}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="uleOrderId" class="control-label col-sm-3 line34">邮乐订单号</label>
+											<div class="col-sm-8">
+												<input type="text" name="uleOrderId" id="uleOrderId" value="$!{cvcOrderInfo.uleOrderId}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="bnOrderId" class="control-label col-sm-3 line34">bn_order_id</label>
+											<div class="col-sm-8">
+												<input type="text" name="bnOrderId" id="bnOrderId" value="$!{cvcOrderInfo.bnOrderId}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="backOrderId" class="control-label col-sm-3 line34">逆向订单号</label>
+											<div class="col-sm-8">
+												<input type="text" name="backOrderId" id="backOrderId" value="$!{cvcOrderInfo.backOrderId}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="channel" class="control-label col-sm-3 line34">渠道t台秀ul邮乐</label>
+											<div class="col-sm-8">
+												<input type="text" name="channel" id="channel" value="$!{cvcOrderInfo.channel}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="sendType" class="control-label col-sm-3 line34">提货方式（0：送货到家；1：马上提货）</label>
+											<div class="col-sm-8">
+												<input type="text" name="sendType" id="sendType" value="$!{cvcOrderInfo.sendType}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="orderType" class="control-label col-sm-3 line34">订单类型（0：购物；2：开店）</label>
+											<div class="col-sm-8">
+												<input type="text" name="orderType" id="orderType" value="$!{cvcOrderInfo.orderType}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="groupNo" class="control-label col-sm-3 line34">团号</label>
+											<div class="col-sm-8">
+												<input type="text" name="groupNo" id="groupNo" value="$!{cvcOrderInfo.groupNo}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="channelName" class="control-label col-sm-3 line34">频道商城名称</label>
+											<div class="col-sm-8">
+												<input type="text" name="channelName" id="channelName" value="$!{cvcOrderInfo.channelName}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="isNoneChannel" class="control-label col-sm-3 line34">是否为无来源</label>
+											<div class="col-sm-8">
+												<input type="text" name="isNoneChannel" id="isNoneChannel" value="$!{cvcOrderInfo.isNoneChannel}" class="form-control">
+											</div>
+										 </div>
+										 <div class="form-group col-sm-3">
+											<label for="idcard" class="control-label col-sm-3 line34">idcard</label>
+											<div class="col-sm-8">
+												<input type="text" name="idcard" id="idcard" value="$!{cvcOrderInfo.idcard}" class="form-control">
+											</div>
+										 </div>
+								<button type="submit" class="btn btn-primary"><i class="fa fa-search"></i> 搜  索</button>
+								<button type="button" class="btn btn-primary" onclick="searchReset()"><i class="fa fa-refresh"></i> 重  置</button>
+								<div class="clearfix"></div>
+							</div>
+							<div id="legend">
+								<legend  class="le">
+									<button type="button" class="btn btn-primary" onclick="doUrl('$!{basePath}/hotel/cvcOrderInfo.do?toAdd')" ><i class="fa fa-plus"></i> 新增</button> 
+									<button type="button" class="btn btn-primary" onclick="batchDelete()" ><i class="fa fa-trash-o"></i> 批量删除</button>
+								</legend>
+							</div>
+							<table class="table table-striped">
+								<thead>
+									<th>
+											<input type="checkbox" name="ckAll" id="ckAll" />
+					        		</th>
+											<th>order_id</th>
+											<th>order_sn</th>
+											<th>user_id</th>
+											<th>积分账户</th>
+											<th>order_status</th>
+											<th>tk订单状态</th>
+											<th>shipping_status</th>
+											<th>pay_status</th>
+											<th>consignee</th>
+											<th>country</th>
+											<th>province</th>
+											<th>city</th>
+											<th>district</th>
+											<th>address</th>
+											<th>zipcode</th>
+											<th>tel</th>
+											<th>mobile</th>
+											<th>email</th>
+											<th>best_time</th>
+											<th>sign_building</th>
+											<th>postscript</th>
+											<th>shipping_id</th>
+											<th>shipping_name</th>
+											<th>pay_id</th>
+											<th>pay_name</th>
+											<th>how_oos</th>
+											<th>how_surplus</th>
+											<th>pack_name</th>
+											<th>card_name</th>
+											<th>card_message</th>
+											<th>inv_payee</th>
+											<th>inv_content</th>
+											<th>goods_amount</th>
+											<th>shipping_fee</th>
+											<th>insure_fee</th>
+											<th>pay_fee</th>
+											<th>pack_fee</th>
+											<th>card_fee</th>
+											<th>money_paid</th>
+											<th>surplus</th>
+											<th>integral</th>
+											<th>integral_money</th>
+											<th>bonus</th>
+											<th>order_amount</th>
+											<th>from_ad</th>
+											<th>referer</th>
+											<th>add_time</th>
+											<th>confirm_time</th>
+											<th>pay_time</th>
+											<th>shipping_time</th>
+											<th>用户取消订单时间</th>
+											<th>管理员返款时间</th>
+											<th>pack_id</th>
+											<th>card_id</th>
+											<th>bonus_id</th>
+											<th>invoice_no</th>
+											<th>extension_code</th>
+											<th>extension_id</th>
+											<th>to_buyer</th>
+											<th>pay_note</th>
+											<th>agency_id</th>
+											<th>inv_type</th>
+											<th>tax</th>
+											<th>is_separate</th>
+											<th>parent_id</th>
+											<th>discount</th>
+											<th>prefer_deliverdate</th>
+											<th>enterprise_id</th>
+											<th>送货时间</th>
+											<th>支付银行code</th>
+											<th>enterprise_discount</th>
+											<th>gift_card</th>
+											<th>cps_id</th>
+											<th>是否显示</th>
+											<th> 父订单id</th>
+											<th>邮乐发货运单号</th>
+											<th>供应商id</th>
+											<th>邮乐订单号</th>
+											<th>bn_order_id</th>
+											<th>逆向订单号</th>
+											<th>渠道t台秀ul邮乐</th>
+											<th>提货方式（0：送货到家；1：马上提货）</th>
+											<th>订单类型（0：购物；2：开店）</th>
+											<th>团号</th>
+											<th>频道商城名称</th>
+											<th>是否为无来源</th>
+											<th>idcard</th>
+									<th>操作</th>
+								</thead>
+								<tbody>
+								#if($!{pageInfos})
+									#foreach($!{info} in $!{pageInfos})
+										<tr>	
+											<td>
+													<input type="checkbox" name="ck" id="ck_$!{velocityCount}" value="$!{info.id}"/>
+											</td>	
+														<td>$!{info.orderId}</td>
+														<td>$!{info.orderSn}</td>
+														<td>$!{info.userId}</td>
+														<td>$!{info.userName}</td>
+														<td>$!{info.orderStatus}</td>
+														<td>$!{info.tkOrderStatus}</td>
+														<td>$!{info.shippingStatus}</td>
+														<td>$!{info.payStatus}</td>
+														<td>$!{info.consignee}</td>
+														<td>$!{info.country}</td>
+														<td>$!{info.province}</td>
+														<td>$!{info.city}</td>
+														<td>$!{info.district}</td>
+														<td>$!{info.address}</td>
+														<td>$!{info.zipcode}</td>
+														<td>$!{info.tel}</td>
+														<td>$!{info.mobile}</td>
+														<td>$!{info.email}</td>
+														<td>$!{info.bestTime}</td>
+														<td>$!{info.signBuilding}</td>
+														<td>$!{info.postscript}</td>
+														<td>$!{info.shippingId}</td>
+														<td>$!{info.shippingName}</td>
+														<td>$!{info.payId}</td>
+														<td>$!{info.payName}</td>
+														<td>$!{info.howOos}</td>
+														<td>$!{info.howSurplus}</td>
+														<td>$!{info.packName}</td>
+														<td>$!{info.cardName}</td>
+														<td>$!{info.cardMessage}</td>
+														<td>$!{info.invPayee}</td>
+														<td>$!{info.invContent}</td>
+														<td>$!{info.goodsAmount}</td>
+														<td>$!{info.shippingFee}</td>
+														<td>$!{info.insureFee}</td>
+														<td>$!{info.payFee}</td>
+														<td>$!{info.packFee}</td>
+														<td>$!{info.cardFee}</td>
+														<td>$!{info.moneyPaid}</td>
+														<td>$!{info.surplus}</td>
+														<td>$!{info.integral}</td>
+														<td>$!{info.integralMoney}</td>
+														<td>$!{info.bonus}</td>
+														<td>$!{info.orderAmount}</td>
+														<td>$!{info.fromAd}</td>
+														<td>$!{info.referer}</td>
+														<td>$!{info.addTime}</td>
+														<td>$!{info.confirmTime}</td>
+														<td>$!{info.payTime}</td>
+														<td>$!{info.shippingTime}</td>
+														<td>$!{info.cancelTime}</td>
+														<td>$!{info.refundTime}</td>
+														<td>$!{info.packId}</td>
+														<td>$!{info.cardId}</td>
+														<td>$!{info.bonusId}</td>
+														<td>$!{info.invoiceNo}</td>
+														<td>$!{info.extensionCode}</td>
+														<td>$!{info.extensionId}</td>
+														<td>$!{info.toBuyer}</td>
+														<td>$!{info.payNote}</td>
+														<td>$!{info.agencyId}</td>
+														<td>$!{info.invType}</td>
+														<td>$!{info.tax}</td>
+														<td>$!{info.isSeparate}</td>
+														<td>$!{info.parentId}</td>
+														<td>$!{info.discount}</td>
+														<td>$!dateTool.format("yyyy-MM-dd",$!{info.preferDeliverdate})</td>
+														<td>$!{info.enterpriseId}</td>
+														<td>$!dateTool.format("yyyy-MM-dd",$!{info.customDate})</td>
+														<td>$!{info.bank}</td>
+														<td>$!{info.enterpriseDiscount}</td>
+														<td>$!{info.giftCard}</td>
+														<td>$!{info.cpsId}</td>
+														<td>$!{info.isShow}</td>
+														<td>$!{info.pId}</td>
+														<td>$!{info.ordernumber}</td>
+														<td>$!{info.upcSuppliersId}</td>
+														<td>$!{info.uleOrderId}</td>
+														<td>$!{info.bnOrderId}</td>
+														<td>$!{info.backOrderId}</td>
+														<td>$!{info.channel}</td>
+														<td>$!{info.sendType}</td>
+														<td>$!{info.orderType}</td>
+														<td>$!{info.groupNo}</td>
+														<td>$!{info.channelName}</td>
+														<td>$!{info.isNoneChannel}</td>
+														<td>$!{info.idcard}</td>
+											<td class="last">
+											<a class="btn btn-success btn-xs"  href="javascript:doUrl('$!{basePath}/hotel/cvcOrderInfo.do?toEdit&id=$!{info.id}')" ><i class="fa fa-edit"></i> 编辑</a>
+											<a class="btn btn-danger btn-xs" href="javascript:delData('$!{basePath}/hotel/cvcOrderInfo.do?doDelete&id=$!{info.id}')"><i class="fa fa-trash-o"></i> 删除</a>
+											</td>
+										</tr>
+									 #end
+								 #end
+								</tbody>
+							</table>
+							<div class="text-right">
+								<!--公用翻页代码-->
+								#set($attr='formSubmit')
+								#showPageList($pageInfos $attr)
+								<!--END公用翻页代码-->
+							</div>
+						</div>
+					</div>
+				</div>  
+			</form>
+		</div>
+	</div>
+</body>
+</html>
+<script>
+$("#ckAll").click(function(){ 
+	if($(this).prop("checked")){ 
+	 $(":checkbox").prop("checked",true) 
+	}else{ 
+	$(":checkbox").prop("checked",false)  
+	} 
+}); 
+
+//jquery获取复选框值    
+function getCkValue(){  
+  var chk_value =[];    
+  $('input[name="ck"]:checked').each(function(){    
+   chk_value.push($(this).val());    
+  });    
+  //alert(chk_value.length==0 ?'你还没有选择任何内容！':chk_value);    
+}
+//获得所有选中行的ID进行批量删除
+function batchDelete() {
+    var ids = [];
+    var check = document.getElementsByName("ck");
+    for(var i=0;i<check.length;i++){
+        if(check[i].checked){
+    		ids.push(check[i].value);
+        }
+    }
+   	if(ids.length > 0) {
+    	parent.layer.confirm('确认进行批量删除吗？', {
+        	btn: ['确定','取消'] //按钮
+    	}, function(){
+       		jQuery.ajax({
+       			url : '$!{basePath}/hotel/cvcOrderInfo.do?batchDelete',
+       			data : {
+       				ids : ids,
+       			},
+       			type : 'POST',
+    			dataType: 'json',
+       			traditional:true,
+    			success:function(data) {
+    				if(data.success){
+    					parent.layer.alert(data.msg, {
+    	        	        icon: 1,
+    	        	        shadeClose: false,
+    	        	        title: '提示'
+    	        	    },function(index){
+    						document.getElementById('formSubmit').submit();
+    	        	    	parent.layer.close(index);
+    					});
+    				}else {
+    					layeralert(data.msg,0);
+    				}
+    			},
+    			error: function(data, status, e){  
+    	        	if(data.status == "401"){
+    	        		layeralert("没有权限！",0);
+    					return;
+    				}
+    	        }
+       		});
+		});
+   	}else {
+		layeralert("您还没有选择要删除的行");
+   	}
+}
+//重置按钮    
+function searchReset() {
+	$("#formSubmit").find(":input").val("");
+	$("#formSubmit").submit();
+}
+</script>
