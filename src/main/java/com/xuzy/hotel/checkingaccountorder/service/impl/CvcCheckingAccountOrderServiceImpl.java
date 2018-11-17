@@ -2,6 +2,9 @@ package com.xuzy.hotel.checkingaccountorder.service.impl;
 
 import javax.annotation.Resource;
 import java.util.UUID;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.time.DateFormatUtils;
 import org.jeecgframework.minidao.pojo.MiniDaoPage;
 import org.springframework.stereotype.Service;
 
@@ -38,7 +41,21 @@ public class CvcCheckingAccountOrderServiceImpl implements CvcCheckingAccountOrd
 
 	@Override
 	public MiniDaoPage<CvcCheckingAccountOrderEntity> getAll(CvcCheckingAccountOrderEntity cvcCheckingAccountOrder, int page, int rows) {
-		return cvcCheckingAccountOrderDao.getAll(cvcCheckingAccountOrder, page, rows);
+		MiniDaoPage<CvcCheckingAccountOrderEntity>  entitys = cvcCheckingAccountOrderDao.getAll(cvcCheckingAccountOrder, page, rows);
+		if(CollectionUtils.isNotEmpty(entitys.getResults())) {
+			for(CvcCheckingAccountOrderEntity accountOrderEntity:entitys.getResults()) {
+				if(accountOrderEntity.getIsAddCheckingAccount() != null && accountOrderEntity.getIsAddCheckingAccount() == 1) {
+					accountOrderEntity.setStatueName("上传成功");
+				}else if(accountOrderEntity.getAddCheckingAccountTime() != 0) {
+					accountOrderEntity.setStatueName("上传失败");
+				}else {
+					accountOrderEntity.setStatueName("未上传");
+				}
+				
+				accountOrderEntity.setAddCheckingAccountTimeFormat(DateFormatUtils.format(Long.parseLong(accountOrderEntity.getAddCheckingAccountTime()+"000"), "yyyy-MM-dd HH:mm:ss"));
+			}
+		}
+		return entitys;
 	}
 
 	@Override
@@ -53,5 +70,10 @@ public class CvcCheckingAccountOrderServiceImpl implements CvcCheckingAccountOrd
 			String id = ids[i];
 			cvcCheckingAccountOrderDao.deleteById(id);
 		}
+	}
+
+	@Override
+	public int getCount(CvcCheckingAccountOrderEntity query) {
+		return cvcCheckingAccountOrderDao.getCount(query);
 	}
 }

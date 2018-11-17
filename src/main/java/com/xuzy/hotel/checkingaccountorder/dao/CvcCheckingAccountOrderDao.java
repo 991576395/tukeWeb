@@ -48,6 +48,9 @@ public interface CvcCheckingAccountOrderDao{
 	@ResultType(CvcCheckingAccountOrderEntity.class)
 	public MiniDaoPage<CvcCheckingAccountOrderEntity> getAll(@Param("cvcCheckingAccountOrder") CvcCheckingAccountOrderEntity cvcCheckingAccountOrder,@Param("page")  int page,@Param("rows") int rows);
 	
+	
+	int getCount(@Param("cvcCheckingAccountOrder")CvcCheckingAccountOrderEntity query);
+	
 	@Sql("DELETE from cvc_checking_account_order WHERE ID = :id")
 	public void delete(@Param("id") String id);
 	
@@ -57,6 +60,13 @@ public interface CvcCheckingAccountOrderDao{
 	 */
 	 @Sql("DELETE from cvc_checking_account_order WHERE ID = :id")
 	 public void deleteById(@Param("id") String id);
+	 
+	/**
+	 * 删除所属表头订单
+	 * @param id
+	 */
+	@Sql("DELETE from cvc_checking_account_order WHERE checking_account_id = :id")
+	public void deleteByCheckingAccountId(@Param("id") String id);
 	
 }
 

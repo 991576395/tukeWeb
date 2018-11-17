@@ -1,13 +1,20 @@
 package com.xuzy.hotel.checkingaccount.service.impl;
 
+import java.util.List;
+
 import javax.annotation.Resource;
-import java.util.UUID;
 import org.jeecgframework.minidao.pojo.MiniDaoPage;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.xuzy.hotel.checkingaccount.dao.CvcCheckingAccountDao;
 import com.xuzy.hotel.checkingaccount.entity.CvcCheckingAccountEntity;
 import com.xuzy.hotel.checkingaccount.service.CvcCheckingAccountService;
+import com.xuzy.hotel.checkingaccountorder.dao.CvcCheckingAccountOrderDao;
+import com.xuzy.hotel.checkingaccountorder.entity.CvcCheckingAccountOrderEntity;
+import com.xuzy.hotel.order.dao.CvcOrderInfoDao;
+import com.xuzy.hotel.order.entity.CvcOrderGoodsEntity;
+import com.xuzy.hotel.order.entity.CvcOrderInfoEntity;
 
 /**
  * 描述：对账表
@@ -20,6 +27,12 @@ import com.xuzy.hotel.checkingaccount.service.CvcCheckingAccountService;
 public class CvcCheckingAccountServiceImpl implements CvcCheckingAccountService {
 	@Resource
 	private CvcCheckingAccountDao cvcCheckingAccountDao;
+	
+	@Resource
+	private CvcOrderInfoDao cvcOrderInfoDao;
+	
+	@Resource
+	private CvcCheckingAccountOrderDao cvcCheckingAccountOrderDao;
 
 	@Override
 	public CvcCheckingAccountEntity get(String id) {
@@ -32,8 +45,27 @@ public class CvcCheckingAccountServiceImpl implements CvcCheckingAccountService 
 	}
 
 	@Override
-	public void insert(CvcCheckingAccountEntity cvcCheckingAccount) {
+	@Transactional
+	public void insert(CvcCheckingAccountEntity cvcCheckingAccount,int CheckAccountInfoID, List<CvcOrderInfoEntity> cvcOrderInfoEntities) {
 		cvcCheckingAccountDao.insert(cvcCheckingAccount);
+		for(CvcOrderInfoEntity cvcOrderInfoEntity:cvcOrderInfoEntities) {
+			CvcOrderGoodsEntity cvcOrderGoodsEntity = cvcOrderInfoDao.getOrderGood(cvcOrderInfoEntity.getId()+"");
+			CvcCheckingAccountOrderEntity cvcCheckingAccountOrder = new CvcCheckingAccountOrderEntity();
+			cvcCheckingAccountOrder.setCheckingAccountId(CheckAccountInfoID);
+			cvcCheckingAccountOrder.setOrderId(cvcOrderInfoEntity.getId());
+			cvcCheckingAccountOrder.setInvoiceNo(cvcOrderInfoEntity.getInvoiceNo());
+			cvcCheckingAccountOrder.setShippingName(cvcOrderInfoEntity.getShippingName());
+			if(cvcOrderGoodsEntity != null) {
+				cvcCheckingAccountOrder.setGoodsSn(cvcOrderGoodsEntity.getGoodsSn());
+				cvcCheckingAccountOrder.setGoodsNumber(cvcOrderGoodsEntity.getGoodsNumber());
+			}
+			cvcCheckingAccountOrder.setIsAddCheckingAccount(0);
+			cvcCheckingAccountOrder.setAddress(cvcOrderInfoEntity.getAddress());
+			cvcCheckingAccountOrder.setConsignee(cvcOrderInfoEntity.getConsignee());
+			cvcCheckingAccountOrder.setMobile(cvcOrderInfoEntity.getMobile());
+			cvcCheckingAccountOrder.setSigninDate(cvcOrderInfoEntity.getSigninDate());
+			cvcCheckingAccountOrderDao.insert(cvcCheckingAccountOrder);
+		}
 	}
 
 	@Override
@@ -42,9 +74,12 @@ public class CvcCheckingAccountServiceImpl implements CvcCheckingAccountService 
 	}
 
 	@Override
+	@Transactional
 	public void delete(String id) {
+		//删除对账表头
 		cvcCheckingAccountDao.delete(id);
-		
+		//删除所属订单
+		cvcCheckingAccountOrderDao.deleteByCheckingAccountId(id);
 	}
 	
 	@Override
@@ -59,4 +94,5 @@ public class CvcCheckingAccountServiceImpl implements CvcCheckingAccountService 
 	public int getCount(CvcCheckingAccountEntity cvcCheckingAccount) {
 		return cvcCheckingAccountDao.getCount(cvcCheckingAccount);
 	}
+
 }

@@ -56,11 +56,6 @@ public class CvcCheckingAccountController extends BaseController{
   
 	@Autowired
 	private CvcOrderInfoService cvcOrderInfoService;
-	@Autowired
-	private CvcOrderGoodsService cvcOrderGoodsService;
-	
-	@Autowired
-	 private CvcCheckingAccountOrderService cvcCheckingAccountOrderService;
   
 	/**
 	  * 列表页面
@@ -125,11 +120,13 @@ public class CvcCheckingAccountController extends BaseController{
 			moduleType.setEndDate(cvcCheckingAccount.getEndTime());
 			moduleType.setTopic(cvcCheckingAccount.getTopic());
 			moduleType.setAccountType(cvcCheckingAccount.getAccountType());
-			ResponseHead head = ConmentHttp.sendHttp(new TukeRequestBody.Builder().setParams(moduleType).setSequence(2)
-					.setServiceCode("CRMIF.CheckingAcccountInfoAddJson").builder(), ResponseCheckingAcccountInfoAddJson.class);
-			if(head.getReturn() >= 0) {
-				ResponseCheckingAcccountInfoAddJson responseCheckingAcccountInfoAddJson = (ResponseCheckingAcccountInfoAddJson) head.getBody();
-				int CheckAccountInfoID = responseCheckingAcccountInfoAddJson.getCheckAccountInfoID();	
+//			ResponseHead head = ConmentHttp.sendHttp(new TukeRequestBody.Builder().setParams(moduleType).setSequence(2)
+//					.setServiceCode("CRMIF.CheckingAcccountInfoAddJson").builder(), ResponseCheckingAcccountInfoAddJson.class);
+//			if(head.getReturn() >= 0) {
+//				ResponseCheckingAcccountInfoAddJson responseCheckingAcccountInfoAddJson = (ResponseCheckingAcccountInfoAddJson) head.getBody();
+//				
+//				int CheckAccountInfoID = responseCheckingAcccountInfoAddJson.getCheckAccountInfoID();	
+				int CheckAccountInfoID = 123456;	
 				if(CheckAccountInfoID > 0 && !CollectionUtils.isEmpty(cvcOrderInfoEntities)) {
 					CvcCheckingAccountEntity accountEntity = cvcCheckingAccountService.get(CheckAccountInfoID+"");
 					if(accountEntity == null) {
@@ -143,32 +140,15 @@ public class CvcCheckingAccountController extends BaseController{
 						accountEntity.setEndTime(cvcCheckingAccount.getEndTime());
 						accountEntity.setAddTime(Calendar.getInstance().getTimeInMillis());
 						accountEntity.setIsBalance(0);
-						cvcCheckingAccountService.insert(accountEntity);
 						
-						for(CvcOrderInfoEntity cvcOrderInfoEntity:cvcOrderInfoEntities) {
-							CvcOrderGoodsEntity cvcOrderGoodsEntity = cvcOrderGoodsService.get(cvcOrderInfoEntity.getId()+"");
-							CvcCheckingAccountOrderEntity cvcCheckingAccountOrder = new CvcCheckingAccountOrderEntity();
-							cvcCheckingAccountOrder.setCheckingAccountId(CheckAccountInfoID);
-							cvcCheckingAccountOrder.setOrderId(cvcOrderInfoEntity.getId());
-							cvcCheckingAccountOrder.setInvoiceNo(cvcOrderInfoEntity.getInvoiceNo());
-							cvcCheckingAccountOrder.setShippingName(cvcOrderInfoEntity.getShippingName());
-							if(cvcOrderGoodsEntity != null) {
-								cvcCheckingAccountOrder.setGoodsSn(cvcOrderGoodsEntity.getGoodsSn());
-								cvcCheckingAccountOrder.setGoodsNumber(cvcOrderGoodsEntity.getGoodsNumber());
-							}
-							cvcCheckingAccountOrder.setAddress(cvcOrderInfoEntity.getAddress());
-							cvcCheckingAccountOrder.setConsignee(cvcOrderInfoEntity.getConsignee());
-							cvcCheckingAccountOrder.setMobile(cvcOrderInfoEntity.getMobile());
-							cvcCheckingAccountOrder.setSigninDate(cvcOrderInfoEntity.getSigninDate());
-							cvcCheckingAccountOrderService.insert(cvcCheckingAccountOrder);
-						}
+						cvcCheckingAccountService.insert(accountEntity,CheckAccountInfoID,cvcOrderInfoEntities);
 					}
 				}
 				j.setMsg("保存成功");
-			}else {
-				j.setSuccess(false);
-				j.setMsg("伊利接口调用失败！");
-			}
+//			}else {
+//				j.setSuccess(false);
+//				j.setMsg("伊利接口调用失败！");
+//			}
 		} catch (Exception e) {
 		    log.info(e.getMessage());
 			j.setSuccess(false);
@@ -229,10 +209,28 @@ public class CvcCheckingAccountController extends BaseController{
 	 */
 	@RequestMapping(params="doDelete",method = RequestMethod.GET)
 	@ResponseBody
-	public AjaxJson doDelete(@RequestParam(required = true, value = "id" ) String id){
+	public AjaxJson doDelete(@RequestParam(required = true, value = "id" ) Integer id){
 			AjaxJson j = new AjaxJson();
 			try {
-				cvcCheckingAccountService.delete(id);
+				if(id == null) {
+					j.setSuccess(false);
+					j.setMsg("该对账表头不存在！");
+					return j;
+				}
+				CvcCheckingAccountEntity  accountEntity = cvcCheckingAccountService.get(id+"");
+				if(accountEntity == null) {
+					j.setSuccess(false);
+					j.setMsg("该对账表头不存在！");
+					return j;
+				}
+				
+				if(accountEntity.getIsBalance() == 1) {
+					j.setSuccess(false);
+					j.setMsg("该对账表头已经封账，不能删除！");
+					return j;
+				}
+				
+				cvcCheckingAccountService.delete(id+"");
 				j.setMsg("删除成功");
 			} catch (Exception e) {
 			    log.info(e.getMessage());

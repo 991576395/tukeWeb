@@ -2,12 +2,17 @@ package com.xuzy.hotel.checkingaccountorder.web;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.velocity.VelocityContext;
+import org.jeecgframework.core.common.model.json.DataGrid;
 import org.jeecgframework.minidao.pojo.MiniDaoPage;
 import org.jeecgframework.p3.core.common.utils.AjaxJson;
 import org.jeecgframework.p3.core.page.SystemTools;
 import org.jeecgframework.p3.core.util.plugin.ViewVelocity;
 import org.jeecgframework.p3.core.web.BaseController;
+import org.jeecgframework.tag.core.easyui.TagUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -15,8 +20,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.xuzy.hotel.checkingaccount.entity.CvcCheckingAccountEntity;
 import com.xuzy.hotel.checkingaccountorder.entity.CvcCheckingAccountOrderEntity;
 import com.xuzy.hotel.checkingaccountorder.service.CvcCheckingAccountOrderService;
+import com.xuzy.hotel.order.entity.CvcOrderInfoEntity;
+import com.xuzy.hotel.order.service.CvcOrderInfoService;
 
  /**
  * 描述：对账订单表
@@ -25,55 +35,73 @@ import com.xuzy.hotel.checkingaccountorder.service.CvcCheckingAccountOrderServic
  * @version:1.0
  */
 @Controller
-@RequestMapping("/hotel/cvcCheckingAccountOrder")
+@RequestMapping("/cvcCheckingAccountOrder")
 public class CvcCheckingAccountOrderController extends BaseController{
   @Autowired
   private CvcCheckingAccountOrderService cvcCheckingAccountOrderService;
   
+  @Autowired
+  private CvcOrderInfoService cvcOrderInfoService;
 	/**
-	  * 列表页面
-	  * @return
-	  */
-	@RequestMapping(params = "list",method = {RequestMethod.GET,RequestMethod.POST})
-	public void list(@ModelAttribute CvcCheckingAccountOrderEntity query,HttpServletRequest request,HttpServletResponse response,
-			@RequestParam(required = false, value = "pageNo", defaultValue = "1") int pageNo,
-			@RequestParam(required = false, value = "pageSize", defaultValue = "10") int pageSize) throws Exception{
-			try {
-			 	LOG.info(request, " back list");
-			 	//分页数据
-				MiniDaoPage<CvcCheckingAccountOrderEntity> list =  cvcCheckingAccountOrderService.getAll(query,pageNo,pageSize);
-				VelocityContext velocityContext = new VelocityContext();
-				velocityContext.put("cvcCheckingAccountOrder",query);
-				velocityContext.put("pageInfos",SystemTools.convertPaginatedList(list));
-				String viewName = "hotel/checkingaccountorder/cvcCheckingAccountOrder-list.vm";
-				ViewVelocity.view(request,response,viewName,velocityContext);
-			} catch (Exception e) {
-			e.printStackTrace();
-			}
-}
+	 * 列表页面
+	 * @return
+	 */
+	@RequestMapping(params = "list", method = { RequestMethod.GET, RequestMethod.POST })
+	public ModelAndView list(@ModelAttribute CvcCheckingAccountEntity query, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+		String checkingAccountId = request.getParameter("checkingAccountId");
+		request.setAttribute("checkingAccountId", checkingAccountId);
+		return new ModelAndView("com/xuzy/hotel/checkaccount/orderList");
+	}
+	
+	
+	/**
+	 * easyui AJAX请求数据
+	 * 
+	 * @param request
+	 * @param response
+	 * @param dataGrid
+	 * @param user
+	 */
 
-	 /**
-	  * 详情
-	  * @return
-	  */
-	@RequestMapping(params="toDetail",method = RequestMethod.GET)
-	public void cvcCheckingAccountOrderDetail(@RequestParam(required = true, value = "id" ) String id,HttpServletResponse response,HttpServletRequest request)throws Exception{
-			VelocityContext velocityContext = new VelocityContext();
-			String viewName = "hotel/checkingaccountorder/cvcCheckingAccountOrder-detail.vm";
-			CvcCheckingAccountOrderEntity cvcCheckingAccountOrder = cvcCheckingAccountOrderService.get(id);
-			velocityContext.put("cvcCheckingAccountOrder",cvcCheckingAccountOrder);
-			ViewVelocity.view(request,response,viewName,velocityContext);
+	@RequestMapping(params = "datagrid")
+	public void datagrid(CvcCheckingAccountOrderEntity query,HttpServletRequest request, HttpServletResponse response, DataGrid dataGrid) {
+		MiniDaoPage<CvcCheckingAccountOrderEntity> list = cvcCheckingAccountOrderService.getAll(query, dataGrid.getPage(), dataGrid.getRows());
+		dataGrid.setResults(SystemTools.convertPaginatedList(list));
+		dataGrid.setTotal(cvcCheckingAccountOrderService.getCount(query));
+		TagUtil.datagrid(response, dataGrid);
 	}
 
 	/**
-	 * 跳转到添加页面
+	 * 上传对账明细
 	 * @return
 	 */
-	@RequestMapping(params = "toAdd",method ={RequestMethod.GET, RequestMethod.POST})
-	public void toAddDialog(HttpServletRequest request,HttpServletResponse response)throws Exception{
-		 VelocityContext velocityContext = new VelocityContext();
-		 String viewName = "hotel/checkingaccountorder/cvcCheckingAccountOrder-add.vm";
-		 ViewVelocity.view(request,response,viewName,velocityContext);
+	@RequestMapping(params = "addCheckingAccount",method ={RequestMethod.GET, RequestMethod.POST})
+	public AjaxJson addCheckingAccount(@RequestParam(required = true, value = "checkingAccountId" )Integer checkingAccountId)throws Exception{
+		AjaxJson j = new AjaxJson();
+		try {
+			if(checkingAccountId == null) {
+				j.setSuccess(false);
+				j.setMsg("该对账单不存在！");
+				return j;
+			}
+			CvcOrderInfoEntity  cvcOrderInfoEntity = cvcOrderInfoService.get(checkingAccountId);
+			if(cvcOrderInfoEntity == null) {
+				j.setSuccess(false);
+				j.setMsg("该对账单不存在！");
+				return j;
+			}
+			
+			
+			
+			
+			j.setMsg("上传成功");
+		} catch (Exception e) {
+		    log.info(e.getMessage());
+			j.setSuccess(false);
+			j.setMsg("上传失败");
+		}
+		return j;
 	}
 
 	/**

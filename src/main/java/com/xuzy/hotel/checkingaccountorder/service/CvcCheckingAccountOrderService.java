@@ -22,5 +22,7 @@ public interface CvcCheckingAccountOrderService {
 	public void delete(String id);
 	
 	public void batchDelete(String[] ids);
+
+	public int getCount(CvcCheckingAccountOrderEntity query);
 	
 }

@@ -56,7 +56,7 @@ public interface CvcCheckingAccountDao{
 	@ResultType(CvcCheckingAccountEntity.class)
 	public MiniDaoPage<CvcCheckingAccountEntity> getAll(@Param("cvcCheckingAccount") CvcCheckingAccountEntity cvcCheckingAccount,@Param("page")  int page,@Param("rows") int rows);
 	
-	@Sql("DELETE from cvc_checking_account WHERE ID = :id")
+	@Sql("DELETE from cvc_checking_account WHERE checking_account_id = :id")
 	public void delete(@Param("id") String id);
 	
 	/**

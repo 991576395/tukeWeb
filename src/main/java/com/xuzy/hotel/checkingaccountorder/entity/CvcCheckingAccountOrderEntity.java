@@ -12,7 +12,31 @@ import java.math.BigDecimal;
  */
 public class CvcCheckingAccountOrderEntity implements Serializable{
 	private static final long serialVersionUID = 1L;
-		/**	 *id	 */	private Integer id;	/**	 *对账表头id	 */	private int checkingAccountId;	/**	 *订单id	 */	private Integer orderId;	/**	 *快递公司	 */	private String shippingName;	/**	 *是否上传对账明细	 */	private int isAddCheckingAccount;	/**	 *上传时间	 */	private int addCheckingAccountTime;	/**	 *快递单号	 */	private String invoiceNo;	/**	 *商品编号	 */	private String goodsSn;	/**	 *商品数量	 */	private int goodsNumber;	/**	 *收货地址	 */	private String address;	/**	 *收货人	 */	private String consignee;	/**	 *手机号	 */	private String mobile;	/**	 *签收时间	 */	private String signinDate;
+		/**	 *id	 */	private Integer id;	/**	 *对账表头id	 */	private int checkingAccountId;	/**	 *订单id	 */	private Integer orderId;	/**	 *快递公司	 */	private String shippingName;	/**	 *是否上传对账明细	 */	private Integer isAddCheckingAccount;	/**	 *上传时间	 */	private long addCheckingAccountTime;
+	
+	/**
+	 * 格式化时间
+	 */
+	private String addCheckingAccountTimeFormat;
+		/**	 *快递单号	 */	private String invoiceNo;	/**	 *商品编号	 */	private String goodsSn;	/**	 *商品数量	 */	private int goodsNumber;	/**	 *收货地址	 */	private String address;	/**	 *收货人	 */	private String consignee;	/**	 *手机号	 */	private String mobile;	/**	 *签收时间	 */	private String signinDate;
+	
+	/**
+	 * 展示状态
+	 */
+	private String statueName;
+	
+	public String getAddCheckingAccountTimeFormat() {
+		return addCheckingAccountTimeFormat;
+	}
+	public void setAddCheckingAccountTimeFormat(String addCheckingAccountTimeFormat) {
+		this.addCheckingAccountTimeFormat = addCheckingAccountTimeFormat;
+	}
+	public String getStatueName() {
+		return statueName;
+	}
+	public void setStatueName(String statueName) {
+		this.statueName = statueName;
+	}
 	public Integer getId() {
 		return id;
 	}
@@ -37,16 +61,18 @@ public class CvcCheckingAccountOrderEntity implements Serializable{
 	public void setShippingName(String shippingName) {
 		this.shippingName = shippingName;
 	}
-	public int getIsAddCheckingAccount() {
+
+	public Integer getIsAddCheckingAccount() {
 		return isAddCheckingAccount;
 	}
-	public void setIsAddCheckingAccount(int isAddCheckingAccount) {
+	public void setIsAddCheckingAccount(Integer isAddCheckingAccount) {
 		this.isAddCheckingAccount = isAddCheckingAccount;
 	}
-	public int getAddCheckingAccountTime() {
+	
+	public long getAddCheckingAccountTime() {
 		return addCheckingAccountTime;
 	}
-	public void setAddCheckingAccountTime(int addCheckingAccountTime) {
+	public void setAddCheckingAccountTime(long addCheckingAccountTime) {
 		this.addCheckingAccountTime = addCheckingAccountTime;
 	}
 	public String getInvoiceNo() {

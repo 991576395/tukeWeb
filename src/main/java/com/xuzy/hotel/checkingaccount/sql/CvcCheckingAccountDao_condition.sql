@@ -26,7 +26,7 @@
 		    /* 对账结束时间 */
 			and cca.end_time = :cvcCheckingAccount.endTime
 		</#if>
-		<#if ( cvcCheckingAccount.addTime )?? && cvcCheckingAccount.addTime ?length gt 0>
+		<#if ( cvcCheckingAccount.addTime )?? && cvcCheckingAccount.addTime ?length gt 0 && cvcCheckingAccount.addTime gt 0>
 		    /* 对账生成时间 */
 			and cca.add_time = :cvcCheckingAccount.addTime
 		</#if>
