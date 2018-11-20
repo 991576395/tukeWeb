@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+#parse("content/base/back/common/head.vm")
+<body style='overflow:scroll;overflow-x:hidden'>
+	<div class="container bs-docs-container" style="width:100%;">
+		<div class="row">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+								<button type="button" class="btn btn-primary" id="formSubmit"><span class="fa fa-save"></span> 保存</button>
+				<button type="button" class="btn btn-default" id="formReturn" data-dismiss="modal" onclick="doUrl('$!{basePath}/hotel/cvcShippingBatch.do?list')"><span class="fa fa-arrow-circle-left"></span> 返回</button>
+				</div>
+				<div class="panel-body">
+					<form class="form-horizontal" role="form" id="dailogForm" action="$!{basePath}/hotel/cvcShippingBatch.do?doAdd" method="POST">
+						<input type="hidden" id="btn_sub" class="btn_sub" />
+									<div class="form-group mno">
+										<label for="inputEmail3" class="col-sm-2 control-label" style="text-align:left;">上传批次号</label>
+										<div class="col-sm-8">
+											<input type="text" value="$!{cvcShippingBatch.batchNo}" name="batchNo" id="batchNo" class="form-control"  datatype="*" />
+										</div>
+									</div>
+									<div class="form-group mno">
+										<label for="inputEmail3" class="col-sm-2 control-label" style="text-align:left;">发货总量</label>
+										<div class="col-sm-8">
+											<input type="text" value="$!{cvcShippingBatch.shippingCount}" name="shippingCount" id="shippingCount" class="form-control"  datatype="*" />
+										</div>
+									</div>
+									<div class="form-group mno">
+										<label for="inputEmail3" class="col-sm-2 control-label" style="text-align:left;">发货成功数</label>
+										<div class="col-sm-8">
+											<input type="text" value="$!{cvcShippingBatch.shippingCountOk}" name="shippingCountOk" id="shippingCountOk" class="form-control"  datatype="*" />
+										</div>
+									</div>
+									<div class="form-group mno">
+										<label for="inputEmail3" class="col-sm-2 control-label" style="text-align:left;">上传时间</label>
+										<div class="col-sm-8">
+											<input type="text" value="$!{cvcShippingBatch.addTime}" name="addTime" id="addTime" class="form-control"  datatype="*" />
+										</div>
+									</div>
+									<div class="form-group mno">
+										<label for="inputEmail3" class="col-sm-2 control-label" style="text-align:left;">订单批次号（抓单批次号）</label>
+										<div class="col-sm-8">
+											<input type="text" value="$!{cvcShippingBatch.orderBatchNo}" name="orderBatchNo" id="orderBatchNo" class="form-control"  datatype="*" />
+										</div>
+									</div>
+									<div class="form-group mno">
+										<label for="inputEmail3" class="col-sm-2 control-label" style="text-align:left;">是否存在非本订单批次号的订单（0:否；1:是）</label>
+										<div class="col-sm-8">
+											<input type="text" value="$!{cvcShippingBatch.msgStatus}" name="msgStatus" id="msgStatus" class="form-control"  datatype="*" />
+										</div>
+									</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
+<script type="text/javascript" src="$!{basePath}/plug-in-ui/js/Validform_v5.3.2.js"></script> 
+<script type="text/javascript" src="$!{basePath}/plug-in-ui/js/forminit.p3.js"></script> 
