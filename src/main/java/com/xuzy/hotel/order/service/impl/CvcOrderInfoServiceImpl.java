@@ -5,16 +5,27 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
+import org.apache.log4j.Logger;
 import org.jeecgframework.minidao.pojo.MiniDaoPage;
+import org.jeecgframework.p3.core.common.utils.AjaxJson;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.util.PhpDateUtils;
+import com.xuzy.hotel.deliveryinfo.entity.CvcDeliveryInfoEntity;
+import com.xuzy.hotel.deliveryorder.dao.CvcDeliveryOrderDao;
 import com.xuzy.hotel.deliveryorder.entity.CvcDeliveryOrderEntity;
+import com.xuzy.hotel.deliveryorder.service.CvcDeliveryOrderService;
 import com.xuzy.hotel.order.dao.CvcOrderInfoDao;
 import com.xuzy.hotel.order.entity.CvcDeliveryGoodsEntity;
-import com.xuzy.hotel.order.entity.CvcDeliveryInfoEntity;
 import com.xuzy.hotel.order.entity.CvcOrderInfoEntity;
 import com.xuzy.hotel.order.service.CvcOrderInfoService;
+import com.xuzy.hotel.shippingbatch.web.CvcShippingBatchController;
+import com.xuzy.hotel.shippingbatchorder.dao.CvcShippingBatchOrderDao;
+import com.xuzy.hotel.shippingbatchorder.entity.CvcShippingBatchOrderEntity;
+import com.xuzy.hotel.ylrequest.module.RequestOFFHarbourExchangeOrderJson;
 
 /**
  * 描述：订单表
@@ -28,7 +39,20 @@ public class CvcOrderInfoServiceImpl implements CvcOrderInfoService {
 	@Resource
 	private CvcOrderInfoDao cvcOrderInfoDao;
 	
+	@Resource
+	private CvcDeliveryOrderDao cvcDeliveryOrderDao;
+	
+	@Autowired
+	private CvcDeliveryOrderService cvcDeliveryOrderService;
+	
+	@Resource
+	private CvcShippingBatchOrderDao cvcShippingBatchOrderDao;
 
+	 /**
+		 * Logger for this class
+		 */
+		private static final Logger logger = Logger.getLogger(CvcOrderInfoServiceImpl.class);
+	
 	@Override
 	public CvcOrderInfoEntity get(int id) {
 		return cvcOrderInfoDao.get(id);
@@ -41,7 +65,7 @@ public class CvcOrderInfoServiceImpl implements CvcOrderInfoService {
 
 	@Override
 	public void insert(CvcOrderInfoEntity cvcOrderInfo) {
-		cvcOrderInfoDao.insert(cvcOrderInfo);
+		cvcOrderInfoDao.insertOrder(cvcOrderInfo);
 		
 	}
 
@@ -76,10 +100,10 @@ public class CvcOrderInfoServiceImpl implements CvcOrderInfoService {
 		if (cvcOrderInfoEntity != null) {
 			cvcOrderInfoEntity.setOldAddTime(cvcOrderInfoEntity.getAddTime());
 			// 格式化时间
-			cvcOrderInfoEntity.setAddTime(DateFormatUtils
-					.format(Long.parseLong(cvcOrderInfoEntity.getAddTime() + "000"), "yyyy-MM-dd HH:mm:ss"));
-			cvcOrderInfoEntity.setGetTime(DateFormatUtils
-					.format(Long.parseLong(cvcOrderInfoEntity.getGetTime() + "000"), "yyyy-MM-dd HH:mm:ss"));
+			cvcOrderInfoEntity.setAddTime(PhpDateUtils
+					.parseDate(Long.parseLong(cvcOrderInfoEntity.getAddTime()), "yyyy-MM-dd HH:mm:ss"));
+			cvcOrderInfoEntity.setGetTime(PhpDateUtils
+					.parseDate(Long.parseLong(cvcOrderInfoEntity.getGetTime()), "yyyy-MM-dd HH:mm:ss"));
 		}
 		return cvcOrderInfoEntity;
 	}
@@ -95,10 +119,6 @@ public class CvcOrderInfoServiceImpl implements CvcOrderInfoService {
 		return deliveryOrder;
 	}
 
-	@Override
-	public CvcDeliveryInfoEntity getDeliveryInfosByInvoiceNo(String invoiceNo) {
-		return cvcOrderInfoDao.getAll(invoiceNo);
-	}
 
 	@Override
 	public void updateHandle(int orderId, int handleStatus, int handleTime, String handleUser) {
@@ -108,7 +128,7 @@ public class CvcOrderInfoServiceImpl implements CvcOrderInfoService {
 	
 	@Override
 	public void insert(CvcDeliveryGoodsEntity cvcDeliveryGoods) {
-		cvcOrderInfoDao.insert(cvcDeliveryGoods);
+		cvcOrderInfoDao.insertGoods(cvcDeliveryGoods);
 	}
 
 	@Override
@@ -135,5 +155,104 @@ public class CvcOrderInfoServiceImpl implements CvcOrderInfoService {
 	@Override
 	public void updateStatusByOrderId(int orderId, int status) {
 		cvcOrderInfoDao.updateStatusByOrderId(orderId, status);
+	}
+
+	@Override
+	public void updateErrorStatusByOrderId(int orderId, int errorStatus) {
+		cvcOrderInfoDao.updateErrorStatusByOrderId(orderId, errorStatus, PhpDateUtils.getTime());
+	}
+
+	@Override
+	public CvcOrderInfoEntity getOnlyEntity(int id) {
+		return cvcOrderInfoDao.getOnlyEntity(id);
+	}
+
+	@Override
+	public CvcOrderInfoEntity getEntity(int id, String batchNo) {
+		return cvcOrderInfoDao.getEntity(id, batchNo);
+	}
+	
+	/**
+	 * 订单发货
+	 * 
+	 * 
+	 */
+	public AjaxJson sendOrder(CvcOrderInfoEntity cvcOrderInfoEntity, String shippingName, String batchSendNo) {
+		AjaxJson j = new AjaxJson();
+		try {
+			if (cvcOrderInfoEntity == null) {
+				j.setSuccess(false);
+				j.setMsg("订单查询失败！");
+				return j;
+			}
+
+			if (5 == cvcOrderInfoEntity.getOrderStatus()) {
+				// 检查权限
+				j.setSuccess(false);
+				j.setMsg("订单已发货！");
+				return j;
+			}
+			// 快递公司信息
+			if (StringUtils.isEmpty(shippingName)) {
+				// 快递信息异常
+				j.setSuccess(false);
+				j.setMsg("订单：" + cvcOrderInfoEntity.getId() + "快递名称：" + shippingName + "有误，请检查！");
+				return j;
+			}
+			// 是否离港
+			boolean isOffhabour = false;
+			if (cvcOrderInfoEntity.getTkOrderStatus() == 2) {
+				// 配货中订单 调用离港接口
+				// 订单离港
+				RequestOFFHarbourExchangeOrderJson exchangeOrderJson = new RequestOFFHarbourExchangeOrderJson();
+				exchangeOrderJson.setOrderID(cvcOrderInfoEntity.getId());
+				exchangeOrderJson.setEMSCompany(shippingName);
+				exchangeOrderJson.setEMSOdd(cvcOrderInfoEntity.getInvoiceNo());
+				exchangeOrderJson.setPreArrivalDate(cvcOrderInfoEntity.getPreArrivalDate());
+//				ResponseHead head = ConmentHttp.sendHttp(new TukeRequestBody.Builder().setParams(exchangeOrderJson)
+//						.setSequence(4).setServiceCode("CRMIF.OFFHarbourExchangeOrderJson").builder(), null);
+//				if (head.getReturn() >= 0) {
+					isOffhabour = true;
+//				} else {
+//					j.setSuccess(false);
+//					j.setMsg(head.getReturnInfo());
+//					return j;
+//				}
+			}
+
+			if (cvcOrderInfoEntity.getTkOrderStatus() == 3 || isOffhabour) {
+				int isPostorder = 0;
+				// 已经为离港订单 或者调用伊利接口成功
+				if (StringUtils.isNotEmpty(batchSendNo)) {
+					// 批量发货相关
+					// 是否已经订阅快递信息
+					CvcShippingBatchOrderEntity batchOrderEntity = cvcShippingBatchOrderDao
+							.getEntityByInvoiceNo(cvcOrderInfoEntity.getInvoiceNo());
+					if (batchOrderEntity == null) {
+						// 未订阅物流信息 开始订阅
+//						Kuaidi100Response kuaidi100Response = ConmentHttp.postorder(shippingName,
+//								cvcOrderInfoEntity.getInvoiceNo());
+//						isPostorder = (kuaidi100Response.getResult() || kuaidi100Response.getMessage().contains("重复订阅"))
+//								? 1: 0;
+					} else {
+						isPostorder = 1;
+					}
+				} else {
+					// 非批量发货
+//					ConmentHttp.postorder(shippingName, cvcOrderInfoEntity.getInvoiceNo());
+				}
+				// 添加发货订单
+				cvcDeliveryOrderService.addDeliveryOrderByOrder(cvcOrderInfoEntity, shippingName, batchSendNo,
+						isPostorder);
+				j.setSuccess(true);
+				j.setMsg("发货成功");
+			}
+		} catch (Exception e) {
+			j.setSuccess(false);
+			j.setMsg("接口调用异常");
+			logger.error("发货异常", e);
+			return j;
+		}
+		return j;
 	}
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import org.jeecgframework.minidao.annotation.Param;
 import org.jeecgframework.minidao.pojo.MiniDaoPage;
 import com.xuzy.hotel.deliveryorder.entity.CvcDeliveryOrderEntity;
+import com.xuzy.hotel.order.entity.CvcOrderInfoEntity;
 
 /**
  * 描述：物流信息表
@@ -44,5 +45,27 @@ public interface CvcDeliveryOrderService {
 	 * @param invoiceNo
 	 */
 	public void updateNu(int orderId,int shippingId,String shippingName,String invoiceNo);
-
+	
+	/**
+	 * 更新异常码
+	 * @param shippingCode
+	 * @param invoiceNo
+	 */
+	public void updateErrorCode( String shippingCode, String invoiceNo);
+	
+	/**
+	 * 根据物流单号获取记录
+	 * @param invoiceNo
+	 * @return
+	 */
+	CvcDeliveryOrderEntity getEntityByinvoiceNo(@Param("invoiceNo") String invoiceNo);
+	
+	/**
+	 * 通过订单添加快递信息
+	 * @param orderInfoEntity
+	 * @param batchSendNo 
+	 * @param batchSendNo2 
+	 * @return
+	 */
+	public void addDeliveryOrderByOrder(CvcOrderInfoEntity orderInfoEntity,String shippingName,String batchSendNo, int isPostorder);
 }

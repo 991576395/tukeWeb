@@ -1,6 +1,8 @@
 package com.xuzy.hotel.order.module;
 
-public class DelivetyJson {
+import java.io.Serializable;
+
+public class DelivetyJson implements Serializable{
 	private String time;
 	
 	private String ftime;
@@ -30,4 +32,11 @@ public class DelivetyJson {
 	public void setContext(String context) {
 		this.context = context;
 	}
+
+	@Override
+	public String toString() {
+		return "DelivetyJson [time=" + time + ", ftime=" + ftime + ", context=" + context + "]";
+	}
+	
+	
 }

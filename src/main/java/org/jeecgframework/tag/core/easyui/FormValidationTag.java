@@ -136,7 +136,7 @@ public class FormValidationTag extends JeecgTag {
 				sb.append("class=\""+this.getStyleClass()+"\" ");
 			}
 
-					sb.append(" action=\"" + action + "\" name=\"" + formid + "\" method=\"post\">");
+					sb.append(" action=\"" + action + "\" name=\"" + formid + "\" method=\"post\" enctype=\"multipart/form-data\">");
 			if ("btn_sub".equals(btnsub) && dialog)
 				sb.append("<input type=\"hidden\" id=\"" + btnsub + "\" class=\"" + btnsub + "\"/>");
 

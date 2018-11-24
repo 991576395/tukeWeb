@@ -4,10 +4,12 @@ import javax.annotation.Resource;
 import java.util.UUID;
 import org.jeecgframework.minidao.pojo.MiniDaoPage;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.xuzy.hotel.shippingbatch.dao.CvcShippingBatchDao;
 import com.xuzy.hotel.shippingbatch.entity.CvcShippingBatchEntity;
 import com.xuzy.hotel.shippingbatch.service.CvcShippingBatchService;
+import com.xuzy.hotel.shippingbatchorder.dao.CvcShippingBatchOrderDao;
 
 /**
  * 描述：批量发货表
@@ -20,6 +22,9 @@ import com.xuzy.hotel.shippingbatch.service.CvcShippingBatchService;
 public class CvcShippingBatchServiceImpl implements CvcShippingBatchService {
 	@Resource
 	private CvcShippingBatchDao cvcShippingBatchDao;
+	
+	@Resource
+	private CvcShippingBatchOrderDao cvcShippingBatchOrderDao;
 
 	@Override
 	public CvcShippingBatchEntity get(String id) {
@@ -33,8 +38,6 @@ public class CvcShippingBatchServiceImpl implements CvcShippingBatchService {
 
 	@Override
 	public void insert(CvcShippingBatchEntity cvcShippingBatch) {
-		String randomSeed = UUID.randomUUID().toString().replaceAll("-", "").toUpperCase();
-		cvcShippingBatch.setId(randomSeed);
 		cvcShippingBatchDao.insert(cvcShippingBatch);
 		
 	}
@@ -45,9 +48,10 @@ public class CvcShippingBatchServiceImpl implements CvcShippingBatchService {
 	}
 
 	@Override
-	public void delete(String id) {
-		cvcShippingBatchDao.delete(id);
-		
+	@Transactional
+	public void delete(String batchNo) {
+		cvcShippingBatchDao.delete(batchNo);
+		cvcShippingBatchOrderDao.deleteBybatchNo(batchNo);
 	}
 	
 	@Override
@@ -56,5 +60,10 @@ public class CvcShippingBatchServiceImpl implements CvcShippingBatchService {
 			String id = ids[i];
 			cvcShippingBatchDao.deleteById(id);
 		}
+	}
+
+	@Override
+	public int getCount(CvcShippingBatchEntity cvcShippingBatch) {
+		return cvcShippingBatchDao.getCount(cvcShippingBatch);
 	}
 }

@@ -48,8 +48,11 @@ public interface CvcShippingBatchDao{
 	@ResultType(CvcShippingBatchEntity.class)
 	public MiniDaoPage<CvcShippingBatchEntity> getAll(@Param("cvcShippingBatch") CvcShippingBatchEntity cvcShippingBatch,@Param("page")  int page,@Param("rows") int rows);
 	
-	@Sql("DELETE from cvc_shipping_batch WHERE ID = :id")
-	public void delete(@Param("id") String id);
+	int getCount(@Param("cvcShippingBatch") CvcShippingBatchEntity cvcShippingBatch);
+	
+	
+	@Sql("DELETE from cvc_shipping_batch WHERE batch_no = :batchNo limit 1")
+	public void delete(@Param("batchNo") String batchNo);
 	
 	/**
 	 * 根据ID删除

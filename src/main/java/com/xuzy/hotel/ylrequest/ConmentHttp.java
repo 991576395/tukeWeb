@@ -4,7 +4,6 @@ package com.xuzy.hotel.ylrequest;
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -22,13 +21,14 @@ import org.w3c.dom.NodeList;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import com.wustrive.aesrsa.util.AES;
 import com.wustrive.aesrsa.util.Base64;
 import com.wustrive.aesrsa.util.RSA;
 import com.xuzy.hotel.order.dao.CvcOrderInfoDao;
 import com.xuzy.hotel.ylrequest.module.ASABody;
 import com.xuzy.hotel.ylrequest.module.ASAResponseBody;
+import com.xuzy.hotel.ylrequest.module.Kuaidi100Request;
+import com.xuzy.hotel.ylrequest.module.Kuaidi100Response;
 import com.xuzy.hotel.ylrequest.module.LoginBody;
 import com.xuzy.hotel.ylrequest.module.LoginResponseBody;
 import com.xuzy.hotel.ylrequest.module.RequestDeliveryExchangeOrderJson;
@@ -36,6 +36,7 @@ import com.xuzy.hotel.ylrequest.module.RequestRefuseExchangeOrderJson;
 import com.xuzy.hotel.ylrequest.module.RequestSignInExchangeOrderJson;
 
 import okhttp3.Cookie;
+import okhttp3.FormBody;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -55,7 +56,11 @@ public class ConmentHttp {
 	public static Gson gson = new GsonBuilder().disableHtmlEscaping().create(); 
 	
 	private static final HashMap<String, List<Cookie>> cookieStore = new HashMap<>();
-
+	
+	private static final String KEY = "MfxXXpWd8126";
+	private static final String URL = "http://www.kuaidi100.com/poll";
+	private static final String CALLBACK = "http://47.96.119.244:8080/tukeWeb/callBack.do?result";
+	
     /**
      * 公用 mSequence
      */
@@ -68,18 +73,28 @@ public class ConmentHttp {
     
     /**
      * 物流状态监听
+     * @param company 
+     * @param number 
      */
-    public static void postorder() {
+    public static Kuaidi100Response postorder(String company, String number) { 
+    	Kuaidi100Request kuaidi100Request = new Kuaidi100Request();
+    	kuaidi100Request.setCompany(company);
+    	kuaidi100Request.setNumber(number);
+    	kuaidi100Request.setKey(KEY);
+    	kuaidi100Request.getParameters().setCallbackurl(CALLBACK);
 		// 开始请求
-//        Request request = new Request.Builder().url("http://220.194.60.85:8037/api/Category/EncryptTextStr")
-//                .post(MultipartBody.create(MediaType.parse("Content-Type:text/html;charset=utf-8"),sb.toString()))
-//                .build();
-//        Response response = null;
-//		try {
-//			response = ConmentHttp.okHttpClient.newCall(request).execute();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
+        Request request = new Request.Builder().url(URL)
+                .post(new FormBody.Builder().add("schema", "json").add("param", gson.toJson(kuaidi100Request)).build())
+                .build();
+        Response response = null;
+		try {
+			response = ConmentHttp.okHttpClient.newCall(request).execute();
+			String result = response.body().string();
+			return gson.fromJson(result, Kuaidi100Response.class);
+		} catch (IOException e) {
+			logger.error("订阅快递100异常",e);
+		}
+		return null;
     }
 
 

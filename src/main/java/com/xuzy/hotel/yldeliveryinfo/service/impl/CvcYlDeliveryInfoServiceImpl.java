@@ -22,8 +22,8 @@ public class CvcYlDeliveryInfoServiceImpl implements CvcYlDeliveryInfoService {
 	private CvcYlDeliveryInfoDao cvcYlDeliveryInfoDao;
 
 	@Override
-	public CvcYlDeliveryInfoEntity get(String id) {
-		return cvcYlDeliveryInfoDao.get(id);
+	public CvcYlDeliveryInfoEntity get( int id,String number,String context){
+		return cvcYlDeliveryInfoDao.get(id,number,context);
 	}
 
 	@Override
@@ -33,10 +33,7 @@ public class CvcYlDeliveryInfoServiceImpl implements CvcYlDeliveryInfoService {
 
 	@Override
 	public void insert(CvcYlDeliveryInfoEntity cvcYlDeliveryInfo) {
-		String randomSeed = UUID.randomUUID().toString().replaceAll("-", "").toUpperCase();
-		cvcYlDeliveryInfo.setId(randomSeed);
 		cvcYlDeliveryInfoDao.insert(cvcYlDeliveryInfo);
-		
 	}
 
 	@Override

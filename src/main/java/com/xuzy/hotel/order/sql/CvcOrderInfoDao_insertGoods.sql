@@ -1,8 +1,7 @@
 INSERT  INTO
 	cvc_delivery_goods
       ( 
-      rec_id                        
-      ,delivery_id                    
+      delivery_id                    
       ,goods_id                       
       ,product_id                     
       ,product_sn                     
@@ -20,8 +19,7 @@ INSERT  INTO
       ) 
 values
       (
-      :cvcDeliveryGoods.recId                         
-      ,:cvcDeliveryGoods.deliveryId                    
+      :cvcDeliveryGoods.deliveryId                    
       ,:cvcDeliveryGoods.goodsId                       
       ,:cvcDeliveryGoods.productId                     
       ,:cvcDeliveryGoods.productSn                     

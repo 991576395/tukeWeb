@@ -66,7 +66,7 @@
 					<td><select name="shippingName" id="shippingNameSelect" onchange="change_shipping()">
 							<c:if test="${fn:length(shippingEntitys) > 0}">
 								<c:forEach var="shippingEntity" items="${shippingEntitys}">
-									<option value="${shippingEntity.shippingId}"
+									<option value="${shippingEntity.shippingName}"
 										<c:if test="${shippingEntity.isDefault eq 1}">
 															selected="selected"
 														</c:if>>${shippingEntity.shippingName}</option>
@@ -87,7 +87,7 @@
 				</tr>
 				<tr>
 					<td style="text-indent: 2.5em" width="12%" valign="top">预计送到时间：</td>
-					<td><input id="signdate_id" name="signdate" type="text"
+					<td><input id="preArrivalDate" name="preArrivalDate" type="text"
 						style="width: 200px" class="Wdate"
 						onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})" /></td>
 				</tr>
@@ -99,7 +99,7 @@
 				<tr height="50px">
 					<td style="text-indent: 2.5em" colspan="6" align="left"><strong>当前可执行操作：</strong>
 						<input name="delivery_confirmed" type="button" value="发货并生成对账单"
-						class="btn btn-primary btn-sm" />&nbsp;&nbsp; <input
+						class="btn btn-primary btn-sm" onclick="send(${cvcOrderInfoEntity.id});" />&nbsp;&nbsp; <input
 						type="button" value="取消 " class="btn btn-danger btn-sm"
 						onclick="location.href='cvcOrderInfo.do?toDetail&id=${cvcOrderInfoEntity.id}'" />
 
@@ -113,18 +113,19 @@
 
 <script type="text/javascript">
 	//点击发货
-	function update_nu(order_id) {
+	function send(order_id) {
 		layer.open({
 			title : "系统提示",
 			content : "确认发货？",
 			icon : 7,
 			shade : 0.3,
 			yes : function(index) {
-				request('cvcOrderInfo.do?ship&&orderId=' + order_id
+				request('cvcOrderInfo.do?ship&orderId=' + order_id
 						+ '&invoiceNo=' + $("#invoice_no").val()
-						+ '&shippingName=' + $("#shipping_name").val(),
+						+ '&shippingName=' + $("#shippingNameSelect").val()
+						+ '&preArrivalDate=' + $("#preArrivalDate").val(),
 						function(d) {
-							
+							window.location.href= 'cvcOrderInfo.do?toDetail&id='+order_id;
 						});
 			},
 			btn : [ '确定', '取消' ],
@@ -139,7 +140,6 @@
 		$.ajax({
 			url : url,
 			type : 'post',
-			data : {orderId:$("#orderId").val()},
 			cache : false,
 			success : function(data) {
 				var d = $.parseJSON(data);
