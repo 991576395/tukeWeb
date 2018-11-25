@@ -1,3 +1,4 @@
+		
 		<#if ( cvcShippingBatchOrder.batchNo )?? && cvcShippingBatchOrder.batchNo ?length gt 0>
 		    /* 导入批次号 */
 			and csbo.batch_no = :cvcShippingBatchOrder.batchNo

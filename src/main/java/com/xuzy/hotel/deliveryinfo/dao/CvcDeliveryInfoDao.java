@@ -10,53 +10,69 @@ import com.xuzy.hotel.deliveryinfo.entity.CvcDeliveryInfoEntity;
 
 /**
  * 描述：物流表
+ * 
  * @author：www.jeecg.org
- * @since：2018年11月20日 20时42分45秒 星期二 
+ * @since：2018年11月20日 20时42分45秒 星期二
  * @version:1.0
  */
 @Repository
-public interface CvcDeliveryInfoDao{
+public interface CvcDeliveryInfoDao {
 
-    /**
+	/**
 	 * 查询返回Java对象
+	 * 
 	 * @param id
 	 * @return
 	 */
 	@Sql("SELECT * FROM cvc_delivery_info WHERE ID = :id")
 	CvcDeliveryInfoEntity get(@Param("id") String id);
-	
+
 	/**
 	 * 修改数据
+	 * 
 	 * @param cvcDeliveryInfo
 	 * @return
 	 */
 	int update(@Param("cvcDeliveryInfo") CvcDeliveryInfoEntity cvcDeliveryInfo);
-	
+
 	/**
 	 * 插入数据
+	 * 
 	 * @param act
 	 */
 	void insert(@Param("cvcDeliveryInfo") CvcDeliveryInfoEntity cvcDeliveryInfo);
-	
+
 	/**
 	 * 通用分页方法，支持（oracle、mysql、SqlServer、postgresql）
+	 * 
 	 * @param cvcDeliveryInfo
 	 * @param page
 	 * @param rows
 	 * @return
 	 */
 	@ResultType(CvcDeliveryInfoEntity.class)
-	public MiniDaoPage<CvcDeliveryInfoEntity> getAll(@Param("cvcDeliveryInfo") CvcDeliveryInfoEntity cvcDeliveryInfo,@Param("page")  int page,@Param("rows") int rows);
-	
+	public MiniDaoPage<CvcDeliveryInfoEntity> getAll(@Param("cvcDeliveryInfo") CvcDeliveryInfoEntity cvcDeliveryInfo,
+			@Param("page") int page, @Param("rows") int rows);
+
 	@Sql("DELETE from cvc_delivery_info WHERE ID = :id")
 	public void delete(@Param("id") String id);
-	
+
 	/**
 	 * 根据ID删除
+	 * 
 	 * @param id
 	 */
-	 @Sql("DELETE from cvc_delivery_info WHERE ID = :id")
-	 public void deleteById(@Param("id") String id);
-	
-}
+	@Sql("DELETE from cvc_delivery_info WHERE ID = :id")
+	public void deleteById(@Param("id") String id);
 
+	/**
+	 * 获取物流流程
+	 * 
+	 * @param invoice_no
+	 * @return
+	 */
+	@ResultType(CvcDeliveryInfoEntity.class)
+	@Sql("SELECT data,state FROM  cvc_delivery_info WHERE number = :invoice_no ORDER BY id DESC LIMIT 1")
+	public CvcDeliveryInfoEntity getAll(@Param("invoice_no") String invoice_no);
+
+}

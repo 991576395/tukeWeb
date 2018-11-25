@@ -47,8 +47,10 @@ public interface CvcGetOrderStatisticsDao{
 	 * @return
 	 */
 	@Sql("UPDATE cvc_get_order_statistics SET offharbour_count=offharbour_count+1 WHERE batch_no=:batchNo")
-	int addOffharbourCount(String batchNo);
+	void addOffharbourCount(@Param("batchNo")String batchNo);
 	
+	@Sql("UPDATE cvc_get_order_statistics SET exception_count=exception_count+1 WHERE batch_no=:batchNo")
+	void addExceptionCount(@Param("batchNo")String batchNo);
 	
 	/**
 	 * 添加一条发货记录
@@ -56,7 +58,7 @@ public interface CvcGetOrderStatisticsDao{
 	 * @return
 	 */
 	@Sql("UPDATE cvc_get_order_statistics SET order_count=order_count+:orderCount,add_time=addTime WHERE unified_batch_no=:batchNo")
-	int addOrderCount(@Param("orderCount")int  orderCount,@Param("batchNo")String batchNo,@Param("addTime")String addTime);
+	void addOrderCount(@Param("orderCount")int  orderCount,@Param("batchNo")String batchNo,@Param("addTime")String addTime);
 	
 	/**
 	 * 插入数据

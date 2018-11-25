@@ -27,7 +27,7 @@ public interface CvcGetOrderStatisticsService {
 	
 	public void batchDelete(String[] ids);
 	
-	public int addOffharbourCount(String batchNo);
+	public void addOffharbourCount(String batchNo);
 
 	public int getCount(CvcGetOrderStatisticsEntity query, int page, int rows);
 	
@@ -37,4 +37,6 @@ public interface CvcGetOrderStatisticsService {
 	public CvcGetOrderStatisticsEntity addOrUpdateOrder(List<ExchangeOrder> exchangeOrders);
 	
 	public int addwaitDeliveryCount(int  orderCount,String batchNo);
+	
+	void addExceptionCount(String batchNo);
 }

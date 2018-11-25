@@ -30,6 +30,9 @@ public interface CvcDeliveryOrderDao{
 	@Sql("SELECT LAST_INSERT_ID();")
 	public int getInserId();
 	
+	@Sql("SELECT order_id FROM cvc_delivery_order WHERE invoice_no = :invoiceNo limit 1")
+	CvcDeliveryOrderEntity getEntityByinvoiceNo(@Param("invoiceNo") String invoiceNo);
+	
 	/**
 	 * 修改数据
 	 * @param cvcDeliveryOrder
@@ -41,7 +44,7 @@ public interface CvcDeliveryOrderDao{
 	 * 插入数据
 	 * @param act
 	 */
-	void insert(@Param("cvcDeliveryOrder") CvcDeliveryOrderEntity cvcDeliveryOrder);
+	int insert(@Param("cvcDeliveryOrder") CvcDeliveryOrderEntity cvcDeliveryOrder);
 	
 	/**
 	 * 通用分页方法，支持（oracle、mysql、SqlServer、postgresql）
@@ -72,5 +75,8 @@ public interface CvcDeliveryOrderDao{
 	 @Sql("UPDATE cvc_delivery_order SET invoice_no=:invoiceNo,shipping_id=:shippingId,shipping_name=:shippingName  WHERE order_id= :orderId LIMIT 1 ")
 	 public void updateNu(@Param("orderId") int orderId,@Param("shippingId") int shippingId,@Param("shippingName") String shippingName,@Param("invoiceNo") String invoiceNo);
 	 
+	 @Sql("UPDATE cvc_delivery_order SET shipping_code=:shippingCode WHERE invoice_no= :invoiceNo LIMIT 1 ")
+	 public void updateErrorCode(@Param("shippingCode") String shippingCode,@Param("invoiceNo") String invoiceNo);
+
 }
 

@@ -4,10 +4,11 @@ import java.util.List;
 
 import org.jeecgframework.minidao.annotation.Param;
 import org.jeecgframework.minidao.pojo.MiniDaoPage;
+import org.jeecgframework.p3.core.common.utils.AjaxJson;
 
+import com.xuzy.hotel.deliveryinfo.entity.CvcDeliveryInfoEntity;
 import com.xuzy.hotel.deliveryorder.entity.CvcDeliveryOrderEntity;
 import com.xuzy.hotel.order.entity.CvcDeliveryGoodsEntity;
-import com.xuzy.hotel.order.entity.CvcDeliveryInfoEntity;
 import com.xuzy.hotel.order.entity.CvcOrderInfoEntity;
 
 /**
@@ -17,6 +18,8 @@ import com.xuzy.hotel.order.entity.CvcOrderInfoEntity;
  * @version:1.0
  */
 public interface CvcOrderInfoService {
+	CvcOrderInfoEntity getOnlyEntity(int id);
+	
 	public CvcOrderInfoEntity get(int id);
 
 	public int update(CvcOrderInfoEntity cvcOrderInfo);
@@ -30,6 +33,12 @@ public interface CvcOrderInfoService {
 	public void delete(String id);
 	
 	public void batchDelete(String[] ids);
+	/**
+	 * 修改指定订单的状态
+	 * @param orderId
+	 * @param status
+	 */
+	public void updateStatusByOrderId(@Param("orderId")  int orderId,int status);
 	
 	/**
 	 * 获取订订单信息
@@ -45,12 +54,7 @@ public interface CvcOrderInfoService {
 	 */
 	public CvcDeliveryOrderEntity getDeliveryOrderByOrderId(int orderId);
 	
-	/**
-	 * 根据物流单号获取物流信息
-	 * @param invoiceNo
-	 * @return
-	 */
-	public CvcDeliveryInfoEntity getDeliveryInfosByInvoiceNo(String invoiceNo);
+	
 	/**
 	 * 修改操作人
 	 * @param orderId
@@ -90,5 +94,11 @@ public interface CvcOrderInfoService {
 	public List<CvcOrderInfoEntity> getAccountOrderList(String userName,
 			 String startTime,String endTime);
 		
+	public void updateErrorStatusByOrderId( int orderId,int errorStatus);
 	
+	
+	CvcOrderInfoEntity getEntity(int id,String batchNo);
+	
+	
+	public AjaxJson sendOrder(CvcOrderInfoEntity cvcOrderInfoEntity, String shippingName, String batchSendNo);
 }

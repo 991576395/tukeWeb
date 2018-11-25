@@ -33,8 +33,6 @@ public class CvcDeliveryInfoServiceImpl implements CvcDeliveryInfoService {
 
 	@Override
 	public void insert(CvcDeliveryInfoEntity cvcDeliveryInfo) {
-		String randomSeed = UUID.randomUUID().toString().replaceAll("-", "").toUpperCase();
-		cvcDeliveryInfo.setId(randomSeed);
 		cvcDeliveryInfoDao.insert(cvcDeliveryInfo);
 		
 	}
@@ -56,5 +54,10 @@ public class CvcDeliveryInfoServiceImpl implements CvcDeliveryInfoService {
 			String id = ids[i];
 			cvcDeliveryInfoDao.deleteById(id);
 		}
+	}
+	
+	@Override
+	public CvcDeliveryInfoEntity getDeliveryInfosByInvoiceNo(String invoiceNo) {
+		return cvcDeliveryInfoDao.getAll(invoiceNo);
 	}
 }

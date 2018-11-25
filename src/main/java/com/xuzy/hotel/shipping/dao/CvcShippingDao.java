@@ -22,8 +22,8 @@ public interface CvcShippingDao{
 	 * @param id
 	 * @return
 	 */
-	@Sql("SELECT * FROM cvc_shipping WHERE ID = :id")
-	CvcShippingEntity get(@Param("id") String id);
+	@Sql("SELECT * FROM cvc_shipping WHERE shipping_name = :shippingName")
+	CvcShippingEntity get(@Param("shippingName") String shippingName);
 	
 	
 	/**
@@ -37,7 +37,7 @@ public interface CvcShippingDao{
 	 * 插入数据
 	 * @param act
 	 */
-	void insert(@Param("cvcShipping") CvcShippingEntity cvcShipping);
+	int insert(@Param("cvcShipping") CvcShippingEntity cvcShipping);
 	
 	/**
 	 * 通用分页方法，支持（oracle、mysql、SqlServer、postgresql）

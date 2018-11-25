@@ -10,7 +10,9 @@ import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.jeecgframework.minidao.pojo.MiniDaoPage;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.util.PhpDateUtils;
 import com.xuzy.hotel.getorderstatistics.dao.CvcGetOrderStatisticsDao;
 import com.xuzy.hotel.getorderstatistics.entity.CvcGetOrderStatisticsEntity;
 import com.xuzy.hotel.getorderstatistics.service.CvcGetOrderStatisticsService;
@@ -69,9 +71,9 @@ public class CvcGetOrderStatisticsServiceImpl implements CvcGetOrderStatisticsSe
 		}
 	}
 	
-	public int addOffharbourCount(String batchNo)
+	public void addOffharbourCount(String batchNo)
 	{
-		return cvcGetOrderStatisticsDao.addOffharbourCount(batchNo);
+		 cvcGetOrderStatisticsDao.addOffharbourCount(batchNo);
 	}
 
 	@Override
@@ -80,6 +82,7 @@ public class CvcGetOrderStatisticsServiceImpl implements CvcGetOrderStatisticsSe
 	}
 
 	@Override
+	@Transactional(rollbackFor=Exception.class)
 	public CvcGetOrderStatisticsEntity addOrUpdateOrder(List<ExchangeOrder> exchangeOrders) {
 		CvcGetOrderStatisticsEntity cvcGetOrderStatisticsEntity = null;
 		String unified_batch_no  = DateFormatUtils.format(Calendar.getInstance(), "yyyyMMdd");
@@ -110,8 +113,8 @@ public class CvcGetOrderStatisticsServiceImpl implements CvcGetOrderStatisticsSe
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}
-				cvcOrderInfoEntity.setGetTime(""+Calendar.getInstance().getTimeInMillis());
-				cvcOrderInfoDao.insert(cvcOrderInfoEntity);
+				cvcOrderInfoEntity.setGetTime(PhpDateUtils.getTime()+"");
+				cvcOrderInfoDao.insertOrder(cvcOrderInfoEntity);
 				for (ExchangeOrderDetail exchangeOrderDetail : exchangeOrder.getItems()) {
 					CvcOrderGoodsEntity  cvcOrderGoods = new CvcOrderGoodsEntity();
 					cvcOrderGoods.setOrderId(exchangeOrder.getID());
@@ -142,9 +145,15 @@ public class CvcGetOrderStatisticsServiceImpl implements CvcGetOrderStatisticsSe
 	}
 
 	@Override
+	@Transactional
 	public int addwaitDeliveryCount(int orderCount, String batchNo) {
 		cvcOrderInfoDao.updateOrderRead(batchNo);
 		cvcGetOrderStatisticsDao.addwaitDeliveryCount(orderCount, batchNo);
 		return 1;
+	}
+
+	@Override
+	public void addExceptionCount(String batchNo) {
+		cvcGetOrderStatisticsDao.addExceptionCount(batchNo);
 	}
 }

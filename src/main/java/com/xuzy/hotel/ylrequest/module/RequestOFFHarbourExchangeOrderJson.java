@@ -1,7 +1,7 @@
 package com.xuzy.hotel.ylrequest.module;
 
 public class RequestOFFHarbourExchangeOrderJson extends BaseBody{
-	private String OrderID;
+	private int OrderID;
 	
 	private String EMSCompany;
 	
@@ -12,11 +12,13 @@ public class RequestOFFHarbourExchangeOrderJson extends BaseBody{
 	
 	private int OppStaff = 1;
 
-	public String getOrderID() {
+	
+
+	public int getOrderID() {
 		return OrderID;
 	}
 
-	public void setOrderID(String orderID) {
+	public void setOrderID(int orderID) {
 		OrderID = orderID;
 	}
 

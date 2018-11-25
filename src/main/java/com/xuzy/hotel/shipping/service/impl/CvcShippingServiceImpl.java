@@ -36,8 +36,6 @@ public class CvcShippingServiceImpl implements CvcShippingService {
 //		String randomSeed = UUID.randomUUID().toString().replaceAll("-", "").toUpperCase();
 //		cvcShipping.setId(randomSeed);
 		cvcShippingDao.insert(cvcShipping);
-		
-		
 	}
 
 	@Override

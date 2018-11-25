@@ -1,5 +1,7 @@
 package com.xuzy.hotel.shippingbatchorder.service;
 
+import java.util.List;
+
 import org.jeecgframework.minidao.annotation.Param;
 import org.jeecgframework.minidao.pojo.MiniDaoPage;
 import com.xuzy.hotel.shippingbatchorder.entity.CvcShippingBatchOrderEntity;
@@ -23,4 +25,15 @@ public interface CvcShippingBatchOrderService {
 	
 	public void batchDelete(String[] ids);
 	
+	int getCount( CvcShippingBatchOrderEntity cvcShippingBatchOrder);
+	
+	CvcShippingBatchOrderEntity getEntityByInvoiceNo( String invoiceNo);
+	
+	public void deleteBybatchNo( String batchNo);
+	
+	public void updateBatchOrderStatus(int status,long shippingTime, int orderId, String batchNo);
+	
+	List<CvcShippingBatchOrderEntity> getEntitysByBatchNo(String batchNo,int orderId);
+	
+	public void batchInsert(List<CvcShippingBatchOrderEntity> batchOrderEntities,String orderBatchNo);
 }

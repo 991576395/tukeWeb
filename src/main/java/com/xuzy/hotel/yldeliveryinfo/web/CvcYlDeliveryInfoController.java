@@ -52,18 +52,6 @@ public class CvcYlDeliveryInfoController extends BaseController{
 			}
 }
 
-	 /**
-	  * 详情
-	  * @return
-	  */
-	@RequestMapping(params="toDetail",method = RequestMethod.GET)
-	public void cvcYlDeliveryInfoDetail(@RequestParam(required = true, value = "id" ) String id,HttpServletResponse response,HttpServletRequest request)throws Exception{
-			VelocityContext velocityContext = new VelocityContext();
-			String viewName = "hotel/yldeliveryinfo/cvcYlDeliveryInfo-detail.vm";
-			CvcYlDeliveryInfoEntity cvcYlDeliveryInfo = cvcYlDeliveryInfoService.get(id);
-			velocityContext.put("cvcYlDeliveryInfo",cvcYlDeliveryInfo);
-			ViewVelocity.view(request,response,viewName,velocityContext);
-	}
 
 	/**
 	 * 跳转到添加页面
@@ -95,18 +83,6 @@ public class CvcYlDeliveryInfoController extends BaseController{
 		return j;
 	}
 
-	/**
-	 * 跳转到编辑页面
-	 * @return
-	 */
-	@RequestMapping(params="toEdit",method = RequestMethod.GET)
-	public void toEdit(@RequestParam(required = true, value = "id" ) String id,HttpServletResponse response,HttpServletRequest request) throws Exception{
-			 VelocityContext velocityContext = new VelocityContext();
-			 CvcYlDeliveryInfoEntity cvcYlDeliveryInfo = cvcYlDeliveryInfoService.get(id);
-			 velocityContext.put("cvcYlDeliveryInfo",cvcYlDeliveryInfo);
-			 String viewName = "hotel/yldeliveryinfo/cvcYlDeliveryInfo-edit.vm";
-			 ViewVelocity.view(request,response,viewName,velocityContext);
-	}
 
 	/**
 	 * 编辑

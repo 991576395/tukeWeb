@@ -22,8 +22,8 @@ public interface CvcYlDeliveryInfoDao{
 	 * @param id
 	 * @return
 	 */
-	@Sql("SELECT * FROM cvc_yl_delivery_info WHERE ID = :id")
-	CvcYlDeliveryInfoEntity get(@Param("id") String id);
+	@Sql("SELECT * FROM cvc_yl_delivery_info WHERE order_id = :id and number=:number and context=:context")
+	CvcYlDeliveryInfoEntity get(@Param("id") int id,@Param("number")String number,@Param("context")String context);
 	
 	/**
 	 * 修改数据

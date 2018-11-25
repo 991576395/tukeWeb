@@ -19,8 +19,9 @@ public interface CvcShippingBatchService {
 
 	public MiniDaoPage<CvcShippingBatchEntity> getAll(CvcShippingBatchEntity cvcShippingBatch,int page,int rows);
 
-	public void delete(String id);
+	public void delete(String batchNo);
 	
 	public void batchDelete(String[] ids);
 	
+	int getCount(CvcShippingBatchEntity cvcShippingBatch);
 }

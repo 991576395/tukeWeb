@@ -291,7 +291,7 @@ public class CvcOrderInfoEntity implements Serializable{
 	/**
 	 *prefer_deliverdate
 	 */
-	private Date preferDeliverdate;
+	private String preferDeliverdate;
 	/**
 	 *enterprise_id
 	 */
@@ -299,7 +299,7 @@ public class CvcOrderInfoEntity implements Serializable{
 	/**
 	 *送货时间
 	 */
-	private Date customDate;
+	private String customDate;
 	/**
 	 *支付银行code
 	 */
@@ -433,8 +433,18 @@ public class CvcOrderInfoEntity implements Serializable{
 	 *签收时间
 	 */
 	private String signinDate;
+	/**
+	 * 预计到达时间
+	 */
+	private String preArrivalDate;
 	
 	
+	public String getPreArrivalDate() {
+		return preArrivalDate;
+	}
+	public void setPreArrivalDate(String preArrivalDate) {
+		this.preArrivalDate = preArrivalDate;
+	}
 	public String getSigninDate() {
 		return signinDate;
 	}
@@ -843,11 +853,12 @@ public class CvcOrderInfoEntity implements Serializable{
 	public void setDiscount(BigDecimal discount) {
 	    this.discount=discount;
 	}
-	public Date getPreferDeliverdate() {
-	    return this.preferDeliverdate;
+	
+	public String getPreferDeliverdate() {
+		return preferDeliverdate;
 	}
-	public void setPreferDeliverdate(Date preferDeliverdate) {
-	    this.preferDeliverdate=preferDeliverdate;
+	public void setPreferDeliverdate(String preferDeliverdate) {
+		this.preferDeliverdate = preferDeliverdate;
 	}
 	public Integer getEnterpriseId() {
 	    return this.enterpriseId;
@@ -855,11 +866,12 @@ public class CvcOrderInfoEntity implements Serializable{
 	public void setEnterpriseId(Integer enterpriseId) {
 	    this.enterpriseId=enterpriseId;
 	}
-	public Date getCustomDate() {
-	    return this.customDate;
+	
+	public String getCustomDate() {
+		return customDate;
 	}
-	public void setCustomDate(Date customDate) {
-	    this.customDate=customDate;
+	public void setCustomDate(String customDate) {
+		this.customDate = customDate;
 	}
 	public String getBank() {
 	    return this.bank;

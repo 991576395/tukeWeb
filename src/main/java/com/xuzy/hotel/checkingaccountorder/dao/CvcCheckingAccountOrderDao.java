@@ -1,5 +1,7 @@
 package com.xuzy.hotel.checkingaccountorder.dao;
 
+import java.util.List;
+
 import org.jeecgframework.minidao.annotation.Param;
 import org.jeecgframework.minidao.annotation.ResultType;
 import org.jeecgframework.minidao.annotation.Sql;
@@ -22,8 +24,8 @@ public interface CvcCheckingAccountOrderDao{
 	 * @param id
 	 * @return
 	 */
-	@Sql("SELECT * FROM cvc_checking_account_order WHERE ID = :id")
-	CvcCheckingAccountOrderEntity get(@Param("id") String id);
+	@Sql("SELECT * FROM cvc_checking_account_order WHERE checking_account_id = :checkingAccountId and order_id = :orderId")
+	CvcCheckingAccountOrderEntity get(@Param("checkingAccountId") int checkingAccountId,@Param("orderId") int orderId);
 	
 	/**
 	 * 修改数据
@@ -48,6 +50,9 @@ public interface CvcCheckingAccountOrderDao{
 	@ResultType(CvcCheckingAccountOrderEntity.class)
 	public MiniDaoPage<CvcCheckingAccountOrderEntity> getAll(@Param("cvcCheckingAccountOrder") CvcCheckingAccountOrderEntity cvcCheckingAccountOrder,@Param("page")  int page,@Param("rows") int rows);
 	
+	@Sql("SELECT * FROM cvc_checking_account_order WHERE checking_account_id = :checkingAccountId order by id desc")
+	@ResultType(CvcCheckingAccountOrderEntity.class)
+	public List<CvcCheckingAccountOrderEntity> getOrders(@Param("checkingAccountId") int checkingAccountId);
 	
 	int getCount(@Param("cvcCheckingAccountOrder")CvcCheckingAccountOrderEntity query);
 	
@@ -68,5 +73,13 @@ public interface CvcCheckingAccountOrderDao{
 	@Sql("DELETE from cvc_checking_account_order WHERE checking_account_id = :id")
 	public void deleteByCheckingAccountId(@Param("id") String id);
 	
+	/**
+	 * 修改上传对账信息成功
+	 * @param checkingAccountId
+	 * @param orderId
+	 */
+	@Sql("UPDATE cvc_checking_account_order SET is_add_checking_account=1,add_checking_account_time=:time where checking_account_id = :checkingAccountId and order_id=:orderId limit 1")
+	public void updateAddCheckingAccount(@Param("checkingAccountId") int checkingAccountId
+			,@Param("orderId")int orderId,@Param("time")long time);
 }
 

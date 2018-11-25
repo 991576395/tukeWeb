@@ -2,6 +2,9 @@ package com.xuzy.hotel.checkingaccountorder.entity;
 
 import java.io.Serializable;
 import java.util.Date;
+
+import org.jeecgframework.poi.excel.annotation.Excel;
+
 import java.math.BigDecimal;
 
 /**
@@ -12,18 +15,64 @@ import java.math.BigDecimal;
  */
 public class CvcCheckingAccountOrderEntity implements Serializable{
 	private static final long serialVersionUID = 1L;
-		/**	 *id	 */	private Integer id;	/**	 *对账表头id	 */	private int checkingAccountId;	/**	 *订单id	 */	private Integer orderId;	/**	 *快递公司	 */	private String shippingName;	/**	 *是否上传对账明细	 */	private Integer isAddCheckingAccount;	/**	 *上传时间	 */	private long addCheckingAccountTime;
+		/**	 *id	 */	private Integer id;	/**	 *对账表头id	 */
+	@Excel(name="对账表头ID",width=10)	private int checkingAccountId;	/**	 *订单id	 */
+	@Excel(name="订单号",width=8)	private Integer orderId;	/**	 *快递公司	 */
+	@Excel(name="快递公司",width=120)	private String shippingName;
+	
+	/**
+	 *快递单号
+	 */
+	@Excel(name="快递单号",width=50)
+	private String invoiceNo;
+	
+	/**
+	 *收货地址
+	 */
+	@Excel(name="收货地址",width=255)
+	private String address;
+	
+	/**
+	 *收货人
+	 */
+	@Excel(name="收货人",width=20)
+	private String consignee;
+	/**
+	 *手机号
+	 */
+	@Excel(name="联系电话",width=20)
+	private String mobile;
+	/**
+	 *商品编号
+	 */
+	@Excel(name="礼品编号",width=30)
+	private String goodsSn;
+	/**
+	 *商品数量
+	 */
+	@Excel(name="商品数量",width=8)
+	private int goodsNumber;
+	
+	/**
+	 *签收时间
+	 */
+	@Excel(name="签收时间",width=20)
+	private String signinDate;
+
+	/**
+	 * 展示状态
+	 */
+	@Excel(name="上传状态",width=5)
+	private String statueName;
+	/**	 *是否上传对账明细	 */	private Integer isAddCheckingAccount;	/**	 *上传时间	 */	private long addCheckingAccountTime;
 	
 	/**
 	 * 格式化时间
 	 */
+	@Excel(name="上传时间",width=20)
 	private String addCheckingAccountTimeFormat;
-		/**	 *快递单号	 */	private String invoiceNo;	/**	 *商品编号	 */	private String goodsSn;	/**	 *商品数量	 */	private int goodsNumber;	/**	 *收货地址	 */	private String address;	/**	 *收货人	 */	private String consignee;	/**	 *手机号	 */	private String mobile;	/**	 *签收时间	 */	private String signinDate;
 	
-	/**
-	 * 展示状态
-	 */
-	private String statueName;
+	
 	
 	public String getAddCheckingAccountTimeFormat() {
 		return addCheckingAccountTimeFormat;

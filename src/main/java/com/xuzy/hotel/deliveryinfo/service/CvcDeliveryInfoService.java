@@ -1,7 +1,7 @@
 package com.xuzy.hotel.deliveryinfo.service;
 
-import org.jeecgframework.minidao.annotation.Param;
 import org.jeecgframework.minidao.pojo.MiniDaoPage;
+
 import com.xuzy.hotel.deliveryinfo.entity.CvcDeliveryInfoEntity;
 
 /**
@@ -23,4 +23,10 @@ public interface CvcDeliveryInfoService {
 	
 	public void batchDelete(String[] ids);
 	
+	/**
+	 * 根据物流单号获取物流信息
+	 * @param invoiceNo
+	 * @return
+	 */
+	public CvcDeliveryInfoEntity getDeliveryInfosByInvoiceNo(String invoiceNo);
 }
