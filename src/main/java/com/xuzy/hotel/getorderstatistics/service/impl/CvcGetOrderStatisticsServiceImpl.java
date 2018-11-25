@@ -97,7 +97,7 @@ public class CvcGetOrderStatisticsServiceImpl implements CvcGetOrderStatisticsSe
 				cvcOrderInfoEntity.setBatchNo(unified_batch_no);
 				cvcOrderInfoEntity.setId(exchangeOrder.getID());
 				cvcOrderInfoEntity.setOrderSn(exchangeOrder.getID()+"");
-				cvcOrderInfoEntity.setUserId(exchangeOrder.getClientID());
+				cvcOrderInfoEntity.setUserId(Integer.parseInt((exchangeOrder.getClientID()+"").trim()));
 				cvcOrderInfoEntity.setUserName(exchangeOrder.getAccountType());
 				cvcOrderInfoEntity.setTel(exchangeOrder.getTeleNum());
 				cvcOrderInfoEntity.setConsignee(exchangeOrder.getConsignee());

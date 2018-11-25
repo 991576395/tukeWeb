@@ -33,8 +33,6 @@ public class CvcDeliveryGoodsServiceImpl implements CvcDeliveryGoodsService {
 
 	@Override
 	public void insert(CvcDeliveryGoodsEntity cvcDeliveryGoods) {
-		String randomSeed = UUID.randomUUID().toString().replaceAll("-", "").toUpperCase();
-		cvcDeliveryGoods.setId(randomSeed);
 		cvcDeliveryGoodsDao.insert(cvcDeliveryGoods);
 		
 	}
