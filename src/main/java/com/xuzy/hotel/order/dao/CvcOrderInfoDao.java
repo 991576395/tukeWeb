@@ -8,11 +8,10 @@ import org.jeecgframework.minidao.annotation.Sql;
 import org.jeecgframework.minidao.pojo.MiniDaoPage;
 import org.springframework.stereotype.Repository;
 
-import com.xuzy.hotel.deliveryinfo.entity.CvcDeliveryInfoEntity;
+import com.xuzy.hotel.deliverygoods.entity.CvcDeliveryGoodsEntity;
 import com.xuzy.hotel.deliveryorder.entity.CvcDeliveryOrderEntity;
-import com.xuzy.hotel.order.entity.CvcDeliveryGoodsEntity;
-import com.xuzy.hotel.order.entity.CvcOrderGoodsEntity;
 import com.xuzy.hotel.order.entity.CvcOrderInfoEntity;
+import com.xuzy.hotel.ordergoods.entity.CvcOrderGoodsEntity;
 
 /**
  * 描述：订单表
@@ -109,13 +108,7 @@ public interface CvcOrderInfoDao{
 	 @Sql("DELETE from cvc_order_info WHERE ID = :id")
 	 public void deleteById(@Param("id") String id);
 	
-	 /**
-	  * 通过订单号查询快递信息
-	  * @return
-	  */
-	 @ResultType(CvcDeliveryOrderEntity.class)
-	 @Sql("SELECT shipping_name, invoice_no, pre_arrival_date,add_time FROM cvc_delivery_order WHERE order_id = :orderId")
-	 public CvcDeliveryOrderEntity getDeliveryOrderByOrderId(@Param("orderId") int orderId);
+	 
 	 
 	 /**
 	  * 通过订单号查询操作人
@@ -124,42 +117,17 @@ public interface CvcOrderInfoDao{
 	 @Sql("SELECT action_user FROM cvc_order_action WHERE order_id = :orderId group by action_user")
 	 public String getActionUserByOrderId(@Param("orderId") int orderId);
 	
-		
-	 
-	 
-	 /**
-	  * 获取物流流程
-	  * @param invoice_no
-	  * @return
-	  */
-	 @ResultType(CvcOrderGoodsEntity.class)
-	 public List<CvcOrderGoodsEntity> getGoods(@Param("orderId") int orderId);
-	 
-	 
-	/**
-	 * 插入数据
-	 * 
-	 * @param act
-	 */
-	void insertGoods(@Param("cvcDeliveryGoods") CvcDeliveryGoodsEntity cvcDeliveryGoods);
-	
-	/**
-	 * 插入数据
-	 * @param act
-	 */
-	void insert(@Param("cvcOrderGoods") CvcOrderGoodsEntity cvcOrderGoods);
 	
 	@ResultType(CvcOrderInfoEntity.class)
 	List<CvcOrderInfoEntity> getAccountOrders(@Param("userName")  String userName,
 			@Param("startTime") String startTime,@Param("endTime") String endTime);
-
 	
-	@ResultType(CvcOrderGoodsEntity.class)
-	@Sql("SELECT goods_sn, goods_number FROM  cvc_order_goods WHERE order_id= :orderId")
-	CvcOrderGoodsEntity getOrderGood(@Param("orderId")String orderId);
 	
-	@Sql("SELECT COUNT(rec_id) FROM  cvc_order_goods WHERE order_id = :orderId AND goods_number > send_number")
-	int getOrderFinish(@Param("orderId")int orderId);
+	@ResultType(CvcOrderInfoEntity.class)
+	public List<CvcOrderInfoEntity> getExcelAll(@Param("cvcOrderInfo") CvcOrderInfoEntity cvcOrderInfo);
+	
+	@ResultType(CvcOrderInfoEntity.class)
+	public List<CvcOrderInfoEntity> getExceptionExcelAll(@Param("cvcOrderInfo") CvcOrderInfoEntity cvcOrderInfo);
 	
 }
 

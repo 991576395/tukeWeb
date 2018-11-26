@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import org.jeecgframework.poi.excel.annotation.Excel;
+
 /**
  * 描述：订单表
  * @author: www.jeecg.org
@@ -16,6 +18,7 @@ public class CvcOrderInfoEntity implements Serializable{
 	/**
 	 *order_id
 	 */
+	@Excel(name="订单号",orderNum="1")
 	private Integer id;
 	/**
 	 *order_sn
@@ -24,10 +27,12 @@ public class CvcOrderInfoEntity implements Serializable{
 	/**
 	 *user_id
 	 */
+	@Excel(name="用户ID",orderNum="2")
 	private Integer userId;
 	/**
 	 *积分账户
 	 */
+	@Excel(name="积分账户",orderNum="6")
 	private String userName;
 	/**
 	 *order_status
@@ -37,6 +42,9 @@ public class CvcOrderInfoEntity implements Serializable{
 	 *tk订单状态
 	 */
 	private Integer tkOrderStatus;
+	
+	@Excel(name="订单状态",orderNum="12")
+	private String tkOrderStatusString;
 	/**
 	 *shipping_status
 	 */
@@ -48,6 +56,7 @@ public class CvcOrderInfoEntity implements Serializable{
 	/**
 	 *consignee
 	 */
+	@Excel(name="收货人",orderNum="5")
 	private String consignee;
 	/**
 	 *country
@@ -68,6 +77,7 @@ public class CvcOrderInfoEntity implements Serializable{
 	/**
 	 *address
 	 */
+	@Excel(name="收货地址",orderNum="8")
 	private String address;
 	/**
 	 *zipcode
@@ -76,6 +86,7 @@ public class CvcOrderInfoEntity implements Serializable{
 	/**
 	 *tel
 	 */
+	@Excel(name="收货人电话",orderNum="9")
 	private String tel;
 	/**
 	 *mobile
@@ -104,6 +115,7 @@ public class CvcOrderInfoEntity implements Serializable{
 	/**
 	 *shipping_name
 	 */
+	@Excel(name="快递公司",orderNum="10")
 	private String shippingName;
 	/**
 	 *pay_id
@@ -200,6 +212,7 @@ public class CvcOrderInfoEntity implements Serializable{
 	/**
 	 *add_time
 	 */
+	@Excel(name="下单时间",orderNum="3")
 	private String addTime;
 	/**
 	 * 未转换格式后的时间
@@ -247,6 +260,7 @@ public class CvcOrderInfoEntity implements Serializable{
 	/**
 	 *invoice_no
 	 */
+	@Excel(name="快递单号",orderNum="11")
 	private String invoiceNo;
 	/**
 	 *extension_code
@@ -379,11 +393,16 @@ public class CvcOrderInfoEntity implements Serializable{
 	/**
 	 *抓单批次号
 	 */
+	@Excel(name="订单批次",orderNum="0")
 	private String batchNo;
 	/**
 	 *异常状态（0:无异常；1:疑难；2:退签；3:退回；4:快递单号异常；5:超时关闭）
 	 */
 	private Integer exceptionStatus;
+	
+	@Excel(name="是否异常",orderNum="14")
+	private String  exceptionStatusString;
+	
 	/**
 	 *处理状态（0:未处理；1:已处理）
 	 */
@@ -402,6 +421,9 @@ public class CvcOrderInfoEntity implements Serializable{
 	 *是否已结算
 	 */
 	private Integer isBalance;
+	
+	@Excel(name="是否异常",orderNum="15")
+	private String isBalanceString;
 	/**
 	 *异常标记时间
 	 */
@@ -410,9 +432,14 @@ public class CvcOrderInfoEntity implements Serializable{
 	 *伊利订单状态
 	 */
 	private Integer ylOrderStatus;
+	
+	@Excel(name="伊利订单状态 ",orderNum="13")
+	private String ylOrderStatusString;
+	
 	/**
 	 *抓单时间
 	 */
+	@Excel(name="抓单时间",orderNum="4")
 	private String getTime;
 	/**
 	 *退货原因（0：无；1：包裹损坏；2：地址不详；3：退积分）
@@ -426,7 +453,9 @@ public class CvcOrderInfoEntity implements Serializable{
 	
 	/**
 	 * 礼品编号
+	 * 
 	 */
+	@Excel(name="礼品编号",orderNum="7")
 	private String goodsSn;
 	
 	/**
@@ -1096,8 +1125,29 @@ public class CvcOrderInfoEntity implements Serializable{
 	public void setOldAddTime(String oldAddTime) {
 		this.oldAddTime = oldAddTime;
 	}
-	
-	
-	
+	public String getTkOrderStatusString() {
+		return tkOrderStatusString;
+	}
+	public void setTkOrderStatusString(String tkOrderStatusString) {
+		this.tkOrderStatusString = tkOrderStatusString;
+	}
+	public String getExceptionStatusString() {
+		return exceptionStatusString;
+	}
+	public void setExceptionStatusString(String exceptionStatusString) {
+		this.exceptionStatusString = exceptionStatusString;
+	}
+	public String getIsBalanceString() {
+		return isBalanceString;
+	}
+	public void setIsBalanceString(String isBalanceString) {
+		this.isBalanceString = isBalanceString;
+	}
+	public String getYlOrderStatusString() {
+		return ylOrderStatusString;
+	}
+	public void setYlOrderStatusString(String ylOrderStatusString) {
+		this.ylOrderStatusString = ylOrderStatusString;
+	}
 }
 

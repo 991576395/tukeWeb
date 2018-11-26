@@ -3,7 +3,7 @@ package com.xuzy.hotel.deliveryorder.entity;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-import com.xuzy.hotel.order.entity.CvcDeliveryGoodsEntity;
+import com.xuzy.hotel.deliverygoods.entity.CvcDeliveryGoodsEntity;
 
 /**
  * 描述：商品表

@@ -1,5 +1,7 @@
 package com.xuzy.hotel.ordergoods.service;
 
+import java.util.List;
+
 import org.jeecgframework.minidao.annotation.Param;
 import org.jeecgframework.minidao.pojo.MiniDaoPage;
 import com.xuzy.hotel.ordergoods.entity.CvcOrderGoodsEntity;
@@ -22,5 +24,7 @@ public interface CvcOrderGoodsService {
 	public void delete(String id);
 	
 	public void batchDelete(String[] ids);
+	
+	public List<CvcOrderGoodsEntity> getAll(int orderId);
 	
 }

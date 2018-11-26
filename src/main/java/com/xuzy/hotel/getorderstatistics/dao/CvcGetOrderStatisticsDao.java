@@ -16,7 +16,6 @@ import com.xuzy.hotel.getorderstatistics.entity.CvcGetOrderStatisticsEntity;
  */
 @Repository
 public interface CvcGetOrderStatisticsDao{
-
     /**
 	 * 查询返回Java对象
 	 * @param id

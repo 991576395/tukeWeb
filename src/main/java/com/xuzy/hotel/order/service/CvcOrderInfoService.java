@@ -6,9 +6,8 @@ import org.jeecgframework.minidao.annotation.Param;
 import org.jeecgframework.minidao.pojo.MiniDaoPage;
 import org.jeecgframework.p3.core.common.utils.AjaxJson;
 
-import com.xuzy.hotel.deliveryinfo.entity.CvcDeliveryInfoEntity;
+import com.xuzy.hotel.deliverygoods.entity.CvcDeliveryGoodsEntity;
 import com.xuzy.hotel.deliveryorder.entity.CvcDeliveryOrderEntity;
-import com.xuzy.hotel.order.entity.CvcDeliveryGoodsEntity;
 import com.xuzy.hotel.order.entity.CvcOrderInfoEntity;
 
 /**
@@ -27,6 +26,10 @@ public interface CvcOrderInfoService {
 	public void insert(CvcOrderInfoEntity cvcOrderInfo);
 
 	public MiniDaoPage<CvcOrderInfoEntity> getAll(CvcOrderInfoEntity cvcOrderInfo,int page,int rows);
+	
+	public List<CvcOrderInfoEntity> getExcelAll(CvcOrderInfoEntity cvcOrderInfo);
+	
+	public List<CvcOrderInfoEntity> getExceptionExcelAll(CvcOrderInfoEntity cvcOrderInfo);
 	
 	public int getCount(CvcOrderInfoEntity cvcOrderInfo,int page,int rows);
 

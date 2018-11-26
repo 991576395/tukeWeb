@@ -51,9 +51,8 @@
           <div class="center">
             <h1 id="id-text2" class="grey">
               <i class="ace-icon fa fa-leaf green"></i>
-               JEECG 演示系统
+               品博汇订单系统
             </h1>
-            <h4 class="blue" id="id-company-text">www.jeecg.org</h4>
           </div>
           <div class="space-6"></div>
           <div class="position-relative">
@@ -108,7 +107,7 @@
                       <div class="space-4"></div>
 
                 </div>
-                <div class="toolbar clearfix">
+                <div class="toolbar clearfix" style="display: none;">
                   <div style="float: right">
                     <a href="#"  class="forgot-password-link">
                     	  语言
@@ -120,7 +119,6 @@
                 </form>
               </div>
             </div>
-            <div class="center"><h4 class="blue" id="id-company-text">&copy; JEECG版权所有 v_3.7.2</h4></div>
             <div class="navbar-fixed-top align-right">
               <br />
               &nbsp;

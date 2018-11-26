@@ -2,9 +2,10 @@ package com.util;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Random;
 
-import javax.print.attribute.standard.RequestingUserName;
+
 
 /**
  * 
@@ -22,6 +23,13 @@ public class PhpDateUtils {
 	
 	public static long getTime() {
 		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.HOUR, -8);
+		return calendar.getTimeInMillis() / 1000L;
+	}
+	
+	public static long getTime(Date date) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
 		calendar.add(Calendar.HOUR, -8);
 		return calendar.getTimeInMillis() / 1000L;
 	}

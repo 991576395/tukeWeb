@@ -1,30 +1,32 @@
 package com.xuzy.hotel.order.service.impl;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.log4j.Logger;
+import org.jeecgframework.core.util.ResourceUtil;
 import org.jeecgframework.minidao.pojo.MiniDaoPage;
 import org.jeecgframework.p3.core.common.utils.AjaxJson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.util.PhpDateUtils;
-import com.xuzy.hotel.deliveryinfo.entity.CvcDeliveryInfoEntity;
+import com.xuzy.hotel.deliverygoods.dao.CvcDeliveryGoodsDao;
+import com.xuzy.hotel.deliverygoods.entity.CvcDeliveryGoodsEntity;
 import com.xuzy.hotel.deliveryorder.dao.CvcDeliveryOrderDao;
 import com.xuzy.hotel.deliveryorder.entity.CvcDeliveryOrderEntity;
 import com.xuzy.hotel.deliveryorder.service.CvcDeliveryOrderService;
 import com.xuzy.hotel.order.dao.CvcOrderInfoDao;
-import com.xuzy.hotel.order.entity.CvcDeliveryGoodsEntity;
 import com.xuzy.hotel.order.entity.CvcOrderInfoEntity;
 import com.xuzy.hotel.order.service.CvcOrderInfoService;
-import com.xuzy.hotel.shippingbatch.web.CvcShippingBatchController;
 import com.xuzy.hotel.shippingbatchorder.dao.CvcShippingBatchOrderDao;
 import com.xuzy.hotel.shippingbatchorder.entity.CvcShippingBatchOrderEntity;
+import com.xuzy.hotel.ylrequest.ConmentHttp;
+import com.xuzy.hotel.ylrequest.ResponseHead;
+import com.xuzy.hotel.ylrequest.TukeRequestBody;
+import com.xuzy.hotel.ylrequest.module.Kuaidi100Response;
 import com.xuzy.hotel.ylrequest.module.RequestOFFHarbourExchangeOrderJson;
 
 /**
@@ -47,6 +49,9 @@ public class CvcOrderInfoServiceImpl implements CvcOrderInfoService {
 	
 	@Resource
 	private CvcShippingBatchOrderDao cvcShippingBatchOrderDao;
+	
+	@Resource
+	private CvcDeliveryGoodsDao cvcDeliveryGoodsDao;
 
 	 /**
 		 * Logger for this class
@@ -90,7 +95,6 @@ public class CvcOrderInfoServiceImpl implements CvcOrderInfoService {
 
 	@Override
 	public int getCount(CvcOrderInfoEntity cvcOrderInfo, int page, int rows) {
-		// TODO Auto-generated method stub
 		return cvcOrderInfoDao.getCount(cvcOrderInfo);
 	}
 
@@ -110,11 +114,11 @@ public class CvcOrderInfoServiceImpl implements CvcOrderInfoService {
 
 	@Override
 	public CvcDeliveryOrderEntity getDeliveryOrderByOrderId(int orderId) {
-		CvcDeliveryOrderEntity deliveryOrder = cvcOrderInfoDao.getDeliveryOrderByOrderId(orderId);
+		CvcDeliveryOrderEntity deliveryOrder = cvcDeliveryOrderDao.getDeliveryOrderByOrderId(orderId);
 		if(deliveryOrder != null) {
 			deliveryOrder.setActionUser(cvcOrderInfoDao.getActionUserByOrderId(orderId));
 			
-			deliveryOrder.setAddTimeString(DateFormatUtils.format(new Timestamp(Long.parseLong(deliveryOrder.getAddTime()+"000")), "yyyy-MM-dd HH:mm:ss"));
+			deliveryOrder.setAddTimeString(PhpDateUtils.parseDate(deliveryOrder.getAddTime(), "yyyy-MM-dd HH:mm:ss"));
 		}
 		return deliveryOrder;
 	}
@@ -128,7 +132,7 @@ public class CvcOrderInfoServiceImpl implements CvcOrderInfoService {
 	
 	@Override
 	public void insert(CvcDeliveryGoodsEntity cvcDeliveryGoods) {
-		cvcOrderInfoDao.insertGoods(cvcDeliveryGoods);
+		cvcDeliveryGoodsDao.insert(cvcDeliveryGoods);
 	}
 
 	@Override
@@ -209,15 +213,15 @@ public class CvcOrderInfoServiceImpl implements CvcOrderInfoService {
 				exchangeOrderJson.setEMSCompany(shippingName);
 				exchangeOrderJson.setEMSOdd(cvcOrderInfoEntity.getInvoiceNo());
 				exchangeOrderJson.setPreArrivalDate(cvcOrderInfoEntity.getPreArrivalDate());
-//				ResponseHead head = ConmentHttp.sendHttp(new TukeRequestBody.Builder().setParams(exchangeOrderJson)
-//						.setSequence(4).setServiceCode("CRMIF.OFFHarbourExchangeOrderJson").builder(), null);
-//				if (head.getReturn() >= 0) {
+				ResponseHead head = ConmentHttp.sendHttp(new TukeRequestBody.Builder().setParams(exchangeOrderJson)
+						.setSequence(4).setServiceCode("CRMIF.OFFHarbourExchangeOrderJson").builder(), null);
+				if (head.getReturn() >= 0) {
 					isOffhabour = true;
-//				} else {
-//					j.setSuccess(false);
-//					j.setMsg(head.getReturnInfo());
-//					return j;
-//				}
+				} else {
+					j.setSuccess(false);
+					j.setMsg(head.getReturnInfo());
+					return j;
+				}
 			}
 
 			if (cvcOrderInfoEntity.getTkOrderStatus() == 3 || isOffhabour) {
@@ -230,16 +234,16 @@ public class CvcOrderInfoServiceImpl implements CvcOrderInfoService {
 							.getEntityByInvoiceNo(cvcOrderInfoEntity.getInvoiceNo());
 					if (batchOrderEntity == null) {
 						// 未订阅物流信息 开始订阅
-//						Kuaidi100Response kuaidi100Response = ConmentHttp.postorder(shippingName,
-//								cvcOrderInfoEntity.getInvoiceNo());
-//						isPostorder = (kuaidi100Response.getResult() || kuaidi100Response.getMessage().contains("重复订阅"))
-//								? 1: 0;
+						Kuaidi100Response kuaidi100Response = ConmentHttp.postorder(shippingName,
+								cvcOrderInfoEntity.getInvoiceNo());
+						isPostorder = (kuaidi100Response.getResult() || kuaidi100Response.getMessage().contains("重复订阅"))
+								? 1: 0;
 					} else {
 						isPostorder = 1;
 					}
 				} else {
 					// 非批量发货
-//					ConmentHttp.postorder(shippingName, cvcOrderInfoEntity.getInvoiceNo());
+					ConmentHttp.postorder(shippingName, cvcOrderInfoEntity.getInvoiceNo());
 				}
 				// 添加发货订单
 				cvcDeliveryOrderService.addDeliveryOrderByOrder(cvcOrderInfoEntity, shippingName, batchSendNo,
@@ -254,5 +258,41 @@ public class CvcOrderInfoServiceImpl implements CvcOrderInfoService {
 			return j;
 		}
 		return j;
+	}
+
+	@Override
+	public List<CvcOrderInfoEntity> getExcelAll(CvcOrderInfoEntity cvcOrderInfo) {
+		List<CvcOrderInfoEntity> cvcOrderInfoEntities = cvcOrderInfoDao.getExcelAll(cvcOrderInfo);
+		for (CvcOrderInfoEntity cvcOrderInfoEntity : cvcOrderInfoEntities) {
+			cvcOrderInfoEntity.setOldAddTime(cvcOrderInfoEntity.getAddTime());
+			// 格式化时间
+			cvcOrderInfoEntity.setAddTime(PhpDateUtils
+					.parseDate(Long.parseLong(cvcOrderInfoEntity.getAddTime()), "yyyy-MM-dd HH:mm:ss"));
+			cvcOrderInfoEntity.setGetTime(PhpDateUtils
+					.parseDate(Long.parseLong(cvcOrderInfoEntity.getGetTime()), "yyyy-MM-dd HH:mm:ss"));
+			cvcOrderInfoEntity.setTkOrderStatusString(ResourceUtil.searchAllTypesByCode(cvcOrderInfoEntity.getOrderStatus()+"","OStatus"));
+			cvcOrderInfoEntity.setYlOrderStatusString(ResourceUtil.searchAllTypesByCode(cvcOrderInfoEntity.getYlOrderStatus()+"","OStatus"));
+			cvcOrderInfoEntity.setIsBalanceString(ResourceUtil.searchAllTypesByCode(cvcOrderInfoEntity.getIsBalance()+"","is_balance"));
+			cvcOrderInfoEntity.setExceptionStatusString(ResourceUtil.searchAllTypesByCode(cvcOrderInfoEntity.getExceptionStatus()+"" ,"isExp"));
+		}
+		return cvcOrderInfoEntities;
+	}
+
+	@Override
+	public List<CvcOrderInfoEntity> getExceptionExcelAll(CvcOrderInfoEntity cvcOrderInfo) {
+		List<CvcOrderInfoEntity> cvcOrderInfoEntities = cvcOrderInfoDao.getExceptionExcelAll(cvcOrderInfo);
+		for (CvcOrderInfoEntity cvcOrderInfoEntity : cvcOrderInfoEntities) {
+			cvcOrderInfoEntity.setOldAddTime(cvcOrderInfoEntity.getAddTime());
+			// 格式化时间
+			cvcOrderInfoEntity.setAddTime(PhpDateUtils
+					.parseDate(Long.parseLong(cvcOrderInfoEntity.getAddTime()), "yyyy-MM-dd HH:mm:ss"));
+			cvcOrderInfoEntity.setGetTime(PhpDateUtils
+					.parseDate(Long.parseLong(cvcOrderInfoEntity.getGetTime()), "yyyy-MM-dd HH:mm:ss"));
+			cvcOrderInfoEntity.setTkOrderStatusString(ResourceUtil.searchAllTypesByCode(cvcOrderInfoEntity.getOrderStatus()+"","OStatus"));
+			cvcOrderInfoEntity.setYlOrderStatusString(ResourceUtil.searchAllTypesByCode(cvcOrderInfoEntity.getYlOrderStatus()+"","OStatus"));
+			cvcOrderInfoEntity.setIsBalanceString(ResourceUtil.searchAllTypesByCode(cvcOrderInfoEntity.getIsBalance()+"","is_balance"));
+			cvcOrderInfoEntity.setExceptionStatusString(ResourceUtil.searchAllTypesByCode(cvcOrderInfoEntity.getExceptionStatus()+"" ,"isExp"));
+		}
+		return cvcOrderInfoEntities;
 	}
 }

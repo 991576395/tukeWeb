@@ -1,5 +1,7 @@
 package com.xuzy.hotel.ordergoods.dao;
 
+import java.util.List;
+
 import org.jeecgframework.minidao.annotation.Param;
 import org.jeecgframework.minidao.annotation.ResultType;
 import org.jeecgframework.minidao.annotation.Sql;
@@ -58,5 +60,20 @@ public interface CvcOrderGoodsDao{
 	 @Sql("DELETE from cvc_order_goods WHERE ID = :id")
 	 public void deleteById(@Param("id") String id);
 	
+	 
+	 @Sql("SELECT COUNT(rec_id) FROM  cvc_order_goods WHERE order_id = :orderId AND goods_number > send_number")
+	 int getOrderFinish(@Param("orderId")int orderId);
+	 
+	 @ResultType(CvcOrderGoodsEntity.class)
+	 @Sql("SELECT goods_sn, goods_number FROM  cvc_order_goods WHERE order_id= :orderId")
+	 CvcOrderGoodsEntity getOrderGood(@Param("orderId")String orderId);
+	 
+	 /**
+	  * 获取物流流程
+	  * @param invoice_no
+	  * @return
+	  */
+	 @ResultType(CvcOrderGoodsEntity.class)
+	 public List<CvcOrderGoodsEntity> getGoods(@Param("orderId") int orderId);
 }
 

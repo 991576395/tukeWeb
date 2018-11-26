@@ -18,6 +18,7 @@
    <t:dgCol title="处理时间" field="HandleTimeFormat"   width="120"></t:dgCol>
    <t:dgCol title="操作人" field="handleUser"  width="80"></t:dgCol>
    <t:dgToolBar title="查看详情" icon="icon-search" url="cvcOrderInfo.do?toDetail" width="1200" height="800" funname="goLook"></t:dgToolBar>
+  	<t:dgToolBar title="导出EXCEL" icon="icon-putout" funname="ExportXls"></t:dgToolBar>
   </t:datagrid>
   </div>
   
@@ -65,5 +66,36 @@
 				/*为true等价于function(){}*/
 				});
 			}
+			
+			//导出
+			  function ExportXls() {
+				var batchNo =  $("input[name='batchNo']").val();
+				var id =  $("input[name='id']").val();
+				var shippingId =  $("select[name='shippingId']").val();
+				var invoiceNo =  $("input[name='invoiceNo']").val();
+				var exceptionStatus =  $("select[name='exceptionStatus']").val();
+				var handleStatus =  $("select[name='handleStatus']").val();
+				
+				var url = "cvcOrderInfo.do?exportExceptionEXls";
+				if (batchNo != 'undefined' && batchNo.length > 0) {
+					url+="&batchNo="+batchNo;
+				}
+				if (id != 'undefined' && id.length > 0) {
+					url+="&id="+id;
+				}
+				if (shippingId != 'undefined' && shippingId.length > 0) {
+					url+="&shippingId="+shippingId;
+				}
+				if (invoiceNo != 'undefined' && invoiceNo.length > 0) {
+					url+="&invoiceNo="+invoiceNo;
+				}
+				if (exceptionStatus != 'undefined' && exceptionStatus.length > 0) {
+					url+="&exceptionStatus="+exceptionStatus;
+				}
+				if (handleStatus != 'undefined' && handleStatus.length > 0) {
+					url+="&handleStatus="+handleStatushandleStatus;
+				}
+				window.location.href=url;
+			  }	 
 		</script>
  </div>

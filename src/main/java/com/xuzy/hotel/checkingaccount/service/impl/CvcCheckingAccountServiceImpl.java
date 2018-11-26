@@ -15,8 +15,9 @@ import com.xuzy.hotel.checkingaccount.service.CvcCheckingAccountService;
 import com.xuzy.hotel.checkingaccountorder.dao.CvcCheckingAccountOrderDao;
 import com.xuzy.hotel.checkingaccountorder.entity.CvcCheckingAccountOrderEntity;
 import com.xuzy.hotel.order.dao.CvcOrderInfoDao;
-import com.xuzy.hotel.order.entity.CvcOrderGoodsEntity;
 import com.xuzy.hotel.order.entity.CvcOrderInfoEntity;
+import com.xuzy.hotel.ordergoods.dao.CvcOrderGoodsDao;
+import com.xuzy.hotel.ordergoods.entity.CvcOrderGoodsEntity;
 
 /**
  * 描述：对账表
@@ -35,6 +36,9 @@ public class CvcCheckingAccountServiceImpl implements CvcCheckingAccountService 
 	
 	@Resource
 	private CvcCheckingAccountOrderDao cvcCheckingAccountOrderDao;
+	
+	@Resource
+	private CvcOrderGoodsDao cvcOrderGoodsDao;
 
 	@Override
 	public CvcCheckingAccountEntity get(String id) {
@@ -51,7 +55,7 @@ public class CvcCheckingAccountServiceImpl implements CvcCheckingAccountService 
 	public void insert(CvcCheckingAccountEntity cvcCheckingAccount,int CheckAccountInfoID, List<CvcOrderInfoEntity> cvcOrderInfoEntities) {
 		cvcCheckingAccountDao.insert(cvcCheckingAccount);
 		for(CvcOrderInfoEntity cvcOrderInfoEntity:cvcOrderInfoEntities) {
-			CvcOrderGoodsEntity cvcOrderGoodsEntity = cvcOrderInfoDao.getOrderGood(cvcOrderInfoEntity.getId()+"");
+			CvcOrderGoodsEntity cvcOrderGoodsEntity = cvcOrderGoodsDao.getOrderGood(cvcOrderInfoEntity.getId()+"");
 			CvcCheckingAccountOrderEntity cvcCheckingAccountOrder = new CvcCheckingAccountOrderEntity();
 			cvcCheckingAccountOrder.setCheckingAccountId(CheckAccountInfoID);
 			cvcCheckingAccountOrder.setOrderId(cvcOrderInfoEntity.getId());
@@ -105,7 +109,7 @@ public class CvcCheckingAccountServiceImpl implements CvcCheckingAccountService 
 			if(cvcCheckingAccountOrderEntity != null) {
 				continue;
 			}
-			CvcOrderGoodsEntity cvcOrderGoodsEntity = cvcOrderInfoDao.getOrderGood(cvcOrderInfoEntity.getId()+"");
+			CvcOrderGoodsEntity cvcOrderGoodsEntity = cvcOrderGoodsDao.getOrderGood(cvcOrderInfoEntity.getId()+"");
 			CvcCheckingAccountOrderEntity cvcCheckingAccountOrder = new CvcCheckingAccountOrderEntity();
 			cvcCheckingAccountOrder.setCheckingAccountId(checkAccountInfoID);
 			cvcCheckingAccountOrder.setOrderId(cvcOrderInfoEntity.getId());

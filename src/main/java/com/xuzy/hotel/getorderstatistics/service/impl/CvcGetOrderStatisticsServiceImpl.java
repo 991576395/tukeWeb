@@ -17,8 +17,9 @@ import com.xuzy.hotel.getorderstatistics.dao.CvcGetOrderStatisticsDao;
 import com.xuzy.hotel.getorderstatistics.entity.CvcGetOrderStatisticsEntity;
 import com.xuzy.hotel.getorderstatistics.service.CvcGetOrderStatisticsService;
 import com.xuzy.hotel.order.dao.CvcOrderInfoDao;
-import com.xuzy.hotel.order.entity.CvcOrderGoodsEntity;
 import com.xuzy.hotel.order.entity.CvcOrderInfoEntity;
+import com.xuzy.hotel.ordergoods.dao.CvcOrderGoodsDao;
+import com.xuzy.hotel.ordergoods.entity.CvcOrderGoodsEntity;
 import com.xuzy.hotel.ylrequest.module.order.ExchangeOrder;
 import com.xuzy.hotel.ylrequest.module.order.ExchangeOrderDetail;
 
@@ -37,6 +38,8 @@ public class CvcGetOrderStatisticsServiceImpl implements CvcGetOrderStatisticsSe
 	@Resource
 	private CvcOrderInfoDao cvcOrderInfoDao;
 	
+	@Resource
+	private CvcOrderGoodsDao cvcOrderGoodsDao;
 
 	@Override
 	public CvcGetOrderStatisticsEntity get(String id) {
@@ -87,7 +90,7 @@ public class CvcGetOrderStatisticsServiceImpl implements CvcGetOrderStatisticsSe
 		CvcGetOrderStatisticsEntity cvcGetOrderStatisticsEntity = null;
 		String unified_batch_no  = DateFormatUtils.format(Calendar.getInstance(), "yyyyMMdd");
 		String batch_no  = DateFormatUtils.format(Calendar.getInstance(), "yyyyMMddHHmmss");
-		String add_time = Calendar.getInstance().getTimeInMillis()+"";
+		String add_time = PhpDateUtils.getTime()+"";
 		//添加总数
 		int orderCount = 0;
 		for (ExchangeOrder exchangeOrder : exchangeOrders) {
@@ -104,12 +107,12 @@ public class CvcGetOrderStatisticsServiceImpl implements CvcGetOrderStatisticsSe
 				cvcOrderInfoEntity.setAddress(exchangeOrder.getDeliveryAddre());
 				cvcOrderInfoEntity.setRemark(exchangeOrder.getAcceptRemark());
 				try {
-					cvcOrderInfoEntity.setAddTime(""+DateUtils.parseDate(exchangeOrder.getAcceptDate(),new String[] {"yyyy-MM-dd'T'HH:mm:ss.sss"}).getTime());
+					cvcOrderInfoEntity.setAddTime(""+PhpDateUtils.getTime(DateUtils.parseDate(exchangeOrder.getAcceptDate(),new String[] {"yyyy-MM-dd'T'HH:mm:ss.sss"})));
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}
 				try {
-					cvcOrderInfoEntity.setConfirmTime(""+DateUtils.parseDate(exchangeOrder.getConfirmDate(),new String[] {"yyyy-MM-dd'T'HH:mm:ss.sss"}).getTime());
+					cvcOrderInfoEntity.setConfirmTime(""+PhpDateUtils.getTime(DateUtils.parseDate(exchangeOrder.getConfirmDate(),new String[] {"yyyy-MM-dd'T'HH:mm:ss.sss"})));
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}
@@ -121,7 +124,7 @@ public class CvcGetOrderStatisticsServiceImpl implements CvcGetOrderStatisticsSe
 					cvcOrderGoods.setGoodsId(Integer.parseInt(exchangeOrderDetail.getProduct()));
 					cvcOrderGoods.setGoodsSn(exchangeOrderDetail.getProduct());
 					cvcOrderGoods.setGoodsNumber(exchangeOrderDetail.getBookQuantity());
-					cvcOrderInfoDao.insert(cvcOrderGoods);
+					cvcOrderGoodsDao.insert(cvcOrderGoods);
 				}
 				orderCount++;
 			}

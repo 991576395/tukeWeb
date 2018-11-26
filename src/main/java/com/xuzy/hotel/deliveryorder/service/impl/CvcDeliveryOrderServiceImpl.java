@@ -1,11 +1,10 @@
 package com.xuzy.hotel.deliveryorder.service.impl;
 
-import javax.annotation.Resource;
-
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.List;
-import java.util.UUID;
+
+import javax.annotation.Resource;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -18,17 +17,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.appinterface.app.base.exception.XuException;
 import com.util.PhpDateUtils;
+import com.xuzy.hotel.deliverygoods.dao.CvcDeliveryGoodsDao;
+import com.xuzy.hotel.deliverygoods.entity.CvcDeliveryGoodsEntity;
 import com.xuzy.hotel.deliveryorder.dao.CvcDeliveryOrderDao;
 import com.xuzy.hotel.deliveryorder.entity.CvcDeliveryOrderEntity;
 import com.xuzy.hotel.deliveryorder.service.CvcDeliveryOrderService;
 import com.xuzy.hotel.order.dao.CvcOrderInfoDao;
-import com.xuzy.hotel.order.entity.CvcDeliveryGoodsEntity;
-import com.xuzy.hotel.order.entity.CvcOrderGoodsEntity;
 import com.xuzy.hotel.order.entity.CvcOrderInfoEntity;
+import com.xuzy.hotel.ordergoods.dao.CvcOrderGoodsDao;
+import com.xuzy.hotel.ordergoods.entity.CvcOrderGoodsEntity;
 import com.xuzy.hotel.shipping.dao.CvcShippingDao;
 import com.xuzy.hotel.shipping.entity.CvcShippingEntity;
 import com.xuzy.hotel.shippingbatchorder.dao.CvcShippingBatchOrderDao;
-import com.xuzy.hotel.ylrequest.ConmentHttp;
 
 /**
  * 描述：物流信息表
@@ -52,6 +52,12 @@ public class CvcDeliveryOrderServiceImpl implements CvcDeliveryOrderService {
 	
 	@Resource
 	private CvcShippingDao cvcShippingDao;
+	
+	@Resource
+	private CvcOrderGoodsDao cvcOrderGoodsDao;
+	
+	@Resource
+	private CvcDeliveryGoodsDao cvcDeliveryGoodsDao;
 
 	@Override
 	public CvcDeliveryOrderEntity get(String id) {
@@ -152,7 +158,7 @@ public class CvcDeliveryOrderServiceImpl implements CvcDeliveryOrderService {
 				cvcDeliveryOrderEntity.setPreArrivalDate(orderInfoEntity.getPreArrivalDate());
 				
 				int deliveryId = insert(cvcDeliveryOrderEntity);
-				List<CvcOrderGoodsEntity> cvcOrderGoodsEntities = cvcOrderInfoDao.getGoods(orderInfoEntity.getId());
+				List<CvcOrderGoodsEntity> cvcOrderGoodsEntities = cvcOrderGoodsDao.getGoods(orderInfoEntity.getId());
 				if(CollectionUtils.isNotEmpty(cvcOrderGoodsEntities)) {
 					for(CvcOrderGoodsEntity entity:cvcOrderGoodsEntities) {
 						entity.setFormatedSubtotal(entity.getGoodsPrice().multiply(new BigDecimal(entity.getGoodsNumber())));
@@ -166,12 +172,12 @@ public class CvcDeliveryOrderServiceImpl implements CvcDeliveryOrderService {
 						cvcDeliveryGoods.setDeliveryId(deliveryId);
 						cvcDeliveryGoods.setGoodsId(cvcOrderGoodsEntity.getGoodsId());
 						cvcDeliveryGoods.setSendNumber(cvcOrderGoodsEntity.getGoodsNumber());
-						cvcOrderInfoDao.insertGoods(cvcDeliveryGoods);
+						cvcDeliveryGoodsDao.insert(cvcDeliveryGoods);
 					}
 				}
 			}
 			
-			int size = cvcOrderInfoDao.getOrderFinish(orderInfoEntity.getId());
+			int size = cvcOrderGoodsDao.getOrderFinish(orderInfoEntity.getId());
 			if(orderInfoEntity.getOrderStatus() != 1 && orderInfoEntity.getOrderStatus() != 5
 					&& orderInfoEntity.getOrderStatus() != 6) {
 				//        1); // 已确认  5); // 已分单  6); // 部分分单

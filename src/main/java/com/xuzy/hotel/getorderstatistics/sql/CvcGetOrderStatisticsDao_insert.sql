@@ -1,33 +1,15 @@
 INSERT  INTO
 	cvc_get_order_statistics
       ( 
-      id                            
-      ,unified_batch_no               
+      unified_batch_no               
       ,batch_no                       
       ,add_time                       
-      ,wait_delivery_count            
-      ,delivery_count                 
-      ,offharbour_count               
-      ,send_count                     
-      ,signin_count                   
-      ,exception_count                
-      ,signin_fail_count              
-      ,back_count                     
       ,order_count                    
       ) 
 values
       (
-      :cvcGetOrderStatistics.id                            
-      ,:cvcGetOrderStatistics.unifiedBatchNo                
+      :cvcGetOrderStatistics.unifiedBatchNo                
       ,:cvcGetOrderStatistics.batchNo                       
       ,:cvcGetOrderStatistics.addTime                       
-      ,:cvcGetOrderStatistics.waitDeliveryCount             
-      ,:cvcGetOrderStatistics.deliveryCount                 
-      ,:cvcGetOrderStatistics.offharbourCount               
-      ,:cvcGetOrderStatistics.sendCount                     
-      ,:cvcGetOrderStatistics.signinCount                   
-      ,:cvcGetOrderStatistics.exceptionCount                
-      ,:cvcGetOrderStatistics.signinFailCount               
-      ,:cvcGetOrderStatistics.backCount                     
       ,:cvcGetOrderStatistics.orderCount                    
       )

@@ -13,6 +13,7 @@ import org.jeecgframework.minidao.pojo.MiniDaoPage;
 import org.jeecgframework.web.system.pojo.base.TSType;
 import org.springframework.stereotype.Service;
 
+import com.util.PhpDateUtils;
 import com.xuzy.hotel.orderaction.dao.CvcOrderActionDao;
 import com.xuzy.hotel.orderaction.entity.CvcOrderActionEntity;
 import com.xuzy.hotel.orderaction.service.CvcOrderActionService;
@@ -91,7 +92,7 @@ public class CvcOrderActionServiceImpl implements CvcOrderActionService {
 					}
 				}
 				
-				cvcOrderActionEntity.setActionTime(DateFormatUtils.format(new Timestamp(Long.parseLong(cvcOrderActionEntity.getLogTime()+"000")), "yyyy-MM-dd HH:mm:ss"));
+				cvcOrderActionEntity.setActionTime(PhpDateUtils.parseDate(cvcOrderActionEntity.getLogTime(), "yyyy-MM-dd HH:mm:ss"));
 			}
 		}
 		

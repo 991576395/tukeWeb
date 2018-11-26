@@ -18,7 +18,7 @@
    	<t:dgToolBar title="上传对账明细" icon="icon-putint" url="cvcCheckingAccountOrder.do?addCheckingAccount&checkingAccountId=${checkingAccountId}"  funname="addCheckingAccount"></t:dgToolBar>
    	<t:dgToolBar title="重新生成对账明细" icon="icon-edit"   onclick="doMyGo('cvcCheckingAccount.do?updateCheckingAccountOrder&checkingAccountId=${checkingAccountId}')"></t:dgToolBar>
  	<t:dgToolBar title="封账" icon="icon-add" onclick="doMyGo('cvcCheckingAccount.do?makeBalance&checkingAccountId=${checkingAccountId}')"></t:dgToolBar>
- 	<t:dgToolBar title="导出" icon="icon-putout" onclick="exportEXCEL('cvcCheckingAccountOrder.do?exportXls&checkingAccountId=${checkingAccountId}')"></t:dgToolBar>
+ 	<t:dgToolBar title="导出EXCEL" icon="icon-putout" onclick="exportEXCEL('cvcCheckingAccountOrder.do?exportXls&checkingAccountId=${checkingAccountId}')"></t:dgToolBar>
  	<t:dgToolBar title="删除" icon="icon-remove" url="cvcCheckingAccountOrder.do?doDelete&id=${checkingAccountId}" funname="deleteOrder" ></t:dgToolBar>
  
   </t:datagrid>

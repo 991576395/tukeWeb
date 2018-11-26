@@ -20,9 +20,12 @@ import org.jeecgframework.p3.core.common.utils.AjaxJson;
 import org.jeecgframework.p3.core.page.SystemTools;
 import org.jeecgframework.p3.core.util.plugin.ViewVelocity;
 import org.jeecgframework.p3.core.web.BaseController;
+import org.jeecgframework.poi.excel.entity.ExportParams;
+import org.jeecgframework.poi.excel.entity.vo.NormalExcelConstants;
 import org.jeecgframework.tag.core.easyui.TagUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -31,6 +34,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.google.gson.reflect.TypeToken;
+import com.util.PhpDateUtils;
 import com.xuzy.hotel.getorderstatistics.entity.CvcGetOrderStatisticsEntity;
 import com.xuzy.hotel.getorderstatistics.service.CvcGetOrderStatisticsService;
 import com.xuzy.hotel.order.entity.CvcOrderInfoEntity;
@@ -56,7 +60,7 @@ public class CvcGetOrderStatisticsController extends BaseController{
   private CvcGetOrderStatisticsService cvcGetOrderStatisticsService;
   
   @Autowired
-	private CvcOrderInfoService cvcOrderInfoService;
+  private CvcOrderInfoService cvcOrderInfoService;
   
   /**
 	 * 页面跳转
@@ -85,7 +89,6 @@ public class CvcGetOrderStatisticsController extends BaseController{
 		dataGrid.setTotal(cvcGetOrderStatisticsService.getCount(query, dataGrid.getPage(), dataGrid.getRows()));
 		TagUtil.datagrid(response, dataGrid);
 	}
-	
 	
 	
 	/**
@@ -147,8 +150,8 @@ public class CvcGetOrderStatisticsController extends BaseController{
 			MiniDaoPage<CvcOrderInfoEntity> list = cvcOrderInfoService.getAll(query, dataGrid.getPage(), dataGrid.getRows());
 			if(CollectionUtils.isNotEmpty(list.getResults())) {
 				for (CvcOrderInfoEntity entity : list.getResults()) {
-					entity.setAddTime(DateFormatUtils.format(Long.parseLong(entity.getAddTime()+"000"), "yyyy-MM-dd HH:mm:ss"));
-					entity.setGetTime(DateFormatUtils.format(Long.parseLong(entity.getGetTime()+"000"), "yyyy-MM-dd HH:mm:ss"));
+					entity.setAddTime(PhpDateUtils.parseDate(Long.parseLong(entity.getAddTime()), "yyyy-MM-dd HH:mm:ss"));
+					entity.setGetTime(PhpDateUtils.parseDate(Long.parseLong(entity.getGetTime()), "yyyy-MM-dd HH:mm:ss"));
 				}
 			}
 			dataGrid.setResults(SystemTools.convertPaginatedList(list));
@@ -221,7 +224,6 @@ public class CvcGetOrderStatisticsController extends BaseController{
 		}
 		return j;
 	}
-	
 	
 	/**
 	 * 跳转到添加页面

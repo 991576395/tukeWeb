@@ -77,6 +77,13 @@ public interface CvcDeliveryOrderDao{
 	 
 	 @Sql("UPDATE cvc_delivery_order SET shipping_code=:shippingCode WHERE invoice_no= :invoiceNo LIMIT 1 ")
 	 public void updateErrorCode(@Param("shippingCode") String shippingCode,@Param("invoiceNo") String invoiceNo);
-
+	 
+	 /**
+	  * 通过订单号查询快递信息
+	  * @return
+	  */
+	 @ResultType(CvcDeliveryOrderEntity.class)
+	 @Sql("SELECT shipping_name, invoice_no, pre_arrival_date,add_time FROM cvc_delivery_order WHERE order_id = :orderId")
+	 public CvcDeliveryOrderEntity getDeliveryOrderByOrderId(@Param("orderId") int orderId);
 }
 

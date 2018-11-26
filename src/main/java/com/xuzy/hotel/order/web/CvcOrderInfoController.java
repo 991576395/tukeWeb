@@ -1,6 +1,5 @@
 package com.xuzy.hotel.order.web;
 
-import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -14,15 +13,19 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.jeecgframework.core.common.hibernate.qbc.CriteriaQuery;
 import org.jeecgframework.core.common.model.json.DataGrid;
 import org.jeecgframework.core.util.ResourceUtil;
 import org.jeecgframework.minidao.pojo.MiniDaoPage;
 import org.jeecgframework.p3.core.common.utils.AjaxJson;
 import org.jeecgframework.p3.core.page.SystemTools;
 import org.jeecgframework.p3.core.web.BaseController;
+import org.jeecgframework.poi.excel.entity.ExportParams;
+import org.jeecgframework.poi.excel.entity.vo.NormalExcelConstants;
 import org.jeecgframework.tag.core.easyui.TagUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -33,31 +36,30 @@ import org.springframework.web.servlet.ModelAndView;
 import com.appinterface.app.base.exception.XuException;
 import com.util.PHPAndJavaSerialize;
 import com.util.PhpDateUtils;
+import com.xuzy.hotel.checkingaccountorder.entity.CvcCheckingAccountOrderEntity;
+import com.xuzy.hotel.company.entity.TSCompanyEntity;
 import com.xuzy.hotel.deliveryinfo.entity.CvcDeliveryInfoEntity;
 import com.xuzy.hotel.deliveryinfo.service.CvcDeliveryInfoService;
 import com.xuzy.hotel.deliveryorder.entity.CvcDeliveryOrderEntity;
 import com.xuzy.hotel.deliveryorder.service.CvcDeliveryOrderService;
-import com.xuzy.hotel.getorderstatistics.service.CvcGetOrderStatisticsService;
-import com.xuzy.hotel.order.entity.CvcDeliveryGoodsEntity;
-import com.xuzy.hotel.order.entity.CvcOrderGoodsEntity;
 import com.xuzy.hotel.order.entity.CvcOrderInfoEntity;
 import com.xuzy.hotel.order.module.DelivetyJson;
-import com.xuzy.hotel.order.service.CvcOrderGoodsService;
 import com.xuzy.hotel.order.service.CvcOrderInfoService;
 import com.xuzy.hotel.orderaction.entity.CvcOrderActionEntity;
 import com.xuzy.hotel.orderaction.service.CvcOrderActionService;
+import com.xuzy.hotel.ordergoods.entity.CvcOrderGoodsEntity;
+import com.xuzy.hotel.ordergoods.service.CvcOrderGoodsService;
 import com.xuzy.hotel.revokegoods.entity.CvcRevokeGoodsEntity;
 import com.xuzy.hotel.revokegoods.service.CvcRevokeGoodsService;
 import com.xuzy.hotel.shipping.entity.CvcShippingEntity;
 import com.xuzy.hotel.shipping.service.CvcShippingService;
-import com.xuzy.hotel.shippingbatchorder.entity.CvcShippingBatchOrderEntity;
-import com.xuzy.hotel.shippingbatchorder.service.CvcShippingBatchOrderService;
 import com.xuzy.hotel.ylrequest.ConmentHttp;
 import com.xuzy.hotel.ylrequest.ResponseHead;
 import com.xuzy.hotel.ylrequest.TukeRequestBody;
-import com.xuzy.hotel.ylrequest.module.Kuaidi100Response;
 import com.xuzy.hotel.ylrequest.module.RequestDeliveryExchangeOrderJson;
 import com.xuzy.hotel.ylrequest.module.RequestOFFHarbourExchangeOrderJson;
+import com.xuzy.hotel.ylrequest.module.RequestReNewExchangeEMSJson;
+import com.xuzy.hotel.ylrequest.module.RequestReNewExchangeSignDateJson;
 import com.xuzy.hotel.ylrequest.module.RequestSignInExchangeOrderJson;
 
 /**
@@ -90,6 +92,7 @@ public class CvcOrderInfoController extends BaseController {
 	
 	@Autowired
 	private CvcDeliveryInfoService cvcDeliveryInfoService;
+	
 	
 	/**
 	 * 页面跳转
@@ -155,7 +158,58 @@ public class CvcOrderInfoController extends BaseController {
 		request.setAttribute("batchNo", batchNo);
 		return new ModelAndView("com/xuzy/hotel/order/tOrderTableList");
 	}
+	
+	/**
+	 * 导出excel
+	 * @param request
+	 * @param response
+	 */
+	@RequestMapping(params = "exportXls")
+	public String exportXls(CvcOrderInfoEntity entity,HttpServletRequest request,HttpServletResponse response
+			, DataGrid dataGrid,ModelMap modelMap) {
+		if(StringUtils.isNotEmpty(entity.getAddTime_begin1())) {
+			try {
+				Date date1 = DateUtils.parseDate(entity.getAddTime_begin1(),new String[] {"yyyy-MM-dd HH:mm:ss"}) ;
+				entity.setAddTimeBegin((int)PhpDateUtils.getTime(date1));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		if(StringUtils.isNotEmpty(entity.getAddTime_end2())) {
+			try {
+				Date date1 = DateUtils.parseDate(entity.getAddTime_end2(),new String[] {"yyyy-MM-dd HH:mm:ss"}) ;
+				entity.setAddTimeEnd((int)PhpDateUtils.getTime(date1));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
+		List<CvcOrderInfoEntity> entitys = cvcOrderInfoService.getExcelAll(entity);
+		modelMap.put(NormalExcelConstants.FILE_NAME,DateFormatUtils.format(Calendar.getInstance(), "yyyyMMddHHmmss"));
+		modelMap.put(NormalExcelConstants.CLASS,CvcOrderInfoEntity.class);
+		modelMap.put(NormalExcelConstants.PARAMS,new ExportParams(null, null,
+			"导出信息"));
+		modelMap.put(NormalExcelConstants.DATA_LIST,entitys);
+		return NormalExcelConstants.JEECG_EXCEL_VIEW;
+	}
 
+	/**
+	 * 导出excel
+	 * @param request
+	 * @param response
+	 */
+	@RequestMapping(params = "exportExceptionEXls")
+	public String exportExceptionEXls(CvcOrderInfoEntity entity,HttpServletRequest request,HttpServletResponse response
+			, DataGrid dataGrid,ModelMap modelMap) {
+		List<CvcOrderInfoEntity> entitys = cvcOrderInfoService.getExceptionExcelAll(entity);
+		modelMap.put(NormalExcelConstants.FILE_NAME,DateFormatUtils.format(Calendar.getInstance(), "yyyyMMddHHmmss"));
+		modelMap.put(NormalExcelConstants.CLASS,CvcOrderInfoEntity.class);
+		modelMap.put(NormalExcelConstants.PARAMS,new ExportParams(null, null,
+			"导出信息"));
+		modelMap.put(NormalExcelConstants.DATA_LIST,entitys);
+		return NormalExcelConstants.JEECG_EXCEL_VIEW;
+	}
+	
 	/**
 	 * easyui AJAX请求数据
 	 * 
@@ -170,7 +224,7 @@ public class CvcOrderInfoController extends BaseController {
 		if(StringUtils.isNotEmpty(query.getAddTime_begin1())) {
 			try {
 				Date date1 = DateUtils.parseDate(query.getAddTime_begin1(),new String[] {"yyyy-MM-dd HH:mm:ss"}) ;
-				query.setAddTimeBegin(Integer.parseInt(String.valueOf(date1.getTime()).substring(0, 10)));
+				query.setAddTimeBegin((int)PhpDateUtils.getTime(date1));
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
@@ -179,7 +233,7 @@ public class CvcOrderInfoController extends BaseController {
 		if(StringUtils.isNotEmpty(query.getAddTime_end2())) {
 			try {
 				Date date1 = DateUtils.parseDate(query.getAddTime_end2(),new String[] {"yyyy-MM-dd HH:mm:ss"}) ;
-				query.setAddTimeEnd(Integer.parseInt(String.valueOf(date1.getTime()).substring(0, 10)));
+				query.setAddTimeEnd((int)PhpDateUtils.getTime(date1));
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
@@ -310,11 +364,19 @@ public class CvcOrderInfoController extends BaseController {
 			cvcOrderInfo.setId(orderId);
 			CvcOrderInfoEntity cvcOrderInfo1 = cvcOrderInfoService.getOrder(cvcOrderInfo);
 			if(cvcOrderInfo1 != null) {
-				//TODO 请求伊利接口  CRMIF.ReNewExchangeSignDateJson
-				
-				//TODO 请求伊利接口成功
-				
-				cvcDeliveryOrderService.updateSigndate(orderId, signdate);
+				//请求伊利接口  
+				RequestReNewExchangeSignDateJson dateJson = new RequestReNewExchangeSignDateJson();
+				dateJson.setOrderID(orderId);
+				dateJson.setSignDate(signdate);
+				ResponseHead head = ConmentHttp.sendHttp(new TukeRequestBody.Builder().setSequence(2)
+						.setParams(dateJson).setServiceCode("CRMIF.ReNewExchangeSignDateJson").builder(), null);
+				if(head.getReturn() >= 0) {
+					cvcDeliveryOrderService.updateSigndate(orderId, signdate);
+				}else {
+					j.setSuccess(false);
+					j.setMsg("接口调用失败！原因："+head.getReturnInfo());
+					return j;
+				}
 			}else {
 				j.setSuccess(false);
 				j.setMsg("该订单号不存在！");
@@ -372,14 +434,24 @@ public class CvcOrderInfoController extends BaseController {
 			cvcOrderInfo.setId(orderId);
 			CvcOrderInfoEntity cvcOrderInfo1 = cvcOrderInfoService.getOrder(cvcOrderInfo);
 			if(cvcOrderInfo1 != null) {
-				//TODO 请求伊利接口  CRMIF.ReNewExchangeEMSJson
-				
-				//TODO 请求伊利接口成功
-				cvcDeliveryOrderService.updateNu(orderId, cvcShippingEntity.getShippingId(),cvcShippingEntity.getShippingName(),invoiceNo);
-				if(cvcOrderInfo1.getExceptionStatus() != null &&
-						"4".equals(cvcOrderInfo1.getExceptionStatus()) || "5".equals(cvcOrderInfo1.getExceptionStatus())) {
-					//更新异常订单
-					cvcOrderInfoService.updateHandle(cvcOrderInfo1.getId(),1,Integer.parseInt(String.valueOf(Calendar.getInstance().getTimeInMillis()).substring(0, 10)),ResourceUtil.getSessionUser().getUserName());
+				//请求伊利接口  CRMIF.ReNewExchangeEMSJson
+				RequestReNewExchangeEMSJson emsJson = new RequestReNewExchangeEMSJson();
+				emsJson.setOrderID(orderId);
+				emsJson.setEMSCompany(shippingName);
+				emsJson.setEMSOdd(invoiceNo);
+				ResponseHead head = ConmentHttp.sendHttp(new TukeRequestBody.Builder().setSequence(2)
+						.setParams(emsJson).setServiceCode("CRMIF.ReNewExchangeEMSJson").builder(), null);
+				if(head.getReturn() >= 0) {
+					cvcDeliveryOrderService.updateNu(orderId, cvcShippingEntity.getShippingId(),cvcShippingEntity.getShippingName(),invoiceNo);
+					if(cvcOrderInfo1.getExceptionStatus() != null &&
+							"4".equals(cvcOrderInfo1.getExceptionStatus()) || "5".equals(cvcOrderInfo1.getExceptionStatus())) {
+						//更新异常订单
+						cvcOrderInfoService.updateHandle(cvcOrderInfo1.getId(),1,Integer.parseInt(String.valueOf(Calendar.getInstance().getTimeInMillis()).substring(0, 10)),ResourceUtil.getSessionUser().getUserName());
+					}
+				}else {
+					j.setSuccess(false);
+					j.setMsg("接口调用失败！原因："+head.getReturnInfo());
+					return j;
 				}
 			}else {
 				j.setSuccess(false);

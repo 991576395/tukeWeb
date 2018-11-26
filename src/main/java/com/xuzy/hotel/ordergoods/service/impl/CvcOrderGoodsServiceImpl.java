@@ -1,7 +1,12 @@
 package com.xuzy.hotel.ordergoods.service.impl;
 
 import javax.annotation.Resource;
+
+import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.jeecgframework.minidao.pojo.MiniDaoPage;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +28,7 @@ public class CvcOrderGoodsServiceImpl implements CvcOrderGoodsService {
 
 	@Override
 	public CvcOrderGoodsEntity get(String id) {
-		return cvcOrderGoodsDao.get(id);
+		return cvcOrderGoodsDao.getOrderGood(id);
 	}
 
 	@Override
@@ -54,5 +59,16 @@ public class CvcOrderGoodsServiceImpl implements CvcOrderGoodsService {
 			String id = ids[i];
 			cvcOrderGoodsDao.deleteById(id);
 		}
+	}
+	
+	@Override
+	public List<CvcOrderGoodsEntity> getAll(int orderId) {
+		List<CvcOrderGoodsEntity> cvcOrderGoodsEntities = cvcOrderGoodsDao.getGoods(orderId);
+		if(CollectionUtils.isNotEmpty(cvcOrderGoodsEntities)) {
+			for(CvcOrderGoodsEntity entity:cvcOrderGoodsEntities) {
+				entity.setFormatedSubtotal(entity.getGoodsPrice().multiply(new BigDecimal(entity.getGoodsNumber())));
+			}
+		}
+		return cvcOrderGoodsEntities;
 	}
 }

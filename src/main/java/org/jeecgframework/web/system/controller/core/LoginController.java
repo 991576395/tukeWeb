@@ -674,7 +674,7 @@ public class LoginController extends BaseController{
 			request.setAttribute("show", "0");
 		}
 
-		return new ModelAndView("main/acehome");
+		return new ModelAndView("main/hellohome");
 	}
 	/**
 	 * HPLUS首页跳转
@@ -692,7 +692,7 @@ public class LoginController extends BaseController{
 			request.setAttribute("show", "0");
 		}*/
 
-		return new ModelAndView("main/hplushome");
+		return new ModelAndView("main/hellohome");
 	}
 
 	/**
@@ -702,7 +702,7 @@ public class LoginController extends BaseController{
 	 */
 	@RequestMapping(params = "fineuiHome")
 	public ModelAndView fineuiHome(HttpServletRequest request) {
-		return new ModelAndView("main/fineui_home");
+		return new ModelAndView("main/hellohome");
 	}
 
 	/**

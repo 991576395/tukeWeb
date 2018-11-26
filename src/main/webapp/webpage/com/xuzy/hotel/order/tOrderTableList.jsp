@@ -22,7 +22,9 @@
 <%--    </c:if> --%>
 
    <t:dgToolBar title="查看详情" icon="icon-search" url="cvcOrderInfo.do?toDetail" width="1000" height="600" funname="goLook"></t:dgToolBar>
-  <t:dgToolBar title="推送至离港" icon="icon-edit" url="cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=offharbour"  funname="toUpdate"></t:dgToolBar>
+   
+   <t:dgToolBar title="导出EXCEL" icon="icon-putout" funname="ExportXls"></t:dgToolBar>
+   <t:dgToolBar title="推送至离港" icon="icon-edit" url="cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=offharbour"  funname="toUpdate"></t:dgToolBar>
    <t:dgToolBar title="推送至配送中" icon="icon-edit" url="cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=send"  funname="toUpdate"></t:dgToolBar>
    <t:dgToolBar title="推送至签收" icon="icon-edit" url="cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=signin"  funname="toUpdate"></t:dgToolBar>
   	
@@ -31,7 +33,61 @@
   </div>
   
   <script type="text/javascript">
-		  
+		//导出
+		  function ExportXls() {
+			var batchNo =  $("input[name='batchNo']").val();
+			var id =  $("input[name='id']").val();
+			var orderStatus =  $("select[name='orderStatus']").val();
+			var ylOrderStatus =  $("select[name='ylOrderStatus']").val();
+			var shippingId =  $("select[name='shippingId']").val();
+			var invoiceNo =  $("input[name='invoiceNo']").val();
+			var exceptionStatus =  $("select[name='exceptionStatus']").val();
+			var addTime_begin1 =  $("input[name='addTime_begin1']").val();
+			var addTime_end2 =  $("input[name='addTime_end2']").val();
+			var isBalance =  $("select[name='isBalance']").val();
+			var userName =  $("select[name='userName']").val();
+			var returnReason =  $("select[name='returnReason']").val();
+			
+			var url = "cvcOrderInfo.do?exportXls";
+			if (batchNo != 'undefined' && batchNo.length > 0) {
+				url+="&batchNo="+batchNo;
+			}
+			if (id != 'undefined' && id.length > 0) {
+				url+="&id="+id;
+			}
+			if (orderStatus != 'undefined' && orderStatus.length > 0) {
+				url+="&orderStatus="+orderStatus;
+			}
+			if (ylOrderStatus != 'undefined' && ylOrderStatus.length > 0) {
+				url+="&ylOrderStatus="+ylOrderStatus;
+			}
+			if (shippingId != 'undefined' && shippingId.length > 0) {
+				url+="&shippingId="+shippingId;
+			}
+			if (invoiceNo != 'undefined' && invoiceNo.length > 0) {
+				url+="&invoiceNo="+invoiceNo;
+			}
+			if (exceptionStatus != 'undefined' && exceptionStatus.length > 0) {
+				url+="&exceptionStatus="+exceptionStatus;
+			}
+			if (addTime_begin1 != 'undefined' && addTime_begin1.length > 0) {
+				url+="&addTime_begin1="+addTime_begin1;
+			}
+			if (addTime_end2 != 'undefined' && addTime_end2.length > 0) {
+				url+="&addTime_end2="+addTime_end2;
+			}
+			if (isBalance != 'undefined' && isBalance.length > 0) {
+				url+="&isBalance="+isBalance;
+			}
+			if (userName != 'undefined' && userName.length > 0) {
+				url+="&userName="+userName;
+			}
+			if (returnReason != 'undefined' && returnReason.length > 0) {
+				url+="&returnReason="+returnReason;
+			}
+			window.location.href=url;
+		  }	  	
+  
 		  function toUpdate(title, url, id, width, height, isRestful) {
 			  	var rowsData = $('#' + id).datagrid('getSelections');
 				if (!rowsData || rowsData.length == 0) {

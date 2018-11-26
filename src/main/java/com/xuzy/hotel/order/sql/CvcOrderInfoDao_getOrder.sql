@@ -16,8 +16,7 @@ coi.zipcode,
 coi.tel,
 coi.mobile,
 coi.remark,
-coi.return_reason  returnReason,
-((case when enterprise_discount = 0 then goods_amount else goods_amount * enterprise_discount * 0.01 end) - discount + tax + shipping_fee + insure_fee + pay_fee + pack_fee + card_fee) AS total_fee 
+coi.return_reason  returnReason
 FROM cvc_order_info coi
 where 1=1
 <#include "CvcOrderInfoDao_condition.sql">

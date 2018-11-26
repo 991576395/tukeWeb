@@ -9,6 +9,7 @@ import org.apache.commons.lang.time.DateFormatUtils;
 import org.jeecgframework.minidao.pojo.MiniDaoPage;
 import org.springframework.stereotype.Service;
 
+import com.util.PhpDateUtils;
 import com.xuzy.hotel.checkingaccountorder.dao.CvcCheckingAccountOrderDao;
 import com.xuzy.hotel.checkingaccountorder.entity.CvcCheckingAccountOrderEntity;
 import com.xuzy.hotel.checkingaccountorder.service.CvcCheckingAccountOrderService;
@@ -49,7 +50,7 @@ public class CvcCheckingAccountOrderServiceImpl implements CvcCheckingAccountOrd
 					accountOrderEntity.setStatueName("未上传");
 				}
 				
-				accountOrderEntity.setAddCheckingAccountTimeFormat(DateFormatUtils.format(Long.parseLong(accountOrderEntity.getAddCheckingAccountTime()+"000"), "yyyy-MM-dd HH:mm:ss"));
+				accountOrderEntity.setAddCheckingAccountTimeFormat(PhpDateUtils.parseDate(accountOrderEntity.getAddCheckingAccountTime(), "yyyy-MM-dd HH:mm:ss"));
 			}
 		}
 		return entitys;
@@ -91,7 +92,7 @@ public class CvcCheckingAccountOrderServiceImpl implements CvcCheckingAccountOrd
 				}else {
 					accountOrderEntity.setStatueName("未上传");
 				}
-				accountOrderEntity.setAddCheckingAccountTimeFormat(DateFormatUtils.format(Long.parseLong(accountOrderEntity.getAddCheckingAccountTime()+"000"), "yyyy-MM-dd HH:mm:ss"));
+				accountOrderEntity.setAddCheckingAccountTimeFormat(PhpDateUtils.parseDate(accountOrderEntity.getAddCheckingAccountTime(), "yyyy-MM-dd HH:mm:ss"));
 			}
 		}
 		return 	entitys;

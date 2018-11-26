@@ -7,8 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.velocity.VelocityContext;
 import org.jeecgframework.core.common.model.json.DataGrid;
 import org.jeecgframework.core.util.ResourceUtil;
@@ -26,13 +24,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+
+import com.util.PhpDateUtils;
 import com.xuzy.hotel.checkingaccount.entity.CvcCheckingAccountEntity;
 import com.xuzy.hotel.checkingaccount.service.CvcCheckingAccountService;
-import com.xuzy.hotel.checkingaccountorder.entity.CvcCheckingAccountOrderEntity;
-import com.xuzy.hotel.checkingaccountorder.service.CvcCheckingAccountOrderService;
-import com.xuzy.hotel.order.entity.CvcOrderGoodsEntity;
 import com.xuzy.hotel.order.entity.CvcOrderInfoEntity;
-import com.xuzy.hotel.order.service.CvcOrderGoodsService;
 import com.xuzy.hotel.order.service.CvcOrderInfoService;
 import com.xuzy.hotel.ylrequest.Config;
 import com.xuzy.hotel.ylrequest.ConmentHttp;
@@ -81,7 +77,7 @@ public class CvcCheckingAccountController extends BaseController{
 		MiniDaoPage<CvcCheckingAccountEntity> list = cvcCheckingAccountService.getAll(query, dataGrid.getPage(), dataGrid.getRows());
 		if(CollectionUtils.isNotEmpty(list.getResults())) {
 			for (CvcCheckingAccountEntity entity : list.getResults()) {
-				entity.setAddTimeFormat(DateFormatUtils.format(Long.parseLong(entity.getAddTime()+"000"), "yyyy-MM-dd HH:mm:ss"));
+				entity.setAddTimeFormat(PhpDateUtils.parseDate(entity.getAddTime(), "yyyy-MM-dd HH:mm:ss"));
 			}
 		}
 		dataGrid.setResults(SystemTools.convertPaginatedList(list));
@@ -124,9 +120,9 @@ public class CvcCheckingAccountController extends BaseController{
 //					.setServiceCode("CRMIF.CheckingAcccountInfoAddJson").builder(), ResponseCheckingAcccountInfoAddJson.class);
 //			if(head.getReturn() >= 0) {
 //				ResponseCheckingAcccountInfoAddJson responseCheckingAcccountInfoAddJson = (ResponseCheckingAcccountInfoAddJson) head.getBody();
-//				
+				
 //				int CheckAccountInfoID = responseCheckingAcccountInfoAddJson.getCheckAccountInfoID();	
-				int CheckAccountInfoID = 123456;	
+				int CheckAccountInfoID = 12345;
 				if(CheckAccountInfoID > 0 && !CollectionUtils.isEmpty(cvcOrderInfoEntities)) {
 					CvcCheckingAccountEntity accountEntity = cvcCheckingAccountService.get(CheckAccountInfoID+"");
 					if(accountEntity == null) {
@@ -231,6 +227,7 @@ public class CvcCheckingAccountController extends BaseController{
 	  * @return
 	  */
 	@RequestMapping(params="updateCheckingAccount",method = RequestMethod.GET)
+	@ResponseBody
 	public AjaxJson updateCheckingAccount(@RequestParam(required = true, value = "checkAccountInfoID" ) Integer checkAccountInfoID,HttpServletResponse response,HttpServletRequest request)throws Exception{
 		AjaxJson j = new AjaxJson();
 		try {
