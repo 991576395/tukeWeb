@@ -116,13 +116,13 @@ public class CvcCheckingAccountController extends BaseController{
 			moduleType.setEndDate(cvcCheckingAccount.getEndTime());
 			moduleType.setTopic(cvcCheckingAccount.getTopic());
 			moduleType.setAccountType(cvcCheckingAccount.getAccountType());
-//			ResponseHead head = ConmentHttp.sendHttp(new TukeRequestBody.Builder().setParams(moduleType).setSequence(2)
-//					.setServiceCode("CRMIF.CheckingAcccountInfoAddJson").builder(), ResponseCheckingAcccountInfoAddJson.class);
-//			if(head.getReturn() >= 0) {
-//				ResponseCheckingAcccountInfoAddJson responseCheckingAcccountInfoAddJson = (ResponseCheckingAcccountInfoAddJson) head.getBody();
+			ResponseHead head = ConmentHttp.sendHttp(new TukeRequestBody.Builder().setParams(moduleType).setSequence(2)
+					.setServiceCode("CRMIF.CheckingAcccountInfoAddJson").builder(), ResponseCheckingAcccountInfoAddJson.class);
+			if(head.getReturn() >= 0) {
+				ResponseCheckingAcccountInfoAddJson responseCheckingAcccountInfoAddJson = (ResponseCheckingAcccountInfoAddJson) head.getBody();
 				
-//				int CheckAccountInfoID = responseCheckingAcccountInfoAddJson.getCheckAccountInfoID();	
-				int CheckAccountInfoID = 12345;
+				int CheckAccountInfoID = responseCheckingAcccountInfoAddJson.getCheckAccountInfoID();	
+//				int CheckAccountInfoID = 12345;
 				if(CheckAccountInfoID > 0 && !CollectionUtils.isEmpty(cvcOrderInfoEntities)) {
 					CvcCheckingAccountEntity accountEntity = cvcCheckingAccountService.get(CheckAccountInfoID+"");
 					if(accountEntity == null) {
@@ -134,17 +134,17 @@ public class CvcCheckingAccountController extends BaseController{
 						accountEntity.setOppstaff(1);
 						accountEntity.setStartTime(cvcCheckingAccount.getStartTime());
 						accountEntity.setEndTime(cvcCheckingAccount.getEndTime());
-						accountEntity.setAddTime(Calendar.getInstance().getTimeInMillis());
+						accountEntity.setAddTime(PhpDateUtils.getTime());
 						accountEntity.setIsBalance(0);
 						
 						cvcCheckingAccountService.insert(accountEntity,CheckAccountInfoID,cvcOrderInfoEntities);
 					}
 				}
 				j.setMsg("保存成功");
-//			}else {
-//				j.setSuccess(false);
-//				j.setMsg("伊利接口调用失败！");
-//			}
+			}else {
+				j.setSuccess(false);
+				j.setMsg("伊利接口调用失败！");
+			}
 		} catch (Exception e) {
 		    log.info(e.getMessage());
 			j.setSuccess(false);
@@ -248,16 +248,15 @@ public class CvcCheckingAccountController extends BaseController{
 			moduleType.setEndDate(cvcCheckingAccount.getEndTime());
 			moduleType.setTopic(cvcCheckingAccount.getTopic());
 			moduleType.setAccountType(cvcCheckingAccount.getAccountType());
-//			ResponseHead head = ConmentHttp.sendHttp(new TukeRequestBody.Builder().setParams(moduleType).setSequence(2)
-//					.setServiceCode("CRMIF.UpdateCheckingAccountInfoJson").builder(), null);
-//			if(head.getReturn() >= 0) {
-			
+			ResponseHead head = ConmentHttp.sendHttp(new TukeRequestBody.Builder().setParams(moduleType).setSequence(2)
+					.setServiceCode("CRMIF.UpdateCheckingAccountInfoJson").builder(), null);
+			if(head.getReturn() >= 0) {
 				cvcCheckingAccountService.update(cvcCheckingAccount);
 				j.setMsg("保存成功");
-//			}else {
-//				j.setSuccess(false);
-//				j.setMsg("伊利接口调用失败！");
-//			}
+			}else {
+				j.setSuccess(false);
+				j.setMsg("伊利接口调用失败！");
+			}
 		} catch (Exception e) {
 		    log.info(e.getMessage());
 			j.setSuccess(false);

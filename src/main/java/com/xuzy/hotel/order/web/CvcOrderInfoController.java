@@ -446,7 +446,7 @@ public class CvcOrderInfoController extends BaseController {
 					if(cvcOrderInfo1.getExceptionStatus() != null &&
 							"4".equals(cvcOrderInfo1.getExceptionStatus()) || "5".equals(cvcOrderInfo1.getExceptionStatus())) {
 						//更新异常订单
-						cvcOrderInfoService.updateHandle(cvcOrderInfo1.getId(),1,Integer.parseInt(String.valueOf(Calendar.getInstance().getTimeInMillis()).substring(0, 10)),ResourceUtil.getSessionUser().getUserName());
+						cvcOrderInfoService.updateHandle(cvcOrderInfo1.getId(),1,(int)PhpDateUtils.getTime(),ResourceUtil.getSessionUser().getUserName());
 					}
 				}else {
 					j.setSuccess(false);

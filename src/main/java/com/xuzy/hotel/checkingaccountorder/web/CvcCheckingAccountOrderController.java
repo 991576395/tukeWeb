@@ -146,12 +146,12 @@ public class CvcCheckingAccountOrderController extends BaseController{
 					checkingAccountDetailAddJson.setOppStaff(cvcOrderInfoEntity.getOppstaff());
 //					
 //					//调用上传订单详情接口
-////					ResponseHead responseHead = ConmentHttp.sendHttp(new TukeRequestBody.Builder()
-////							.setSequence(2)
-////							.setServiceCode("CRMIF.CheckingAccountDetailAddJson")
-////							.setParams(checkingAccountDetailAddJson).builder(), null);
-//					if(responseHead.getReturn() >= 0) {
-					if(true) {
+					ResponseHead responseHead = ConmentHttp.sendHttp(new TukeRequestBody.Builder()
+							.setSequence(2)
+							.setServiceCode("CRMIF.CheckingAccountDetailAddJson")
+							.setParams(checkingAccountDetailAddJson).builder(), null);
+					if(responseHead.getReturn() >= 0) {
+//					if(true) {
 						cvcCheckingAccountOrderService.updateAddCheckingAccount(checkingAccountId, entity.getOrderId(), PhpDateUtils.getTime());
 						sucSize++;
 					}else {
@@ -181,9 +181,9 @@ public class CvcCheckingAccountOrderController extends BaseController{
 	public String exportXls(@RequestParam(required = true, value = "checkingAccountId" )Integer checkingAccountId,HttpServletRequest request
 			,HttpServletResponse response,ModelMap modelMap) {
 		List<CvcCheckingAccountOrderEntity> entitys = cvcCheckingAccountOrderService.getOrders(checkingAccountId);
-		modelMap.put(NormalExcelConstants.FILE_NAME,"对账订单");
+		modelMap.put(NormalExcelConstants.FILE_NAME,DateFormatUtils.format(Calendar.getInstance(), "yyyyMMddHHmmss"));
 		modelMap.put(NormalExcelConstants.CLASS,CvcCheckingAccountOrderEntity.class);
-		modelMap.put(NormalExcelConstants.PARAMS,new ExportParams("对账订单列表", "导出人:"+ResourceUtil.getSessionUser().getUserName(),
+		modelMap.put(NormalExcelConstants.PARAMS,new ExportParams(null, null,
 			"导出信息"));
 		modelMap.put(NormalExcelConstants.DATA_LIST,entitys);
 		return NormalExcelConstants.JEECG_EXCEL_VIEW;

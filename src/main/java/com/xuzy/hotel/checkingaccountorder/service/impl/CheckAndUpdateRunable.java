@@ -7,6 +7,7 @@ import org.jeecgframework.minidao.pojo.MiniDaoPage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.util.PhpDateUtils;
 import com.xuzy.hotel.checkingaccount.entity.CvcCheckingAccountEntity;
 import com.xuzy.hotel.checkingaccount.service.CvcCheckingAccountService;
 import com.xuzy.hotel.checkingaccountorder.entity.CvcCheckingAccountOrderEntity;
@@ -69,7 +70,7 @@ public class CheckAndUpdateRunable implements Runnable {
 //							.setParams(checkingAccountDetailAddJson).builder(), null);
 //					if(responseHead.getReturn() >= 0) {
 					cvcCheckingAccountOrderService.updateAddCheckingAccount(checkingAccountId, entity.getOrderId(),
-							Calendar.getInstance().getTimeInMillis());
+							PhpDateUtils.getTime());
 //					}
 				}
 			} else {
