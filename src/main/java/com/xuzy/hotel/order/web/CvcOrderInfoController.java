@@ -477,7 +477,7 @@ public class CvcOrderInfoController extends BaseController {
 	@ResponseBody
 	public AjaxJson ship(@RequestParam(required = true, value = "orderId") int orderId
 			,@RequestParam(required = false, value = "preArrivalDate") String preArrivalDate
-			,@RequestParam(required = false, value = "province") String province
+			,@RequestParam(required = false, value = "invoiceNo") String invoiceNo
 			,@RequestParam(required = false, value = "city") String city
 			,@RequestParam(required = false, value = "district") String district
 			,@RequestParam(required = false, value = "agency_id") String agency_id
@@ -501,6 +501,19 @@ public class CvcOrderInfoController extends BaseController {
 		}
 		
 		cvcOrderInfoEntity.setPreArrivalDate(preArrivalDate);
+		
+		if(StringUtils.isEmpty(preArrivalDate)) {
+			j.setSuccess(false);
+			j.setMsg("预计到达时间不能为空！");
+			return j;
+		}
+		
+		if(StringUtils.isEmpty(invoiceNo)) {
+			j.setSuccess(false);
+			j.setMsg("快递单号不能为空！");
+			return j;
+		}
+		cvcOrderInfoEntity.setInvoiceNo(invoiceNo);
 
 		if (1 == cvcOrderInfoEntity.getOrderStatus()
 				&& (cvcOrderInfoEntity.getShippingStatus() == 1 || cvcOrderInfoEntity.getShippingStatus() == 2)

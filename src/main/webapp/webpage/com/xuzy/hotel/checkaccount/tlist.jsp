@@ -8,7 +8,7 @@
    <t:dgCol title="对账明细主题" field="topic"   width="80"></t:dgCol>
    <t:dgCol title="对账开始时间" field="startTime"   width="80"></t:dgCol>
    <t:dgCol title="对账截止时间" field="endTime"  width="100"></t:dgCol>
-   <t:dgCol title="积分账户" field="accountType" formatterjs="formatAgeFun" dictionary="atType"  width="120"></t:dgCol>
+   <t:dgCol title="积分账户" field="accountType" formatterjs="formatAgeFun"  width="120"></t:dgCol>
    <t:dgCol title="对账生成时间" field="addTimeFormat"  width="100"></t:dgCol>
    <t:dgCol title="是否封账" field="isBalance" dictionary="isBalance"  width="120"></t:dgCol>
    
@@ -45,6 +45,10 @@
 			  function formatAgeFun(age,row,index){
 			  	if(age == 0){
 			  		return "";
+			  	}else if(age == 1){
+			  		return "金领冠";
+			  	}else if(age == 2){
+			  		return "托菲尔";
 			  	}
 			  	return age;
 			  }		

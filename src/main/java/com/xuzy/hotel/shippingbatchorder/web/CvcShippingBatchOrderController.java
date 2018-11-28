@@ -82,10 +82,9 @@ public class CvcShippingBatchOrderController extends BaseController{
 	@ResponseBody
 	public AjaxJson ship(@RequestParam(required = true, value = "batchNo" ) String batchNo,
 			@RequestParam(required = false, value = "orderId" ) String orderId,
-			@RequestParam(required = false, value = "first" ) int first){
+			@RequestParam(required = false, value = "first" ) int first,HttpServletRequest request){
 		AjaxJson j = new AjaxJson();
 		try {
-			
 			ResponseTotelEntity responseTotelEntity = new ResponseTotelEntity(); 
 			//是否批量发货
 			boolean isBatch = true;
@@ -101,6 +100,21 @@ public class CvcShippingBatchOrderController extends BaseController{
 			int totleSize = 0;
 			int sucSize = 0;
 			int faildSize = 0;
+			String totleSizeString = request.getParameter("totleSize");
+			if(StringUtils.isNotEmpty(totleSizeString)) {
+				totleSize = Integer.parseInt(totleSizeString);
+			}
+			
+			String sucSizeString = request.getParameter("sucSize");
+			if(StringUtils.isNotEmpty(sucSizeString)) {
+				sucSize = Integer.parseInt(sucSizeString);
+			}
+			
+			String faildSizeString = request.getParameter("faildSize");
+			if(StringUtils.isNotEmpty(faildSizeString)) {
+				faildSize = Integer.parseInt(faildSizeString);
+			}
+			
 			if(first == 1 && isBatch) {
 				//批量发货统计总数返回
 				totleSize = cvcShippingBatchOrderService.getCount(entity);

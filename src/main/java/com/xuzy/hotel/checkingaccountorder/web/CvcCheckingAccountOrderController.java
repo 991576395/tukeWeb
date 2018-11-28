@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.util.PhpDateUtils;
 import com.xuzy.hotel.checkingaccount.entity.CvcCheckingAccountEntity;
 import com.xuzy.hotel.checkingaccount.service.CvcCheckingAccountService;
 import com.xuzy.hotel.checkingaccountorder.entity.CvcCheckingAccountOrderEntity;
@@ -38,6 +39,7 @@ import com.xuzy.hotel.checkingaccountorder.service.impl.CheckAndUpdateRunable;
 import com.xuzy.hotel.company.entity.TSCompanyEntity;
 import com.xuzy.hotel.order.entity.CvcOrderInfoEntity;
 import com.xuzy.hotel.order.service.CvcOrderInfoService;
+import com.xuzy.hotel.shippingbatchorder.entity.ResponseTotelEntity;
 import com.xuzy.hotel.ylrequest.ConmentHttp;
 import com.xuzy.hotel.ylrequest.ResponseHead;
 import com.xuzy.hotel.ylrequest.TukeRequestBody;
@@ -99,8 +101,14 @@ public class CvcCheckingAccountOrderController extends BaseController{
 	 * @return
 	 */
 	@RequestMapping(params = "addCheckingAccount",method ={RequestMethod.GET, RequestMethod.POST})
-	public AjaxJson addCheckingAccount(@RequestParam(required = true, value = "checkingAccountId" )Integer checkingAccountId)throws Exception{
+	@ResponseBody
+	public AjaxJson addCheckingAccount(@RequestParam(required = true, value = "checkingAccountId" )Integer checkingAccountId
+			,@RequestParam(required = false, value = "first" ) int first
+			,@RequestParam(required = false, value = "totelSize") int totelSize
+			,@RequestParam(required = false, value = "sucSize" ) int sucSize
+			,@RequestParam(required = false, value = "faildSize" ) int faildSize)throws Exception{
 		AjaxJson j = new AjaxJson();
+		ResponseTotelEntity responseTotelEntity = new ResponseTotelEntity(); 
 		try {
 			if(checkingAccountId == null) {
 				j.setSuccess(false);
@@ -113,42 +121,48 @@ public class CvcCheckingAccountOrderController extends BaseController{
 				j.setMsg("该对账单不存在！");
 				return j;
 			}
-			int sucSize = 0;
 			
 			int page = 1;
 			CvcCheckingAccountOrderEntity query = new CvcCheckingAccountOrderEntity();
 			query.setIsAddCheckingAccount(0);
 			query.setCheckingAccountId(checkingAccountId);
+			if(first == 1) {
+				//首次获取数量总数
+				totelSize = cvcCheckingAccountOrderService.getCount(query);
+			}
+			responseTotelEntity.setTotelSize(totelSize);
 			MiniDaoPage<CvcCheckingAccountOrderEntity> list = cvcCheckingAccountOrderService.getAll(query, page, 10);
 			if(CollectionUtils.isNotEmpty(list.getResults())) {
-				checkAndUpdateRunable.setCheckingAccountId(checkingAccountId);
-//				for (CvcCheckingAccountOrderEntity entity : list.getResults()) {
-//					RequestCheckingAccountDetailAddJson checkingAccountDetailAddJson = new RequestCheckingAccountDetailAddJson();
-//					checkingAccountDetailAddJson.setCheckAccountInfoID(checkingAccountId);
-//					checkingAccountDetailAddJson.setOrderID(entity.getOrderId());
-//					checkingAccountDetailAddJson.setProductCode(entity.getGoodsSn());
-//					checkingAccountDetailAddJson.setQuantity(entity.getGoodsNumber());
-//					checkingAccountDetailAddJson.setEMSCompany(entity.getShippingName());
-//					checkingAccountDetailAddJson.setDeliver(cvcOrderInfoEntity.getDeliver());
-//					checkingAccountDetailAddJson.setAccountType(cvcOrderInfoEntity.getAccountType());
-//					checkingAccountDetailAddJson.setOppStaff(cvcOrderInfoEntity.getOppstaff());
+//				checkAndUpdateRunable.setCheckingAccountId(checkingAccountId);
+				for (CvcCheckingAccountOrderEntity entity : list.getResults()) {
+					RequestCheckingAccountDetailAddJson checkingAccountDetailAddJson = new RequestCheckingAccountDetailAddJson();
+					checkingAccountDetailAddJson.setCheckAccountInfoID(checkingAccountId);
+					checkingAccountDetailAddJson.setOrderID(entity.getOrderId());
+					checkingAccountDetailAddJson.setProductCode(entity.getGoodsSn());
+					checkingAccountDetailAddJson.setQuantity(entity.getGoodsNumber());
+					checkingAccountDetailAddJson.setEMSCompany(entity.getShippingName());
+					checkingAccountDetailAddJson.setDeliver(cvcOrderInfoEntity.getDeliver());
+					checkingAccountDetailAddJson.setAccountType(cvcOrderInfoEntity.getAccountType());
+					checkingAccountDetailAddJson.setOppStaff(cvcOrderInfoEntity.getOppstaff());
 //					
 //					//调用上传订单详情接口
 ////					ResponseHead responseHead = ConmentHttp.sendHttp(new TukeRequestBody.Builder()
 ////							.setSequence(2)
 ////							.setServiceCode("CRMIF.CheckingAccountDetailAddJson")
 ////							.setParams(checkingAccountDetailAddJson).builder(), null);
-////					if(responseHead.getReturn() >= 0) {
-//						cvcCheckingAccountOrderService.updateAddCheckingAccount(checkingAccountId, entity.getOrderId(), Calendar.getInstance().getTimeInMillis());
-//						sucSize++;
-////					}
-//				}
-			}else {
-				j.setMsg("上传完毕");
-				return j;
+//					if(responseHead.getReturn() >= 0) {
+					if(true) {
+						cvcCheckingAccountOrderService.updateAddCheckingAccount(checkingAccountId, entity.getOrderId(), PhpDateUtils.getTime());
+						sucSize++;
+					}else {
+						faildSize ++;
+					}
+				}
 			}
+			responseTotelEntity.setSucSize(sucSize);
+			responseTotelEntity.setFaildSize(faildSize);
 			j.setMsg("本次成功！");
-			j.setObj(sucSize);
+			j.setObj(responseTotelEntity);
 		} catch (Exception e) {
 		    log.info(e.getMessage());
 			j.setSuccess(false);

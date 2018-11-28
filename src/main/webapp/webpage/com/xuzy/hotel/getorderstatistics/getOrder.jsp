@@ -27,6 +27,8 @@
 								url : 'cvcGetOrderStatistics.do?getOrderData&ifLoad=1&field=id,batchNo,userId,addTime,consignee,userName,',
 								pageNumber : 1
 						});
+						/* var datas = $('#tGetOrderList').getDataIDs();
+						alert(datas.length); */
 			}
 			
 			//请求

@@ -19,10 +19,6 @@
   </div>
   
   <script type="text/javascript">
-  	 var totelSize = 0;
-  	 var sucSize = 0;
-  	 var faildSize = 0;
-  
 	  function ship(title, url, id, width, height, isRestful) {
 			layer.open({
 				title:"系统提示",
@@ -39,7 +35,7 @@
 						if(totelSize = (sucSize + faildSize)){
 							tip("发货完成！");
 						}else{
-							request(url+"&first=0",this);
+							requestall(url,1,0,0,0);
 						}
 					});
 				},
@@ -49,7 +45,36 @@
 				}
 			}); 
 		}
+	  
+	  function responseCall(url,d){
+			if (d.obj.totelSize == (d.obj.sucSize + d.obj.faildSize)) {
+				reloadtCheckOrderList();
+				tip("发货完成！");
+			} else{
+				requestall(url,0,d.obj.totelSize,d.obj.sucSize,d.obj.faildSize);
+			}
+		}
 			
+		//请求
+		function requestall(url,first,totelSize,sucSize,faildSize) {
+			$.ajax({
+				url : url+"&first="+first+"&totelSize="+totelSize+"&sucSize="+
+					sucSize+"&faildSize="+faildSize,
+				type : 'get',
+				cache : false,
+				success : function(data) {
+					var d = $.parseJSON(data);
+					var msg = d.msg;
+					if (d.success) {
+						responseCall(url,d);
+					} else {
+						tip(msg);
+					}
+				}
+			});
+		}
+	  
+	  
 	  	//请求
 		function request(url,fn){
 			 $.ajax({

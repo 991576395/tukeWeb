@@ -9,7 +9,7 @@
 		   <t:dgCol title="主键"  field="id"  hidden="true"  width="120"></t:dgCol>
 		   <t:dgCol title="订单批次" field="unifiedBatchNo"  width="80"></t:dgCol>
 		   <t:dgCol title="订单数量" field="orderCount" url="cvcOrderInfo.do?list&batchNo=#{unifiedBatchNo}" funname="toLoadNewTab"  width="80"></t:dgCol>
-		   <t:dgCol title="抓单时间" field="addTimeFormat"   width="80"></t:dgCol>
+		   <t:dgCol title="抓单时间" field="addTimeFormat"   width="160"></t:dgCol>
 		   <t:dgCol title="待配货" field="waitDeliveryCount"  url="cvcOrderInfo.do?list&batchNo=#{unifiedBatchNo}&orderStatus=1" funname="toLoadNewTab"   width="80"></t:dgCol>
 		   <t:dgCol title="配货中" field="deliveryCount"  url="cvcOrderInfo.do?list&batchNo=#{unifiedBatchNo}&orderStatus=2" funname="toLoadNewTab"   width="80"></t:dgCol>
 		   <t:dgCol title="离港中" field="offharbourCount" url="cvcOrderInfo.do?list&batchNo=#{unifiedBatchNo}&orderStatus=3" funname="toLoadNewTab"   width="80"></t:dgCol>

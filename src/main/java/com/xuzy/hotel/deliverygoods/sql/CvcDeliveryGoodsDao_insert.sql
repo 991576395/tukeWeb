@@ -8,14 +8,11 @@ INSERT  INTO
       ,goods_name                     
       ,brand_name                     
       ,goods_sn                       
-      ,is_real                        
       ,extension_code                 
-      ,parent_id                      
       ,send_number                    
       ,goods_attr                     
       ,system_sku                     
       ,goods_price                    
-      ,upc_id                         
       ) 
 values
       (
@@ -26,12 +23,9 @@ values
       ,:cvcDeliveryGoods.goodsName                     
       ,:cvcDeliveryGoods.brandName                     
       ,:cvcDeliveryGoods.goodsSn                       
-      ,:cvcDeliveryGoods.isReal                        
       ,:cvcDeliveryGoods.extensionCode                 
-      ,:cvcDeliveryGoods.parentId                      
       ,:cvcDeliveryGoods.sendNumber                    
       ,:cvcDeliveryGoods.goodsAttr                     
       ,:cvcDeliveryGoods.systemSku                     
       ,:cvcDeliveryGoods.goodsPrice                    
-      ,:cvcDeliveryGoods.upcId                         
       )

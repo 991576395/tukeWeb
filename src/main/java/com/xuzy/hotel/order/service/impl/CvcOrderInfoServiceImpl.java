@@ -21,6 +21,8 @@ import com.xuzy.hotel.deliveryorder.service.CvcDeliveryOrderService;
 import com.xuzy.hotel.order.dao.CvcOrderInfoDao;
 import com.xuzy.hotel.order.entity.CvcOrderInfoEntity;
 import com.xuzy.hotel.order.service.CvcOrderInfoService;
+import com.xuzy.hotel.orderaction.dao.CvcOrderActionDao;
+import com.xuzy.hotel.orderaction.entity.CvcOrderActionEntity;
 import com.xuzy.hotel.shippingbatchorder.dao.CvcShippingBatchOrderDao;
 import com.xuzy.hotel.shippingbatchorder.entity.CvcShippingBatchOrderEntity;
 import com.xuzy.hotel.ylrequest.ConmentHttp;
@@ -52,6 +54,7 @@ public class CvcOrderInfoServiceImpl implements CvcOrderInfoService {
 	
 	@Resource
 	private CvcDeliveryGoodsDao cvcDeliveryGoodsDao;
+	
 
 	 /**
 		 * Logger for this class
@@ -212,16 +215,16 @@ public class CvcOrderInfoServiceImpl implements CvcOrderInfoService {
 				exchangeOrderJson.setOrderID(cvcOrderInfoEntity.getId());
 				exchangeOrderJson.setEMSCompany(shippingName);
 				exchangeOrderJson.setEMSOdd(cvcOrderInfoEntity.getInvoiceNo());
-				exchangeOrderJson.setPreArrivalDate(cvcOrderInfoEntity.getPreArrivalDate());
-				ResponseHead head = ConmentHttp.sendHttp(new TukeRequestBody.Builder().setParams(exchangeOrderJson)
-						.setSequence(4).setServiceCode("CRMIF.OFFHarbourExchangeOrderJson").builder(), null);
-				if (head.getReturn() >= 0) {
+//				exchangeOrderJson.setPreArrivalDate(cvcOrderInfoEntity.getPreArrivalDate());
+//				ResponseHead head = ConmentHttp.sendHttp(new TukeRequestBody.Builder().setParams(exchangeOrderJson)
+//						.setSequence(4).setServiceCode("CRMIF.OFFHarbourExchangeOrderJson").builder(), null);
+//				if (head.getReturn() >= 0) {
 					isOffhabour = true;
-				} else {
-					j.setSuccess(false);
-					j.setMsg(head.getReturnInfo());
-					return j;
-				}
+//				} else {
+//					j.setSuccess(false);
+//					j.setMsg(head.getReturnInfo());
+//					return j;
+//				}
 			}
 
 			if (cvcOrderInfoEntity.getTkOrderStatus() == 3 || isOffhabour) {
@@ -234,16 +237,16 @@ public class CvcOrderInfoServiceImpl implements CvcOrderInfoService {
 							.getEntityByInvoiceNo(cvcOrderInfoEntity.getInvoiceNo());
 					if (batchOrderEntity == null) {
 						// 未订阅物流信息 开始订阅
-						Kuaidi100Response kuaidi100Response = ConmentHttp.postorder(shippingName,
-								cvcOrderInfoEntity.getInvoiceNo());
-						isPostorder = (kuaidi100Response.getResult() || kuaidi100Response.getMessage().contains("重复订阅"))
-								? 1: 0;
+//						Kuaidi100Response kuaidi100Response = ConmentHttp.postorder(shippingName,
+//								cvcOrderInfoEntity.getInvoiceNo());
+//						isPostorder = (kuaidi100Response.getResult() || kuaidi100Response.getMessage().contains("重复订阅"))
+//								? 1: 0;
 					} else {
 						isPostorder = 1;
 					}
 				} else {
 					// 非批量发货
-					ConmentHttp.postorder(shippingName, cvcOrderInfoEntity.getInvoiceNo());
+//					ConmentHttp.postorder(shippingName, cvcOrderInfoEntity.getInvoiceNo());
 				}
 				// 添加发货订单
 				cvcDeliveryOrderService.addDeliveryOrderByOrder(cvcOrderInfoEntity, shippingName, batchSendNo,

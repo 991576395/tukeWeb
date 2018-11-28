@@ -204,6 +204,9 @@ public class OrderCallBack extends BaseController {
 	}
 	
 	public static void main(String[] args) {
+		
+		
+		
 		String param = "{\"status\":\"polling\",\"billstatus\":\"got\",\"message\":\"寄件\",\"lastResult\":{\"message\":\"ok\",\"nu\":\"884382620117795613\",\"ischeck\":\"0\",\"condition\":\"00\",\"com\":\"yuantong\",\"status\":\"200\",\"state\":\"0\",\"data\":[{\"time\":\"2017-03-06 21:46:36\",\"ftime\":\"2017-03-06 21:46:36\",\"context\":\"福建省泉州市晋江市二部公司 已打包\"},{\"time\":\"2017-03-06 21:43:39\",\"ftime\":\"2017-03-06 21:43:39\",\"context\":\"福建省泉州市晋江市二部公司(点击查询电话) 已揽收\"}]}}";
 		Data callbaseRequest = ConmentHttp.gson.fromJson(param, Data.class);
 		System.out.println(callbaseRequest.toString());

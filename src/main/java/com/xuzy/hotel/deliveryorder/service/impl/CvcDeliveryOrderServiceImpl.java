@@ -24,6 +24,8 @@ import com.xuzy.hotel.deliveryorder.entity.CvcDeliveryOrderEntity;
 import com.xuzy.hotel.deliveryorder.service.CvcDeliveryOrderService;
 import com.xuzy.hotel.order.dao.CvcOrderInfoDao;
 import com.xuzy.hotel.order.entity.CvcOrderInfoEntity;
+import com.xuzy.hotel.orderaction.dao.CvcOrderActionDao;
+import com.xuzy.hotel.orderaction.entity.CvcOrderActionEntity;
 import com.xuzy.hotel.ordergoods.dao.CvcOrderGoodsDao;
 import com.xuzy.hotel.ordergoods.entity.CvcOrderGoodsEntity;
 import com.xuzy.hotel.shipping.dao.CvcShippingDao;
@@ -58,6 +60,9 @@ public class CvcDeliveryOrderServiceImpl implements CvcDeliveryOrderService {
 	
 	@Resource
 	private CvcDeliveryGoodsDao cvcDeliveryGoodsDao;
+	
+	@Resource
+	private CvcOrderActionDao cvcOrderActionDao;
 
 	@Override
 	public CvcDeliveryOrderEntity get(String id) {
@@ -156,6 +161,7 @@ public class CvcDeliveryOrderServiceImpl implements CvcDeliveryOrderService {
 				cvcDeliveryOrderEntity.setAddress(orderInfoEntity.getAddress());
 				cvcDeliveryOrderEntity.setTel(orderInfoEntity.getTel());
 				cvcDeliveryOrderEntity.setPreArrivalDate(orderInfoEntity.getPreArrivalDate());
+				cvcDeliveryOrderEntity.setInvoiceNo(orderInfoEntity.getInvoiceNo());
 				
 				int deliveryId = insert(cvcDeliveryOrderEntity);
 				List<CvcOrderGoodsEntity> cvcOrderGoodsEntities = cvcOrderGoodsDao.getGoods(orderInfoEntity.getId());
@@ -193,6 +199,17 @@ public class CvcDeliveryOrderServiceImpl implements CvcDeliveryOrderService {
 				//批量发货修改
 				cvcShippingBatchOrderDao.updateBatchOrderStatus(isPostorder, PhpDateUtils.getTime(), orderInfoEntity.getId(), batchSendNo);
 			}
+			//添加操作记录
+			CvcOrderActionEntity cvcOrderAction = new CvcOrderActionEntity();
+			cvcOrderAction.setOrderId(orderInfoEntity.getId());
+			cvcOrderAction.setActionUser(ResourceUtil.getSessionUser().getUserName());
+			cvcOrderAction.setOrderStatus(orderInfoEntity.getOrderStatus());
+			cvcOrderAction.setShippingStatus(orderInfoEntity.getShippingStatus());
+			cvcOrderAction.setPayStatus(0);
+			cvcOrderAction.setActionPlace(0);
+			cvcOrderAction.setActionNote("");
+			cvcOrderAction.setLogTime((int)PhpDateUtils.getTime());
+			cvcOrderActionDao.insert(cvcOrderAction );
 		} catch (Exception e) {
 			logger.error("订单发货异常！", e);
 			throw new XuException("订单发货异常！");
