@@ -22,13 +22,13 @@
 
 		<div class="form-group">
 			<div class="col-sm-offset-2 col-sm-10">
-				<input name="delivery_confirmed" type="button" value="发货并生成对账单"
+				<input name="delivery_confirmed" type="button" value="推送至离港"
 					class="btn btn-primary btn-sm"
 					onclick="toUpdate('cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=offharbour')" />
-				<input name="delivery_confirmed" type="button" value="发货并生成对账单"
+				<input name="delivery_confirmed" type="button" value="推送至配送中"
 					class="btn btn-primary btn-sm"
 					onclick="toUpdate('cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=send')" />
-				<input name="delivery_confirmed" type="button" value="发货并生成对账单"
+				<input name="delivery_confirmed" type="button" value="推送至签收"
 					class="btn btn-primary btn-sm"
 					onclick="toUpdate('cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=signin')" />
 			</div>
