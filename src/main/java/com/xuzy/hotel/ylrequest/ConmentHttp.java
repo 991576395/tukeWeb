@@ -60,7 +60,7 @@ public class ConmentHttp {
 	
 	private static final String KEY = "MfxXXpWd8126";
 	private static final String URL = "http://www.kuaidi100.com/poll";
-	private static final String CALLBACK = "http://47.96.119.244:8080/tukeWeb/callBack.do?result";
+	private static final String CALLBACK = "http://47.96.119.244:8080/jeecg/callBack.do?result";
 	
     /**
      * 公用 mSequence
@@ -121,7 +121,6 @@ public class ConmentHttp {
                 .addHeader("action","http://mmp.meichis.com/DataInterface/Call")
                 .build();
         Response response = okHttpClient.newCall(request).execute();
-        logger.info("xml response： \n"+sb.toString());
         ResponseHead head = parseResponse(response.body().string(),moduleType);
         
         if(head.getReturn() < 0 && ("AuthKey Invalid!".equals(head.getReturnInfo())
@@ -129,6 +128,11 @@ public class ConmentHttp {
         	getREAValue();
     		getLogin();
     		
+    		content = new TukeRequestBody.Builder()
+    				.setParams(content.getRequestPackBody().getParams())
+    				.setSequence(content.getRequestPackBody().getSequence())
+    				.setServiceCode(content.getRequestPackBody().getServiceCode())
+    				.builder();
     		sendHttp(content,moduleType);
         }
         return head;
