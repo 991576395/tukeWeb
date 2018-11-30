@@ -4,6 +4,7 @@ import javax.servlet.jsp.tagext.TagSupport;
 
 import org.apache.log4j.Logger;
 import org.jeecgframework.core.util.EhcacheUtil;
+import org.jeecgframework.core.util.RedisUtil;
 import org.jeecgframework.web.cgform.common.CgAutoListConstant;
 import org.jeecgframework.web.cgform.engine.TempletContext;
 import org.jeecgframework.web.system.controller.core.LoginController;
@@ -29,13 +30,15 @@ public abstract class JeecgTag extends TagSupport {
 
 		
 		//log.info("-----TagCache-----toString()-----"+toString());
-		return (StringBuffer) EhcacheUtil.get(EhcacheUtil.TagCache, toString());
+//		return (StringBuffer) RedisUtil.ObjectR.get(EhcacheUtil.TagCache+toString());
+		return new StringBuffer((String)EhcacheUtil.get(EhcacheUtil.TagCache, toString()));
 	}
 	/**
 	 * 存放缓存
 	 * @param tagCache
 	 */
 	public void putTagCache(StringBuffer tagCache){
-		EhcacheUtil.put(EhcacheUtil.TagCache, toString(), tagCache);
+//		RedisUtil.ObjectR.set(EhcacheUtil.TagCache+toString(), tagCache);
+		EhcacheUtil.put(EhcacheUtil.TagCache, toString(), tagCache.toString());
 	}
 }

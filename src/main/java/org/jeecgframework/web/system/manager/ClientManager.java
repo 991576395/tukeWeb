@@ -39,14 +39,14 @@ public class ClientManager {
 	@SuppressWarnings("unchecked")
 	private boolean addClientToCachedMap(String sessionId,Client client ){
 		HashMap<String, Client> onLineClients ;
-		if(EhcacheUtil.get(CACHENAME, OnlineClientsKey)==null){
+		if(EhcacheUtil.getMap(CACHENAME, OnlineClientsKey)==null){
 			onLineClients = new HashMap<String, Client>();
 		}
 		else{
-			onLineClients =(HashMap<String, Client>) EhcacheUtil.get(CACHENAME,OnlineClientsKey);
+			onLineClients =(HashMap<String, Client>) EhcacheUtil.getMap(CACHENAME,OnlineClientsKey);
 		}
 		onLineClients.put(sessionId, client);
-		EhcacheUtil.put(CACHENAME,OnlineClientsKey, onLineClients);
+		EhcacheUtil.putMap(CACHENAME,OnlineClientsKey, onLineClients);
 		return true;
 	}
 	
@@ -56,10 +56,10 @@ public class ClientManager {
 	@SuppressWarnings("unchecked")
 	private boolean removeClientFromCachedMap(String sessionId){
 		HashMap<String, Client> onLineClients ;
-		if(EhcacheUtil.get(CACHENAME, OnlineClientsKey)!=null){
-			onLineClients =(HashMap<String, Client>) EhcacheUtil.get(CACHENAME,OnlineClientsKey);
+		if(EhcacheUtil.getMap(CACHENAME, OnlineClientsKey)!=null){
+			onLineClients =(HashMap<String, Client>) EhcacheUtil.getMap(CACHENAME,OnlineClientsKey);
 			onLineClients.remove(sessionId);
-			EhcacheUtil.put(CACHENAME, OnlineClientsKey, onLineClients);
+			EhcacheUtil.putMap(CACHENAME, OnlineClientsKey, onLineClients);
 			return true;
 		}
 		else{
@@ -125,8 +125,8 @@ public class ClientManager {
 	 */
 	@SuppressWarnings("unchecked")
 	public Collection<Client> getAllClient(){
-		if(EhcacheUtil.get(CACHENAME,OnlineClientsKey)!=null){
-			HashMap<String, Client> onLineClients = (HashMap<String, Client>) EhcacheUtil.get(CACHENAME,OnlineClientsKey);
+		if(EhcacheUtil.getMap(CACHENAME,OnlineClientsKey)!=null){
+			HashMap<String, Client> onLineClients = (HashMap<String, Client>) EhcacheUtil.getMap(CACHENAME,OnlineClientsKey);
 			return onLineClients.values();
 		}
 		else

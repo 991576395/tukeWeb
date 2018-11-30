@@ -87,7 +87,11 @@ public class FormValidationTag extends JeecgTag {
 	 * @return
 	 */
 	public StringBuffer getTagCache(String key){
-		return (StringBuffer) EhcacheUtil.get(EhcacheUtil.TagCache, key);
+		Object obj = EhcacheUtil.get(EhcacheUtil.TagCache, key);
+		if(obj==null) {
+			return null;
+		}
+		return new StringBuffer((String)obj);
 	}
 	/**
 	 * 存放缓存
@@ -95,7 +99,7 @@ public class FormValidationTag extends JeecgTag {
 	 * @param tagCache
 	 */
 	public void putTagCache(String key, StringBuffer tagCache){
-		EhcacheUtil.put(EhcacheUtil.TagCache, key, tagCache);
+		EhcacheUtil.put(EhcacheUtil.TagCache, key, tagCache.toString());
 	}
 
 	
@@ -136,7 +140,7 @@ public class FormValidationTag extends JeecgTag {
 				sb.append("class=\""+this.getStyleClass()+"\" ");
 			}
 
-					sb.append(" action=\"" + action + "\" name=\"" + formid + "\" method=\"post\" enctype=\"multipart/form-data\">");
+					sb.append(" action=\"" + action + "\" name=\"" + formid + "\" method=\"post\">");
 			if ("btn_sub".equals(btnsub) && dialog)
 				sb.append("<input type=\"hidden\" id=\"" + btnsub + "\" class=\"" + btnsub + "\"/>");
 

@@ -16,7 +16,7 @@
 		<!-- 是使用什么字母做关键字Map的关键字 默认值origin 即和sql保持一致,lower小写(推荐),upper 大写 -->
 		<property name="keyType" value="lower"></property>
 		<!-- 格式化sql -->
-		<property name="formatSql" value="true"></property>
+		<property name="formatSql" value="false"></property>
 		<!-- 输出sql -->
 		<property name="showSql" value="true"></property>
 		<!-- 数据库类型  mysql/postgresql/oracle/sqlserver -->
