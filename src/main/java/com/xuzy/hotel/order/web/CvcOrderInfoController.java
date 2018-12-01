@@ -281,11 +281,11 @@ public class CvcOrderInfoController extends BaseController {
 //		3); // 退回
 //		4); // 快递单号异常
 //		5); // 超时关闭
-		boolean is_show_exception = new ArrayList<String>() {
+		boolean is_show_exception = new ArrayList<Integer>() {
 			{
-				add("1");
-				add("2");
-				add("3");
+				add(1);
+				add(2);
+				add(3);
 			}
 		}.contains(cvcOrderInfoEntity.getExceptionStatus());
 		//是否展示异常区域	
@@ -299,8 +299,6 @@ public class CvcOrderInfoController extends BaseController {
 		
 		//传递订单信息
 		request.setAttribute("cvcOrderInfoEntity", cvcOrderInfoEntity);
-		
-		
 		 /* 根据订单是否完成检查权限 */
 		// getOrderStatus  define('OS_CONFIRMED',              1); // 已确认
 		//getShippingStatus define('SS_SHIPPED',1); // 已发货
@@ -444,7 +442,7 @@ public class CvcOrderInfoController extends BaseController {
 				if(head.getReturn() >= 0) {
 					cvcDeliveryOrderService.updateNu(orderId, cvcShippingEntity.getShippingId(),cvcShippingEntity.getShippingName(),invoiceNo);
 					if(cvcOrderInfo1.getExceptionStatus() != null &&
-							"4".equals(cvcOrderInfo1.getExceptionStatus()) || "5".equals(cvcOrderInfo1.getExceptionStatus())) {
+							4 ==cvcOrderInfo1.getExceptionStatus()|| 5 == cvcOrderInfo1.getExceptionStatus()) {
 						//更新异常订单
 						cvcOrderInfoService.updateHandle(cvcOrderInfo1.getId(),1,(int)PhpDateUtils.getTime(),ResourceUtil.getSessionUser().getUserName());
 					}

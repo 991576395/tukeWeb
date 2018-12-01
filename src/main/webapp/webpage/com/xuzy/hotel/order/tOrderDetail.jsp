@@ -15,6 +15,23 @@
 				window.location.href= 'cvcOrderInfo.do?toShip&orderId='+order_id;  
 			}
 		
+		function updateStatue(url,title,order_id){
+			layer.open({
+				title:"系统提示",
+				content:title,
+				icon:7,
+				shade: 0.3,
+				yes:function(index){
+					request(url+'&id='+$("#invoice_no").val(),function (d){
+					});
+				},
+				btn:['确定','取消'],
+				btn2:function(index){
+					layer.close(index);
+				}
+			});
+		}
+			
 		 //更新快递单号
 		  function update_nu(order_id){
 			  layer.open({
@@ -23,7 +40,7 @@
 					icon:7,
 					shade: 0.3,
 					yes:function(index){
-						request('cvcOrderInfo.do?updateNu&&orderId='+order_id+'&invoiceNo='+$("#invoice_no").val()+'&shippingName='+$("#shipping_name").val(),function (d){
+						request('cvcOrderInfo.do?updateNu&orderId='+order_id+'&invoiceNo='+$("#invoice_no").val()+'&shippingName='+$("#shipping_name").val(),function (d){
 						});
 					},
 					btn:['确定','取消'],
@@ -318,10 +335,10 @@
 		</c:if>
 		<c:if test="${is_show_exception}">
 			<input name="cancel" type="button" value="确认已签收" class="button"
-				onclick="exception_order_operate('signin')" />
+				onclick="updateStatue('cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=signin','${cvcOrderInfoEntity.id}','请确认签收？')" />
 			<c:if test="${exception_status == 2 || exception_status == 3}">
 				<input name="cancel" type="button" value="退货" class="button"
-					onclick="exception_order_operate('pre_return')" />
+					onclick="updateStatue('cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=signin','${cvcOrderInfoEntity.id}','请确认退货？')" />
 			</c:if>
 			<span style="display: none;" id="return_tips">退货原因：</span>
 			<select name="return_reason" id="return_reason"
