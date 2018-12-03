@@ -12,7 +12,8 @@
    <t:dgCol title="伊利订单状态" field="ylOrderStatus" queryMode="single" dictionary="OStatus"  query="true"  width="100"></t:dgCol>
    <t:dgCol title="快递公司" field="shippingId" queryMode="single" dictionary="cvc_shipping where enabled = '1',shipping_id,shipping_name" query="true"  width="80"></t:dgCol>
    <t:dgCol title="快递单号" field="invoiceNo" queryMode="single"  query="true"  width="120"></t:dgCol>
-   <t:dgCol title="是否异常" field="exceptionStatus" queryMode="single" dictionary="isExp"  query="true"  width="70"></t:dgCol>
+   <t:dgCol title="是否异常" field="exceptionStatus" hidden="true" queryMode="single" dictionary="isExp"  query="true"  width="70"></t:dgCol>
+   <t:dgCol title="是否异常" field="exceptionStatusString"  width="70"></t:dgCol>
    <t:dgCol title="下单时间" field="addTime" formatter="yyyy-MM-dd hh:mm:ss"  queryMode="group"  query="true"  width="160"></t:dgCol>
    <t:dgCol title="抓单时间" field="getTime" formatter="yyyy-MM-dd hh:mm:ss"  width="160"></t:dgCol>
    <t:dgCol title="结算标识" field="isBalance"  queryMode="single" dictionary="is_balance"   query="true"  width="70"></t:dgCol>

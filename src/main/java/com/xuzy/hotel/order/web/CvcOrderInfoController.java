@@ -244,6 +244,7 @@ public class CvcOrderInfoController extends BaseController {
 			for (CvcOrderInfoEntity entity : list.getResults()) {
 				entity.setAddTime(PhpDateUtils.parseDate(Long.parseLong(entity.getAddTime()), "yyyy-MM-dd HH:mm:ss"));
 				entity.setGetTime(PhpDateUtils.parseDate(Long.parseLong(entity.getGetTime()), "yyyy-MM-dd HH:mm:ss"));
+				entity.setExceptionStatusString(0 == entity.getExceptionStatus()?"无异常":"有异常");
 			}
 		}
 		dataGrid.setResults(SystemTools.convertPaginatedList(list));
@@ -677,6 +678,10 @@ public class CvcOrderInfoController extends BaseController {
 					j.setSuccess(false);
 					j.setMsg("订单签收失败 原因:"+responseHead.getReturnInfo());
 				}
+			}else if("return".equals(tkOrderStatus)) {
+				//退货
+				cvcOrderInfoService.updateStatusByOrderId(id, 7);
+				j.setMsg("订单退货成功");
 			}
 		} catch (Exception e) {
 			log.info(e.getMessage());

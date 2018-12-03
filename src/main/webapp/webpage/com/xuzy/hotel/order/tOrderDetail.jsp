@@ -22,7 +22,8 @@
 				icon:7,
 				shade: 0.3,
 				yes:function(index){
-					request(url+'&id='+$("#invoice_no").val(),function (d){
+					request(url+'&id='+order_id,function (d){
+						window.location.href= 'cvcOrderInfo.do?toDetail&id='+order_id;  
 					});
 				},
 				btn:['确定','取消'],
@@ -30,6 +31,13 @@
 					layer.close(index);
 				}
 			});
+		}
+		
+		
+		function showException(){
+			 $("#return_tips").show();
+			  $("#return_reason").show();
+			  $("#return_sub").show();
 		}
 			
 		 //更新快递单号
@@ -334,11 +342,11 @@
 			</div>
 		</c:if>
 		<c:if test="${is_show_exception}">
-			<input name="cancel" type="button" value="确认已签收" class="button"
-				onclick="updateStatue('cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=signin','${cvcOrderInfoEntity.id}','请确认签收？')" />
+			<input name="cancel" type="button" class="btn btn-primary btn-sm" value="确认已签收" class="button"
+				onclick="updateStatue('cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=signin','请确认签收？','${cvcOrderInfoEntity.id}')" />
 			<c:if test="${exception_status == 2 || exception_status == 3}">
-				<input name="cancel" type="button" value="退货" class="button"
-					onclick="updateStatue('cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=signin','${cvcOrderInfoEntity.id}','请确认退货？')" />
+				<input name="cancel" type="button" class="btn btn-primary btn-sm" value="退货" class="button"
+					onclick="showException()" />
 			</c:if>
 			<span style="display: none;" id="return_tips">退货原因：</span>
 			<select name="return_reason" id="return_reason"
@@ -348,8 +356,8 @@
 				<option value="2">地址不详</option>
 				<option value="3">退积分</option>
 			</select>
-			<input name="cancel" type="button" value="确定" class="button"
-				onclick="exception_order_operate('return')" id="return_sub"
+			<input name="cancel" type="button" class="btn btn-primary btn-sm" value="确定" 
+				onclick="updateStatue('cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=return','请确认退货？','${cvcOrderInfoEntity.id}')" id="return_sub"
 				style="display: none;" />
 		</c:if>
 </body>
