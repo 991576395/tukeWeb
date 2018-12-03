@@ -19,9 +19,12 @@
 		    /*订单批次 */
 			and coi.batch_no = :cvcOrderInfo.batchNo
 		</#if>
-		<#if (cvcOrderInfo.exceptionStatus )?? && cvcOrderInfo.exceptionStatus ?length gt 0>
+		<#if (cvcOrderInfo.exceptionStatusString )?? && cvcOrderInfo.exceptionStatusString = "1">
 		    /* 是否有异常 */
-			and coi.exception_status = :cvcOrderInfo.exceptionStatus
+			and coi.exception_status > 0 
+		</#if>
+		<#if (cvcOrderInfo.exceptionStatusString )?? && cvcOrderInfo.exceptionStatusString ="2">
+			and coi.exception_status = 0 
 		</#if>
 		<#if ( cvcOrderInfo.orderStatus )?? && cvcOrderInfo.orderStatus ?length gt 0>
 		    /* order_status */

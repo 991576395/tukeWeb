@@ -239,6 +239,14 @@ public class CvcOrderInfoController extends BaseController {
 			}
 		}
 		
+		if(query.getExceptionStatus() != null && query.getExceptionStatus() > 0) {
+			//查询有异常订单
+			query.setExceptionStatusString("1");
+		}else if(query.getExceptionStatus() != null && query.getExceptionStatus() == 0){
+			//查询无异常订单
+			query.setExceptionStatusString("2");
+		}
+		
 		MiniDaoPage<CvcOrderInfoEntity> list = cvcOrderInfoService.getAll(query, dataGrid.getPage(), dataGrid.getRows());
 		if(CollectionUtils.isNotEmpty(list.getResults())) {
 			for (CvcOrderInfoEntity entity : list.getResults()) {
