@@ -155,6 +155,7 @@
 					<list>
 						<!-- 接口拦截跳过 -->
 						<value>appInterface/app.do</value>
+						<value>callBack.do?result</value>
 					
 						<value>loginController.do?goPwdInit</value>
 						<value>loginController.do?pwdInit</value>

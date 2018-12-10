@@ -18,7 +18,7 @@
 		<!-- 格式化sql -->
 		<property name="formatSql" value="false"></property>
 		<!-- 输出sql -->
-		<property name="showSql" value="true"></property>
+		<property name="showSql" value="false"></property>
 		<!-- 数据库类型  mysql/postgresql/oracle/sqlserver -->
 		<property name="dbType" value="mysql"></property>
 		<!-- dao地址,配置符合spring方式 -->

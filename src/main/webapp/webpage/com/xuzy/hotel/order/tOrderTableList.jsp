@@ -25,10 +25,14 @@
    <t:dgToolBar title="查看详情" icon="icon-search" url="cvcOrderInfo.do?toDetail" width="1000" height="600" funname="goLook"></t:dgToolBar>
    
    <t:dgToolBar title="导出EXCEL" icon="icon-putout" funname="ExportXls"></t:dgToolBar>
+   
+   <t:dgToolBar id="sureOrder" title="确认订单" icon="icon-edit" url="cvcOrderInfo.do?toDetail" funname="sureOrder"></t:dgToolBar>
+   <t:dgToolBar id="allocateOrder" title="仓库配货" icon="icon-edit" url="cvcOrderInfo.do?toDetail" funname="allocateOrder"></t:dgToolBar>
+   
    <t:dgToolBar title="推送至离港" icon="icon-edit" url="cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=offharbour"  funname="toUpdate"></t:dgToolBar>
    <t:dgToolBar title="推送至配送中" icon="icon-edit" url="cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=send"  funname="toUpdate"></t:dgToolBar>
    <t:dgToolBar title="推送至签收" icon="icon-edit" url="cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=signin"  funname="toUpdate"></t:dgToolBar>
-  	
+   <t:dgToolBar title="推送至签收失败" icon="icon-edit" url="cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=signFailure"  funname="toUpdate"></t:dgToolBar>
   
   </t:datagrid>
   </div>
@@ -179,5 +183,38 @@
 				/*为true等价于function(){}*/
 				});
 			}
+				
+			
+			$(document).ready(function(){  
+				$("#sureOrder").hide();
+				$("#allocateOrder").hide();
+				
+				var orderStatus = '${orderStatus}';
+				if(nodeNo == 0){
+					$("#sureOrder").show();
+					$("#allocateOrder").hide();
+				}else if(nodeNo == 1){
+					$("#sureOrder").hide();
+					$("#allocateOrder").show();
+				}
+			     // 添加事件
+// 				$("[name='orderStatus']").change(function(e) {
+// 					var nodeNo = e.target.value; // 获取选中下拉框的值
+// 					// 业务代码         
+// 					if(nodeNo == 0){
+// 						$("#sureOrder").show();
+// 						$("#allocateOrder").hide();
+// 					}else if(nodeNo == 1){
+// 						$("#sureOrder").hide();
+// 						$("#allocateOrder").show();
+// 					}
+// 				});
+			});
+			
+			
+			
+			
+			
+			
 		</script>
  </div>

@@ -60,6 +60,7 @@ import com.xuzy.hotel.ylrequest.module.RequestDeliveryExchangeOrderJson;
 import com.xuzy.hotel.ylrequest.module.RequestOFFHarbourExchangeOrderJson;
 import com.xuzy.hotel.ylrequest.module.RequestReNewExchangeEMSJson;
 import com.xuzy.hotel.ylrequest.module.RequestReNewExchangeSignDateJson;
+import com.xuzy.hotel.ylrequest.module.RequestRefuseExchangeOrderJson;
 import com.xuzy.hotel.ylrequest.module.RequestSignInExchangeOrderJson;
 
 /**
@@ -258,6 +259,9 @@ public class CvcOrderInfoController extends BaseController {
 		dataGrid.setResults(SystemTools.convertPaginatedList(list));
 		dataGrid.setTotal(cvcOrderInfoService.getCount(query, dataGrid.getPage(), dataGrid.getRows()));
 		TagUtil.datagrid(response, dataGrid);
+		
+		
+		request.setAttribute("orderStatus", query.getOrderStatus());
 	}
 	
 
@@ -690,6 +694,20 @@ public class CvcOrderInfoController extends BaseController {
 				//退货
 				cvcOrderInfoService.updateStatusByOrderId(id, 7);
 				j.setMsg("订单退货成功");
+			}else if("signFailure".equals(tkOrderStatus)) {
+				//签收失败
+				RequestRefuseExchangeOrderJson exchangeOrderJson = new RequestRefuseExchangeOrderJson();
+				exchangeOrderJson.setOrderID(id);
+				ResponseHead head = ConmentHttp.sendHttp(new TukeRequestBody.Builder()
+							.setParams(exchangeOrderJson).setSequence(2)
+							.setServiceCode("CRMIF.RefuseExchangeOrderJson").builder(), null);
+				if(head.getReturn() >= 0) {
+					cvcOrderInfoService.updateStatusByOrderId(id, 6);
+					j.setMsg("订单签收失败操作成功");
+				}else {
+					j.setSuccess(false);
+					j.setMsg("订单签收失败 原因:"+head.getReturnInfo());
+				}
 			}
 		} catch (Exception e) {
 			log.info(e.getMessage());

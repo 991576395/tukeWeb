@@ -5,6 +5,7 @@ import java.util.Calendar;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
+import org.apache.log4j.Logger;
 import org.jeecgframework.p3.core.web.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,6 +26,7 @@ import com.xuzy.hotel.order.module.CallBackResponse;
 import com.xuzy.hotel.order.module.CallBaseRequest;
 import com.xuzy.hotel.order.module.Data;
 import com.xuzy.hotel.order.service.CvcOrderInfoService;
+import com.xuzy.hotel.order.service.impl.CvcOrderInfoServiceImpl;
 import com.xuzy.hotel.yldeliveryinfo.entity.CvcYlDeliveryInfoEntity;
 import com.xuzy.hotel.yldeliveryinfo.service.CvcYlDeliveryInfoService;
 import com.xuzy.hotel.ylrequest.ConmentHttp;
@@ -59,6 +61,12 @@ public class OrderCallBack extends BaseController {
 	@Autowired
 	  private CvcYlDeliveryInfoService cvcYlDeliveryInfoService;
 	
+	
+	 /**
+	 * Logger for this class
+	 */
+	private static final Logger logger = Logger.getLogger(OrderCallBack.class);
+	
 	/**
 	 * 更新签收时间
 	 * 
@@ -71,6 +79,7 @@ public class OrderCallBack extends BaseController {
 		callBackResponse.setMessage("成功");
 		callBackResponse.setResult("true");
 		callBackResponse.setReturnCode("200");
+		logger.info("param:"+param);
 		try {
 			CallBaseRequest callbaseRequest = ConmentHttp.gson.fromJson(param, CallBaseRequest.class);
 			if(StringUtils.isNotEmpty(callbaseRequest.getLastResult().getMessage())

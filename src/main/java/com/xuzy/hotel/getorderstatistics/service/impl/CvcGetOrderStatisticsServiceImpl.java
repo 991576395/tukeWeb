@@ -107,12 +107,12 @@ public class CvcGetOrderStatisticsServiceImpl implements CvcGetOrderStatisticsSe
 				cvcOrderInfoEntity.setAddress(exchangeOrder.getDeliveryAddre());
 				cvcOrderInfoEntity.setRemark(exchangeOrder.getAcceptRemark());
 				try {
-					cvcOrderInfoEntity.setAddTime(""+PhpDateUtils.getTime(DateUtils.parseDate(exchangeOrder.getAcceptDate(),new String[] {"yyyy-MM-dd'T'HH:mm:ss.sss"})));
+					cvcOrderInfoEntity.setAddTime(""+PhpDateUtils.getTime(DateUtils.parseDate(exchangeOrder.getAcceptDate(),new String[] {"yyyy-MM-dd'T'HH:mm:ss.sss","yyyy-MM-dd'T'HH:mm:ss"})));
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}
 				try {
-					cvcOrderInfoEntity.setConfirmTime(""+PhpDateUtils.getTime(DateUtils.parseDate(exchangeOrder.getConfirmDate(),new String[] {"yyyy-MM-dd'T'HH:mm:ss.sss"})));
+					cvcOrderInfoEntity.setConfirmTime(""+PhpDateUtils.getTime(DateUtils.parseDate(exchangeOrder.getConfirmDate(),new String[] {"yyyy-MM-dd'T'HH:mm:ss.sss","yyyy-MM-dd'T'HH:mm:ss"})));
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}
@@ -151,7 +151,7 @@ public class CvcGetOrderStatisticsServiceImpl implements CvcGetOrderStatisticsSe
 	@Transactional
 	public int addwaitDeliveryCount(int orderCount, String batchNo) {
 		cvcOrderInfoDao.updateOrderRead(batchNo);
-		cvcGetOrderStatisticsDao.addwaitDeliveryCount(orderCount, batchNo);
+//		cvcGetOrderStatisticsDao.addwaitDeliveryCount(orderCount, batchNo);
 		return 1;
 	}
 

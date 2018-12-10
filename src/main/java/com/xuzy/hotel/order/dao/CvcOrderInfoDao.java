@@ -64,7 +64,7 @@ public interface CvcOrderInfoDao{
 	@ResultType(CvcOrderInfoEntity.class)
 	public MiniDaoPage<CvcOrderInfoEntity> getAll(@Param("cvcOrderInfo") CvcOrderInfoEntity cvcOrderInfo,@Param("page")  int page,@Param("rows") int rows);
 	
-	@Sql("SELECT order_id as id FROM  cvc_order_info batch_no = :batchNo AND tk_order_status='0'")
+	@Sql("SELECT order_id as id FROM  cvc_order_info where batch_no = :batchNo AND tk_order_status='0'")
 	public List<CvcOrderInfoEntity> getCanReadOrders(@Param("batchNo")  String batchNo);
 	
 	@Sql("UPDATE cvc_order_info SET yl_order_status= '1',tk_order_status='1' WHERE batch_no=:batchNo and tk_order_status='0'")
