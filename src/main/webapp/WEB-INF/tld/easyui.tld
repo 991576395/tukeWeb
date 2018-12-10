@@ -263,6 +263,12 @@
 			<rtexprvalue></rtexprvalue>
 			<description>主表表名</description>
 		</attribute>
+		
+		<attribute>
+			<name>searchCall</name>
+			<rtexprvalue>true</rtexprvalue>
+			<description>查询回调</description>
+		</attribute>
 		<!-- update-end-Author:guoxianhui  Date:20171214 for：TASK #2450 【改造】支持主子表效果 -->
 	</tag>
 	<tag>

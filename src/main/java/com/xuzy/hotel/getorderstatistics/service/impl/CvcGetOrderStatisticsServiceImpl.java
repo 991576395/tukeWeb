@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.jeecgframework.minidao.pojo.MiniDaoPage;
@@ -150,7 +151,11 @@ public class CvcGetOrderStatisticsServiceImpl implements CvcGetOrderStatisticsSe
 	@Override
 	@Transactional
 	public int addwaitDeliveryCount(int orderCount, String batchNo) {
-		cvcOrderInfoDao.updateOrderRead(batchNo);
+		if(StringUtils.isEmpty(batchNo)) {
+			cvcOrderInfoDao.updateOrderRead();
+		}else {
+			cvcOrderInfoDao.updateOrderRead(batchNo);
+		}
 //		cvcGetOrderStatisticsDao.addwaitDeliveryCount(orderCount, batchNo);
 		return 1;
 	}

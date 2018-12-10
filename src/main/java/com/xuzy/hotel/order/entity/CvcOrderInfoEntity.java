@@ -43,7 +43,7 @@ public class CvcOrderInfoEntity implements Serializable{
 	 */
 	private Integer tkOrderStatus;
 	
-	@Excel(name="订单状态",orderNum="12")
+	@Excel(name="订单状态",orderNum="13")
 	private String tkOrderStatusString;
 	/**
 	 *shipping_status
@@ -77,7 +77,7 @@ public class CvcOrderInfoEntity implements Serializable{
 	/**
 	 *address
 	 */
-	@Excel(name="收货地址",orderNum="8")
+	@Excel(name="收货地址",orderNum="9")
 	private String address;
 	/**
 	 *zipcode
@@ -86,7 +86,7 @@ public class CvcOrderInfoEntity implements Serializable{
 	/**
 	 *tel
 	 */
-	@Excel(name="收货人电话",orderNum="9")
+	@Excel(name="收货人电话",orderNum="10")
 	private String tel;
 	/**
 	 *mobile
@@ -115,7 +115,7 @@ public class CvcOrderInfoEntity implements Serializable{
 	/**
 	 *shipping_name
 	 */
-	@Excel(name="快递公司",orderNum="10")
+	@Excel(name="快递公司",orderNum="11")
 	private String shippingName;
 	/**
 	 *pay_id
@@ -260,7 +260,7 @@ public class CvcOrderInfoEntity implements Serializable{
 	/**
 	 *invoice_no
 	 */
-	@Excel(name="快递单号",orderNum="11")
+	@Excel(name="快递单号",orderNum="12")
 	private String invoiceNo;
 	/**
 	 *extension_code
@@ -400,7 +400,7 @@ public class CvcOrderInfoEntity implements Serializable{
 	 */
 	private Integer exceptionStatus;
 	
-	@Excel(name="是否异常",orderNum="14")
+	@Excel(name="是否异常",orderNum="15")
 	private String  exceptionStatusString;
 	
 	/**
@@ -422,7 +422,7 @@ public class CvcOrderInfoEntity implements Serializable{
 	 */
 	private Integer isBalance;
 	
-	@Excel(name="是否异常",orderNum="15")
+	@Excel(name="是否结算",orderNum="16")
 	private String isBalanceString;
 	/**
 	 *异常标记时间
@@ -433,7 +433,7 @@ public class CvcOrderInfoEntity implements Serializable{
 	 */
 	private Integer ylOrderStatus;
 	
-	@Excel(name="伊利订单状态 ",orderNum="13")
+	@Excel(name="伊利订单状态 ",orderNum="14")
 	private String ylOrderStatusString;
 	
 	/**
@@ -457,6 +457,9 @@ public class CvcOrderInfoEntity implements Serializable{
 	 */
 	@Excel(name="礼品编号",orderNum="7")
 	private String goodsSn;
+		
+	@Excel(name="礼品数量",orderNum="8")
+	private int goodsNumber;
 	
 	/**
 	 *签收时间
@@ -1149,5 +1152,13 @@ public class CvcOrderInfoEntity implements Serializable{
 	public void setYlOrderStatusString(String ylOrderStatusString) {
 		this.ylOrderStatusString = ylOrderStatusString;
 	}
+	public int getGoodsNumber() {
+		return goodsNumber;
+	}
+	public void setGoodsNumber(int goodsNumber) {
+		this.goodsNumber = goodsNumber;
+	}
+	
+	
 }
 

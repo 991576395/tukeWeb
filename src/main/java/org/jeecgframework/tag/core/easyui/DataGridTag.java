@@ -123,6 +123,11 @@ public class DataGridTag extends JeecgTag {
 	private String configId = "";
 	private boolean isShowSubGrid=false;//是否显示表体数据 值为true 或者false
 	
+	/**
+	 * 查询的回掉
+	 */
+	private String searchCall;
+	
 	public String getConfigId() {
 		return configId;
 	}

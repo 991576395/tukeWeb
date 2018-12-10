@@ -259,9 +259,6 @@ public class CvcOrderInfoController extends BaseController {
 		dataGrid.setResults(SystemTools.convertPaginatedList(list));
 		dataGrid.setTotal(cvcOrderInfoService.getCount(query, dataGrid.getPage(), dataGrid.getRows()));
 		TagUtil.datagrid(response, dataGrid);
-		
-		
-		request.setAttribute("orderStatus", query.getOrderStatus());
 	}
 	
 

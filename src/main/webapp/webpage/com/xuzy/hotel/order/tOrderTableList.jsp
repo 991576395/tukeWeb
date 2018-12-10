@@ -26,8 +26,8 @@
    
    <t:dgToolBar title="导出EXCEL" icon="icon-putout" funname="ExportXls"></t:dgToolBar>
    
-   <t:dgToolBar id="sureOrder" title="确认订单" icon="icon-edit" url="cvcOrderInfo.do?toDetail" funname="sureOrder"></t:dgToolBar>
-   <t:dgToolBar id="allocateOrder" title="仓库配货" icon="icon-edit" url="cvcOrderInfo.do?toDetail" funname="allocateOrder"></t:dgToolBar>
+   <t:dgToolBar id="sureOrder" title="确认订单" icon="icon-edit" url="cvcGetOrderStatistics.do?setOrderRead" funname="sureOrder"></t:dgToolBar>
+   <t:dgToolBar id="allocateOrder" title="仓库配货" icon="icon-edit" url="cvcGetOrderStatistics.do?allocateOrder" funname="allocateOrder"></t:dgToolBar>
    
    <t:dgToolBar title="推送至离港" icon="icon-edit" url="cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=offharbour"  funname="toUpdate"></t:dgToolBar>
    <t:dgToolBar title="推送至配送中" icon="icon-edit" url="cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=send"  funname="toUpdate"></t:dgToolBar>
@@ -38,6 +38,45 @@
   </div>
   
   <script type="text/javascript">
+  
+	//仓库配货
+	  function allocateOrder(title, url, id, width, height, isRestful) {
+			layer.open({
+				title:"系统提示",
+				content:"确认操作？",
+				icon:7,
+				shade: 0.3,
+				yes:function(index){
+					request(url,function (d){
+						tOrderListSearch();
+					});
+				},
+				btn:['确定','取消'],
+				btn2:function(index){
+					layer.close(index);
+				}
+			}); 
+		}
+  
+  		//  确认订单
+	  function sureOrder(title, url, id, width, height, isRestful) {
+			layer.open({
+				title:"系统提示",
+				content:"确认操作？",
+				icon:7,
+				shade: 0.3,
+				yes:function(index){
+					request(url,function (d){
+						tOrderListSearch();
+					});
+				},
+				btn:['确定','取消'],
+				btn2:function(index){
+					layer.close(index);
+				}
+			}); 
+		}
+  
 		//导出
 		  function ExportXls() {
 			var batchNo =  $("input[name='batchNo']").val();
@@ -116,7 +155,7 @@
 					shade: 0.3,
 					yes:function(index){
 						request(url,function (d){
-							reloadTable();
+							tOrderListSearch();
 						});
 					},
 					btn:['确定','取消'],
@@ -189,32 +228,28 @@
 				$("#sureOrder").hide();
 				$("#allocateOrder").hide();
 				
-				var orderStatus = '${orderStatus}';
-				if(nodeNo == 0){
-					$("#sureOrder").show();
-					$("#allocateOrder").hide();
-				}else if(nodeNo == 1){
-					$("#sureOrder").hide();
-					$("#allocateOrder").show();
-				}
+// 				var orderStatus = '${orderStatus}';
+// 				if(nodeNo == 0){
+// 					$("#sureOrder").show();
+// 					$("#allocateOrder").hide();
+// 				}else if(nodeNo == 1){
+// 					$("#sureOrder").hide();
+// 					$("#allocateOrder").show();
+// 				}
 			     // 添加事件
-// 				$("[name='orderStatus']").change(function(e) {
-// 					var nodeNo = e.target.value; // 获取选中下拉框的值
-// 					// 业务代码         
-// 					if(nodeNo == 0){
-// 						$("#sureOrder").show();
-// 						$("#allocateOrder").hide();
-// 					}else if(nodeNo == 1){
-// 						$("#sureOrder").hide();
-// 						$("#allocateOrder").show();
-// 					}
-// 				});
+				$("[name='orderStatus']").change(function(e) {
+					var nodeNo = e.target.value; // 获取选中下拉框的值
+// 					alert(nodeNo);
+					// 业务代码         
+					if(nodeNo == 0){
+						$("#sureOrder").show();
+						$("#allocateOrder").hide();
+					}else if(nodeNo == 1){
+						$("#sureOrder").hide();
+						$("#allocateOrder").show();
+					}
+				});
 			});
-			
-			
-			
-			
-			
 			
 		</script>
  </div>

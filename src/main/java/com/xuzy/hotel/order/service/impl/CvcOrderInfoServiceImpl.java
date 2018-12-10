@@ -140,7 +140,11 @@ public class CvcOrderInfoServiceImpl implements CvcOrderInfoService {
 
 	@Override
 	public List<CvcOrderInfoEntity> getCanReadOrders(String batchNo) {
-		return cvcOrderInfoDao.getCanReadOrders(batchNo);
+		if(!StringUtils.isEmpty(batchNo)) {
+			return cvcOrderInfoDao.getCanReadOrders(batchNo);
+		}else {
+			return cvcOrderInfoDao.getCanReadOrders();
+		}
 	}
 
 	@Override
@@ -297,5 +301,15 @@ public class CvcOrderInfoServiceImpl implements CvcOrderInfoService {
 			cvcOrderInfoEntity.setExceptionStatusString(ResourceUtil.searchAllTypesByCode(cvcOrderInfoEntity.getExceptionStatus()+"" ,"isExp"));
 		}
 		return cvcOrderInfoEntities;
+	}
+
+	@Override
+	public List<CvcOrderInfoEntity> getAllocateOrders(CvcOrderInfoEntity entity) {
+		return cvcOrderInfoDao.getExcelAll(entity);
+	}
+
+	@Override
+	public void updateAllocateOrder() {
+		cvcOrderInfoDao.updateAllocateOrder();
 	}
 }

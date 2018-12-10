@@ -185,7 +185,7 @@ public class CvcGetOrderStatisticsController extends BaseController{
 	 */
 	@RequestMapping(params = "setOrderRead",method ={RequestMethod.GET, RequestMethod.POST})
 	@ResponseBody
-	public AjaxJson setOrderRead(@RequestParam(required = true, value = "batchNo")String batchNo){
+	public AjaxJson setOrderRead(@RequestParam(required = false, value = "batchNo")String batchNo){
 		AjaxJson j = new AjaxJson();
 		try {
 			List<CvcOrderInfoEntity> cvcOrderInfoEntities = cvcOrderInfoService.getCanReadOrders(batchNo);
@@ -224,6 +224,57 @@ public class CvcGetOrderStatisticsController extends BaseController{
 		    log.info(e.getMessage());
 			j.setSuccess(false);
 			j.setMsg("保存失败");
+		}
+		return j;
+	}
+	
+	/**
+	 * 仓库配货
+	 * @return
+	 */
+	@RequestMapping(params = "allocateOrder",method ={RequestMethod.GET, RequestMethod.POST})
+	@ResponseBody
+	public AjaxJson allocateOrder(@RequestParam(required = false, value = "batchNo")String batchNo){
+		AjaxJson j = new AjaxJson();
+		try {
+			CvcOrderInfoEntity cvcOrderInfo = new CvcOrderInfoEntity();
+			cvcOrderInfo.setTkOrderStatus(1);
+			List<CvcOrderInfoEntity> cvcOrderInfoEntities = cvcOrderInfoService.getExcelAll(cvcOrderInfo);
+			if(CollectionUtils.isEmpty(cvcOrderInfoEntities)) {
+				j.setSuccess(false);
+				j.setMsg("无可仓库配货，请刷新页面重试！");
+				return j; 
+			}
+			
+			StringBuffer sb = new StringBuffer();
+			for (CvcOrderInfoEntity cvcOrderInfoEntity : cvcOrderInfoEntities) {
+				sb.append(cvcOrderInfoEntity.getId());
+				sb.append(",");
+			}
+			if(sb.length() > 0) {
+				sb.deleteCharAt(sb.length()-1);
+			}
+			
+			RequestSetOrdersReadJson params = new RequestSetOrdersReadJson();
+			params.setOrderIDs(sb.toString());
+			ResponseHead head = ConmentHttp.sendHttp(new TukeRequestBody.Builder()
+					.setSequence(2)
+					.setServiceCode("CRMIF.AllocateExchangeOrderJson")
+					.setParams(params).builder(), null);
+			if(head.getReturn() >= 0) {
+				cvcOrderInfoService.updateAllocateOrder();
+				
+				j.setSuccess(true);
+				j.setMsg("你已成功配货"+cvcOrderInfoEntities.size()+"个订单!");
+			}else {
+				j.setSuccess(false);
+				j.setMsg("配货失败，原因:伊利接口调用失败!");
+				return j;
+			}
+		} catch (Exception e) {
+		    log.info(e.getMessage());
+			j.setSuccess(false);
+			j.setMsg("配货失败");
 		}
 		return j;
 	}

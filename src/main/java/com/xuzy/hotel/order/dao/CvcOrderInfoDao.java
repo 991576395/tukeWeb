@@ -67,8 +67,17 @@ public interface CvcOrderInfoDao{
 	@Sql("SELECT order_id as id FROM  cvc_order_info where batch_no = :batchNo AND tk_order_status='0'")
 	public List<CvcOrderInfoEntity> getCanReadOrders(@Param("batchNo")  String batchNo);
 	
+	@Sql("SELECT order_id as id FROM  cvc_order_info where tk_order_status='0'")
+	public List<CvcOrderInfoEntity> getCanReadOrders();
+	
 	@Sql("UPDATE cvc_order_info SET yl_order_status= '1',tk_order_status='1' WHERE batch_no=:batchNo and tk_order_status='0'")
 	public void updateOrderRead(@Param("batchNo")  String batchNo);
+	
+	@Sql("UPDATE cvc_order_info SET yl_order_status= '1',tk_order_status='1' WHERE tk_order_status='0'")
+	public void updateOrderRead();
+	
+	@Sql("UPDATE cvc_order_info SET yl_order_status= '2',tk_order_status='2' WHERE tk_order_status='1'")
+	public void updateAllocateOrder();
 	
 	@Sql("UPDATE cvc_order_info SET yl_order_status= :status,tk_order_status=:status WHERE order_id=:orderId limit 1")
 	public void updateStatusByOrderId(@Param("orderId")  int orderId,@Param("status")int status);

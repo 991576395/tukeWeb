@@ -77,6 +77,13 @@ public interface CvcOrderInfoService {
 	 public List<CvcOrderInfoEntity> getCanReadOrders(String batchNo);
 	 
 	 /**
+	  * 获取指定状态订单
+	  * @param status
+	  * @return
+	  */
+	 public List<CvcOrderInfoEntity> getAllocateOrders(CvcOrderInfoEntity entity);
+	 
+	 /**
 	  * 获取异常订单列表
 	  * @param cvcOrderInfo
 	  * @param page
@@ -104,4 +111,6 @@ public interface CvcOrderInfoService {
 	
 	
 	public AjaxJson sendOrder(CvcOrderInfoEntity cvcOrderInfoEntity, String shippingName, String batchSendNo);
+
+	public void updateAllocateOrder();
 }
