@@ -674,7 +674,8 @@ public class CvcOrderInfoController extends BaseController {
 				//推送至签收 
 				RequestSignInExchangeOrderJson  requestBody = new RequestSignInExchangeOrderJson();
 				requestBody.setOrderID(id);
-				requestBody.setSignInMan(datas.get(0).getContext());
+				requestBody.setSignInMan("");
+//				requestBody.setSignInMan(datas.get(0).getContext());
 				requestBody.setSignInDate(datas.get(0).getFtime() );
 				ResponseHead responseHead = ConmentHttp.sendHttp(new TukeRequestBody.Builder()
 						.setSequence(2)

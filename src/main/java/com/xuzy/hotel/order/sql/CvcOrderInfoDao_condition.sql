@@ -30,9 +30,9 @@
 		    /* order_status */
 			and coi.tk_order_status = :cvcOrderInfo.orderStatus
 		</#if>
-		<#if ( cvcOrderInfo.tkOrderStatus )?? && cvcOrderInfo.tkOrderStatus ?length gt 0>
+		<#if ( cvcOrderInfo.ylOrderStatus )?? && cvcOrderInfo.ylOrderStatus ?length gt 0>
 		    /* tk订单状态 */
-			and coi.yl_order_status = :cvcOrderInfo.tkOrderStatus
+			and coi.yl_order_status = :cvcOrderInfo.ylOrderStatus
 		</#if>
 		
 		<#if ( cvcOrderInfo.invoiceNo )?? && cvcOrderInfo.invoiceNo ?length gt 0>
