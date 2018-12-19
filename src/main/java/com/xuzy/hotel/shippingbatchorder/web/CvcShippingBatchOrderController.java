@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.xuzy.hotel.order.entity.CvcOrderInfoEntity;
 import com.xuzy.hotel.order.service.CvcOrderInfoService;
 import com.xuzy.hotel.shippingbatchorder.entity.CvcShippingBatchOrderEntity;
 import com.xuzy.hotel.shippingbatchorder.entity.ResponseTotelEntity;
@@ -123,9 +124,15 @@ public class CvcShippingBatchOrderController extends BaseController{
 			List<CvcShippingBatchOrderEntity> batchOrderEntities = miniDaoPage.getResults();
 			if(CollectionUtils.isNotEmpty(batchOrderEntities)) {
 				for (CvcShippingBatchOrderEntity cvcShippingBatchOrderEntity : batchOrderEntities) {
+					
+//					CvcOrderInfoEntity orderIn foEntity = cvcOrderInfoService.get(Integer.parseInt(cvcShippingBatchOrderEntity.getOrderId()));
+//					orderInfoEntity.setOldAddTime(oldAddTime);
+					CvcOrderInfoEntity cvcOrderInfo = new CvcOrderInfoEntity();
+					cvcOrderInfo.setId(Integer.parseInt(cvcShippingBatchOrderEntity.getOrderId()));
+					cvcOrderInfo = cvcOrderInfoService.getOrder(cvcOrderInfo);
 					//循环发货
-					j = cvcOrderInfoService.sendOrder(cvcOrderInfoService.get(cvcShippingBatchOrderEntity.getId())
-							,cvcShippingBatchOrderEntity.getShippingName(), batchNo);
+					j = cvcOrderInfoService.sendOrder(cvcOrderInfo
+							,cvcShippingBatchOrderEntity.getShippingName(), batchNo,cvcShippingBatchOrderEntity.getInvoiceNo(),cvcShippingBatchOrderEntity.getPreArrivalDate());
 					if(j.isSuccess()) {
 						sucSize ++;
 					}else {

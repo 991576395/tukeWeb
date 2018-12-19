@@ -110,7 +110,7 @@ public interface CvcOrderInfoService {
 	CvcOrderInfoEntity getEntity(int id,String batchNo);
 	
 	
-	public AjaxJson sendOrder(CvcOrderInfoEntity cvcOrderInfoEntity, String shippingName, String batchSendNo);
+	public AjaxJson sendOrder(CvcOrderInfoEntity cvcOrderInfoEntity, String shippingName, String batchSendNo,String invoiceNo,String preArrivalDate);
 
 	public void updateAllocateOrder();
 }

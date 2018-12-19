@@ -35,12 +35,23 @@
 			function request() {
 				var value = $('.datagrid-cell-c2-batchNo').html();
 				if(value === undefined){
-					tip('暂无可确认订单');
+					$.ajax({
+						url : 'cvcGetOrderStatistics.do?setOrderRead&batchNo= ',
+						type : 'post',
+						cache : false,
+						success : function(data) {
+							var d = $.parseJSON(data);
+							var msg = d.msg;
+							tip(msg);
+							if (d.success) {
+								fn.call(d);
+							}
+						}
+					});
 				}else{
 					$.ajax({
 						url : 'cvcGetOrderStatistics.do?setOrderRead&batchNo='+value,
 						type : 'post',
-//	 					data : {orderId:$("#orderId").val()},
 						cache : false,
 						success : function(data) {
 							var d = $.parseJSON(data);

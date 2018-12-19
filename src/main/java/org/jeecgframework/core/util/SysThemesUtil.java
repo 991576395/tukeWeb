@@ -20,20 +20,21 @@ public class SysThemesUtil {
 	 * @return
 	 */
 	public static SysThemesEnum getSysTheme(HttpServletRequest request){
-		String indexStyle = null;
-		try {
-			Cookie[] cookies = request.getCookies();
-			for (Cookie cookie : cookies) {
-				if (cookie == null || StringUtils.isEmpty(cookie.getName())) {
-					continue;
-				}
-				if (cookie.getName().equalsIgnoreCase("JEECGINDEXSTYLE")) {
-					indexStyle = cookie.getValue();
-				}
-			}
-		} catch (Exception e) {
-		}
-		return SysThemesEnum.toEnum(indexStyle);
+//		String indexStyle = null;
+//		try {
+//			Cookie[] cookies = request.getCookies();
+//			for (Cookie cookie : cookies) {
+//				if (cookie == null || StringUtils.isEmpty(cookie.getName())) {
+//					continue;
+//				}
+//				if (cookie.getName().equalsIgnoreCase("JEECGINDEXSTYLE")) {
+//					indexStyle = cookie.getValue();
+//				}
+//			}
+//		} catch (Exception e) {
+//		}
+//		return SysThemesEnum.toEnum(indexStyle);
+		return SysThemesEnum.FINEUI_STYLE;
 	}
 
 	/**

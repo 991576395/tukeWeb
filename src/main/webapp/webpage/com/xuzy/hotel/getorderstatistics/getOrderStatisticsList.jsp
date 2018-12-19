@@ -15,7 +15,7 @@
 		   <t:dgCol title="离港中" field="offharbourCount" url="cvcOrderInfo.do?list&batchNo=#{unifiedBatchNo}&orderStatus=3" funname="toLoadNewTab"   width="80"></t:dgCol>
 		   <t:dgCol title="配送中" field="sendCount" url="cvcOrderInfo.do?list&batchNo=#{unifiedBatchNo}&orderStatus=4" funname="toLoadNewTab"   width="80"></t:dgCol>
 		   <t:dgCol title="已签收" field="signinCount" url="cvcOrderInfo.do?list&batchNo=#{unifiedBatchNo}&orderStatus=5" funname="toLoadNewTab"   width="80"></t:dgCol>
-		   <t:dgCol title="异常订单" field="exceptionCount" url="cvcOrderInfo.do?list&batchNo=#{unifiedBatchNo}&orderStatus=1" funname="toLoadNewTab"   width="80"></t:dgCol>
+		   <t:dgCol title="异常订单" field="exceptionCount" url="cvcOrderInfo.do?list&batchNo=#{unifiedBatchNo}&exceptionStatus=2" funname="toLoadNewTab"   width="80"></t:dgCol>
 		   <t:dgCol title="签收失败" field="signinFailCount" url="cvcOrderInfo.do?list&batchNo=#{unifiedBatchNo}&orderStatus=6" funname="toLoadNewTab"   width="80"></t:dgCol>
 		   <t:dgCol title="退货订单" field="backCount" url="cvcOrderInfo.do?list&batchNo=#{unifiedBatchNo}&orderStatus=7" funname="toLoadNewTab"   width="80"></t:dgCol>
 	 		

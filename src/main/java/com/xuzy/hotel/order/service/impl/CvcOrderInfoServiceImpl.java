@@ -23,6 +23,8 @@ import com.xuzy.hotel.order.entity.CvcOrderInfoEntity;
 import com.xuzy.hotel.order.service.CvcOrderInfoService;
 import com.xuzy.hotel.orderaction.dao.CvcOrderActionDao;
 import com.xuzy.hotel.orderaction.entity.CvcOrderActionEntity;
+import com.xuzy.hotel.shipping.dao.CvcShippingDao;
+import com.xuzy.hotel.shipping.entity.CvcShippingEntity;
 import com.xuzy.hotel.shippingbatchorder.dao.CvcShippingBatchOrderDao;
 import com.xuzy.hotel.shippingbatchorder.entity.CvcShippingBatchOrderEntity;
 import com.xuzy.hotel.ylrequest.ConmentHttp;
@@ -54,6 +56,9 @@ public class CvcOrderInfoServiceImpl implements CvcOrderInfoService {
 	
 	@Resource
 	private CvcDeliveryGoodsDao cvcDeliveryGoodsDao;
+	
+	@Resource
+	private CvcShippingDao cvcShippingDao;
 	
 
 	 /**
@@ -188,7 +193,8 @@ public class CvcOrderInfoServiceImpl implements CvcOrderInfoService {
 	 * 
 	 * 
 	 */
-	public AjaxJson sendOrder(CvcOrderInfoEntity cvcOrderInfoEntity, String shippingName, String batchSendNo) {
+	public AjaxJson sendOrder(CvcOrderInfoEntity cvcOrderInfoEntity, String shippingName,String batchSendNo,String invoiceNo
+			,String preArrivalDate) {
 		AjaxJson j = new AjaxJson();
 		try {
 			if (cvcOrderInfoEntity == null) {
@@ -210,16 +216,20 @@ public class CvcOrderInfoServiceImpl implements CvcOrderInfoService {
 				j.setMsg("订单：" + cvcOrderInfoEntity.getId() + "快递名称：" + shippingName + "有误，请检查！");
 				return j;
 			}
+			cvcOrderInfoEntity.setInvoiceNo(invoiceNo);
+			cvcOrderInfoEntity.setPreArrivalDate(preArrivalDate);
+			cvcOrderInfoEntity.setShippingName(shippingName);
+			
 			// 是否离港
 			boolean isOffhabour = false;
-			if (cvcOrderInfoEntity.getTkOrderStatus() == 2) {
+			if (cvcOrderInfoEntity.getOrderStatus() == 2) {
 				// 配货中订单 调用离港接口
 				// 订单离港
 				RequestOFFHarbourExchangeOrderJson exchangeOrderJson = new RequestOFFHarbourExchangeOrderJson();
 				exchangeOrderJson.setOrderID(cvcOrderInfoEntity.getId());
 				exchangeOrderJson.setEMSCompany(shippingName);
-				exchangeOrderJson.setEMSOdd(cvcOrderInfoEntity.getInvoiceNo());
-				exchangeOrderJson.setPreArrivalDate(cvcOrderInfoEntity.getPreArrivalDate());
+				exchangeOrderJson.setEMSOdd(invoiceNo);
+				exchangeOrderJson.setPreArrivalDate(preArrivalDate);
 				ResponseHead head = ConmentHttp.sendHttp(new TukeRequestBody.Builder().setParams(exchangeOrderJson)
 						.setSequence(4).setServiceCode("CRMIF.OFFHarbourExchangeOrderJson").builder(), null);
 				if (head.getReturn() >= 0) {
@@ -231,18 +241,20 @@ public class CvcOrderInfoServiceImpl implements CvcOrderInfoService {
 				}
 			}
 
-			if (cvcOrderInfoEntity.getTkOrderStatus() == 3 || isOffhabour) {
+			CvcShippingEntity cvcShippingEntity = cvcShippingDao.get(shippingName);
+			
+			if (cvcOrderInfoEntity.getOrderStatus() == 3 || isOffhabour) {
 				int isPostorder = 0;
 				// 已经为离港订单 或者调用伊利接口成功
 				if (StringUtils.isNotEmpty(batchSendNo)) {
 					// 批量发货相关
 					// 是否已经订阅快递信息
 					CvcShippingBatchOrderEntity batchOrderEntity = cvcShippingBatchOrderDao
-							.getEntityByInvoiceNo(cvcOrderInfoEntity.getInvoiceNo());
+							.getEntityByInvoiceNo(invoiceNo);
 					if (batchOrderEntity == null) {
 						// 未订阅物流信息 开始订阅
-						Kuaidi100Response kuaidi100Response = ConmentHttp.postorder(shippingName,
-								cvcOrderInfoEntity.getInvoiceNo());
+						Kuaidi100Response kuaidi100Response = ConmentHttp.postorder(cvcShippingEntity.getShippingCode(),
+								invoiceNo);
 						isPostorder = (kuaidi100Response.getResult() || kuaidi100Response.getMessage().contains("重复订阅"))
 								? 1: 0;
 					} else {
@@ -250,7 +262,7 @@ public class CvcOrderInfoServiceImpl implements CvcOrderInfoService {
 					}
 				} else {
 					// 非批量发货
-					ConmentHttp.postorder(shippingName, cvcOrderInfoEntity.getInvoiceNo());
+					ConmentHttp.postorder(cvcShippingEntity.getShippingCode(), invoiceNo);
 				}
 				// 添加发货订单
 				cvcDeliveryOrderService.addDeliveryOrderByOrder(cvcOrderInfoEntity, shippingName, batchSendNo,

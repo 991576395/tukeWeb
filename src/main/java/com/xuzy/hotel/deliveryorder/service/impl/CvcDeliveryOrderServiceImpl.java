@@ -129,7 +129,7 @@ public class CvcDeliveryOrderServiceImpl implements CvcDeliveryOrderService {
 	@Transactional(rollbackFor=XuException.class)
 	public void addDeliveryOrderByOrder(CvcOrderInfoEntity orderInfoEntity,String shippingName,String batchSendNo,int isPostorder) {
 		try {
-			if(StringUtils.isEmpty(orderInfoEntity.getShippingName())) {
+			if(!StringUtils.isEmpty(shippingName)) {
 				CvcShippingEntity cvcShippingEntity = cvcShippingDao.get(shippingName);
 				if(cvcShippingEntity == null) {
 					cvcShippingEntity = new CvcShippingEntity();

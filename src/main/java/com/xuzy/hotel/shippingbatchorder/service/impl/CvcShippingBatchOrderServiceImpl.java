@@ -122,7 +122,7 @@ public class CvcShippingBatchOrderServiceImpl implements CvcShippingBatchOrderSe
 			cvcShippingBatchOrderEntity.setIsOffharbour(0);
 			cvcShippingBatchOrderEntity.setIsPostorder(0);
 			cvcShippingBatchOrderEntity.setStatus(0);
-			cvcShippingBatchOrderEntity.setIsOrderBatchNoOk(0);
+			cvcShippingBatchOrderEntity.setIsOrderBatchNoOk(is_order_batch_no_ok);
 			cvcShippingBatchOrderEntity.setBatchNo(batchNo);
 			cvcShippingBatchOrderEntity.setOrderBatchNo(orderBatchNo);
 			cvcShippingBatchOrderDao.insert(cvcShippingBatchOrderEntity);

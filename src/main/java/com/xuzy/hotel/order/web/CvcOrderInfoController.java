@@ -157,6 +157,8 @@ public class CvcOrderInfoController extends BaseController {
 		request.setAttribute("orderStatus", orderStatus);
 		String batchNo = request.getParameter("batchNo")==null?"":request.getParameter("batchNo");
 		request.setAttribute("batchNo", batchNo);
+		String exceptionStatus = request.getParameter("exceptionStatus")==null?"":request.getParameter("exceptionStatus");
+		request.setAttribute("exceptionStatus", exceptionStatus);
 		return new ModelAndView("com/xuzy/hotel/order/tOrderTableList");
 	}
 	
@@ -541,7 +543,7 @@ public class CvcOrderInfoController extends BaseController {
 		
 		try {
 			//发货
-			j = cvcOrderInfoService.sendOrder(cvcOrderInfoEntity,shippingName,"");
+			j = cvcOrderInfoService.sendOrder(cvcOrderInfoEntity,shippingName,"",invoiceNo,preArrivalDate);
 		} catch (Exception e) {
 			log.info(e.getMessage());
 			j.setSuccess(false);

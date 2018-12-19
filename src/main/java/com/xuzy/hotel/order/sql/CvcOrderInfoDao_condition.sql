@@ -37,7 +37,7 @@
 		
 		<#if ( cvcOrderInfo.invoiceNo )?? && cvcOrderInfo.invoiceNo ?length gt 0>
 		    /* 快递单号 */
-			and coi.invoice_no = :cvcOrderInfo.invoiceNo
+			and d_o.invoice_no = :cvcOrderInfo.invoiceNo
 		</#if>
 		<#if ( cvcOrderInfo.shippingId )?? && cvcOrderInfo.shippingId ?length gt 0>
 		    /* 快递公司 */

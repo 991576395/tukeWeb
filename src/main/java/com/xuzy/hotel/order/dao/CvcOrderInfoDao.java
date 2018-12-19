@@ -27,7 +27,7 @@ public interface CvcOrderInfoDao{
 	 * @param id
 	 * @return
 	 */
-	@Sql("SELECT d_o.shipping_name as shippingName,d_o.invoice_no as invoiceNo,d_o.pre_arrival_date as preArrivalDate FROM  cvc_order_info AS o LEFT JOIN cvc_delivery_order AS d_o  ON o.order_id=d_o.order_id WHERE o.order_id = :id")
+	@Sql("SELECT o.tk_order_status orderStatus,o.order_id id,d_o.shipping_name as shippingName,d_o.invoice_no as invoiceNo,d_o.pre_arrival_date as preArrivalDate FROM  cvc_order_info AS o LEFT JOIN cvc_delivery_order AS d_o  ON o.order_id=d_o.order_id WHERE o.order_id = :id")
 	CvcOrderInfoEntity get(@Param("id") int id);
 	
 	@Sql("SELECT order_id as id,tk_order_status FROM  cvc_order_info  WHERE order_id = :id")
