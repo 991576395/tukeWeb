@@ -83,7 +83,7 @@ public interface CvcDeliveryOrderDao{
 	  * @return
 	  */
 	 @ResultType(CvcDeliveryOrderEntity.class)
-	 @Sql("SELECT shipping_name, invoice_no, pre_arrival_date,add_time FROM cvc_delivery_order WHERE order_id = :orderId")
+	 @Sql("SELECT shipping_name, invoice_no, pre_arrival_date,add_time FROM cvc_delivery_order WHERE order_id = :orderId order by delivery_id desc  limit 1")
 	 public CvcDeliveryOrderEntity getDeliveryOrderByOrderId(@Param("orderId") int orderId);
 }
 

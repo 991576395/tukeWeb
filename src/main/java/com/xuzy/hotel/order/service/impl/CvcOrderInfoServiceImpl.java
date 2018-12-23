@@ -21,8 +21,6 @@ import com.xuzy.hotel.deliveryorder.service.CvcDeliveryOrderService;
 import com.xuzy.hotel.order.dao.CvcOrderInfoDao;
 import com.xuzy.hotel.order.entity.CvcOrderInfoEntity;
 import com.xuzy.hotel.order.service.CvcOrderInfoService;
-import com.xuzy.hotel.orderaction.dao.CvcOrderActionDao;
-import com.xuzy.hotel.orderaction.entity.CvcOrderActionEntity;
 import com.xuzy.hotel.shipping.dao.CvcShippingDao;
 import com.xuzy.hotel.shipping.entity.CvcShippingEntity;
 import com.xuzy.hotel.shippingbatchorder.dao.CvcShippingBatchOrderDao;
@@ -245,7 +243,7 @@ public class CvcOrderInfoServiceImpl implements CvcOrderInfoService {
 			
 			if (cvcOrderInfoEntity.getOrderStatus() == 3 || isOffhabour) {
 				int isPostorder = 0;
-				// 已经为离港订单 或者调用伊利接口成功
+//				 已经为离港订单 或者调用伊利接口成功
 				if (StringUtils.isNotEmpty(batchSendNo)) {
 					// 批量发货相关
 					// 是否已经订阅快递信息
@@ -262,7 +260,9 @@ public class CvcOrderInfoServiceImpl implements CvcOrderInfoService {
 					}
 				} else {
 					// 非批量发货
-					ConmentHttp.postorder(cvcShippingEntity.getShippingCode(), invoiceNo);
+					Kuaidi100Response kuaidi100Response =  ConmentHttp.postorder(cvcShippingEntity.getShippingCode(), invoiceNo);
+					isPostorder = (kuaidi100Response.getResult() || kuaidi100Response.getMessage().contains("重复订阅"))
+					? 1: 0;
 				}
 				// 添加发货订单
 				cvcDeliveryOrderService.addDeliveryOrderByOrder(cvcOrderInfoEntity, shippingName, batchSendNo,
@@ -323,5 +323,10 @@ public class CvcOrderInfoServiceImpl implements CvcOrderInfoService {
 	@Override
 	public void updateAllocateOrder() {
 		cvcOrderInfoDao.updateAllocateOrder();
+	}
+
+	@Override
+	public List<CvcOrderInfoEntity> getCanCangKu() {
+		return cvcOrderInfoDao.getCanCangKu();
 	}
 }

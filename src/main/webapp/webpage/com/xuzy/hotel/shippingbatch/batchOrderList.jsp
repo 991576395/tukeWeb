@@ -3,7 +3,7 @@
 <t:base type="jquery,easyui,tools,DatePicker"></t:base>
 <div class="easyui-layout" fit="true">
   <div region="center" style="padding:0px;border:0px">
-  <t:datagrid name="tOrderList" title="菜名维护" actionUrl="cvcShippingBatchOrder.do?datagrid&batchNo=${batchNo}"  queryMode="group" pageSize="15" idField="id" fit="true">
+  <t:datagrid name="tBatchOrderList" title="菜名维护" actionUrl="cvcShippingBatchOrder.do?datagrid&batchNo=${batchNo}"  queryMode="group" pageSize="15" idField="id" fit="true">
    	<t:dgCol title="编号" field="id"    width="80"></t:dgCol>
    	<t:dgCol title="订单号" field="orderId" query="true" queryMode="single"   width="80"></t:dgCol>
    	<t:dgCol title="快递公司" field="shippingName"  ></t:dgCol>
@@ -19,6 +19,9 @@
   </div>
   
   <script type="text/javascript">
+  	var totelSize=0,sucSize=0,faildSize=0;
+  
+  
 	  function ship(title, url, id, width, height, isRestful) {
 			layer.open({
 				title:"系统提示",
@@ -27,15 +30,15 @@
 				shade: 0.3,
 				yes:function(index){
 					request(url+"&first=1",function (d){
-						if(d.obj.totelSize > 0){
-							totelSize = d.obj.totelSize;
-						}
 						sucSize += d.obj.sucSize;
 						faildSize+= d.obj.faildSize;
-						if(totelSize = (sucSize + faildSize)){
-							tip("发货完成！");
+						if(d.obj.totelSize == 0){
+							sucSize = 0;
+							faildSize=0;
+							tBatchOrderListsearch();
+							tip(d.msg);
 						}else{
-							requestall(url,1,0,0,0);
+							requestall(url,1,totelSize,sucSize,faildSize);
 						}
 					});
 				},
@@ -47,9 +50,11 @@
 		}
 	  
 	  function responseCall(url,d){
-			if (d.obj.totelSize == (d.obj.sucSize + d.obj.faildSize)) {
-				reloadtCheckOrderList();
-				tip("发货完成！");
+			if (d.obj.totelSize == 0) {
+				tBatchOrderListsearch();
+				sucSize = 0;
+				faildSize=0;
+				tip(d.msg);
 			} else{
 				requestall(url,0,d.obj.totelSize,d.obj.sucSize,d.obj.faildSize);
 			}
@@ -86,7 +91,7 @@
 						var msg = d.msg;
 						
 						if (d.success) {
-							fn.call(d);
+							fn.call(this,d);
 						}else{
 							tip(msg);
 						}

@@ -26,6 +26,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.xuzy.hotel.order.entity.CvcOrderInfoEntity;
 import com.xuzy.hotel.order.service.CvcOrderInfoService;
+import com.xuzy.hotel.shippingbatch.service.CvcShippingBatchService;
 import com.xuzy.hotel.shippingbatchorder.entity.CvcShippingBatchOrderEntity;
 import com.xuzy.hotel.shippingbatchorder.entity.ResponseTotelEntity;
 import com.xuzy.hotel.shippingbatchorder.service.CvcShippingBatchOrderService;
@@ -43,7 +44,10 @@ public class CvcShippingBatchOrderController extends BaseController{
 	 private CvcShippingBatchOrderService cvcShippingBatchOrderService;
 	 
 	 @Autowired
-		private CvcOrderInfoService cvcOrderInfoService;
+	 private CvcOrderInfoService cvcOrderInfoService;
+	 
+	 @Autowired
+	  private CvcShippingBatchService cvcShippingBatchService;
 
 	/**
 	 * 列表页面
@@ -116,7 +120,7 @@ public class CvcShippingBatchOrderController extends BaseController{
 				faildSize = Integer.parseInt(faildSizeString);
 			}
 			
-			if(first == 1 && isBatch) {
+			if(isBatch) {
 				//批量发货统计总数返回
 				totleSize = cvcShippingBatchOrderService.getCount(entity);
 				responseTotelEntity.setTotelSize(totleSize);
@@ -124,9 +128,6 @@ public class CvcShippingBatchOrderController extends BaseController{
 			List<CvcShippingBatchOrderEntity> batchOrderEntities = miniDaoPage.getResults();
 			if(CollectionUtils.isNotEmpty(batchOrderEntities)) {
 				for (CvcShippingBatchOrderEntity cvcShippingBatchOrderEntity : batchOrderEntities) {
-					
-//					CvcOrderInfoEntity orderIn foEntity = cvcOrderInfoService.get(Integer.parseInt(cvcShippingBatchOrderEntity.getOrderId()));
-//					orderInfoEntity.setOldAddTime(oldAddTime);
 					CvcOrderInfoEntity cvcOrderInfo = new CvcOrderInfoEntity();
 					cvcOrderInfo.setId(Integer.parseInt(cvcShippingBatchOrderEntity.getOrderId()));
 					cvcOrderInfo = cvcOrderInfoService.getOrder(cvcOrderInfo);
@@ -140,10 +141,14 @@ public class CvcShippingBatchOrderController extends BaseController{
 					}
 				}
 			}
+			if(totleSize == 0 && sucSize > 0) {
+				//本次操作结束
+				cvcShippingBatchService.addSucSizeCount(batchNo, sucSize);
+			}
 			responseTotelEntity.setSucSize(sucSize);
 			responseTotelEntity.setFaildSize(faildSize);
 			j.setObj(responseTotelEntity);
-			j.setMsg("保存成功");
+			j.setMsg("发货成功:"+sucSize+"条，失败:"+faildSize+"条");
 		} catch (Exception e) {
 		    log.info(e.getMessage());
 			j.setSuccess(false);
@@ -182,10 +187,10 @@ public class CvcShippingBatchOrderController extends BaseController{
 	 */
 	@RequestMapping(params = "doAdd",method ={RequestMethod.GET, RequestMethod.POST})
 	@ResponseBody
-	public AjaxJson doAdd(@ModelAttribute CvcShippingBatchOrderEntity cvcShippingBatchOrder){
+	public AjaxJson doAdd(@RequestParam(required = true, value = "batchNo" ) String batchNo,@RequestParam(required = true, value = "sucSize" ) int sucSize){
 		AjaxJson j = new AjaxJson();
 		try {
-			cvcShippingBatchOrderService.insert(cvcShippingBatchOrder);
+			cvcShippingBatchService.addSucSizeCount(batchNo, sucSize);
 			j.setMsg("保存成功");
 		} catch (Exception e) {
 		    log.info(e.getMessage());

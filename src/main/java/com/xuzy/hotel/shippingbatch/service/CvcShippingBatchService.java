@@ -24,4 +24,6 @@ public interface CvcShippingBatchService {
 	public void batchDelete(String[] ids);
 	
 	int getCount(CvcShippingBatchEntity cvcShippingBatch);
+	
+	void addSucSizeCount(String batchNo,int sucSize);
 }

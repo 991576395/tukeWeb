@@ -237,9 +237,7 @@ public class CvcGetOrderStatisticsController extends BaseController{
 	public AjaxJson allocateOrder(@RequestParam(required = false, value = "batchNo")String batchNo){
 		AjaxJson j = new AjaxJson();
 		try {
-			CvcOrderInfoEntity cvcOrderInfo = new CvcOrderInfoEntity();
-			cvcOrderInfo.setTkOrderStatus(1);
-			List<CvcOrderInfoEntity> cvcOrderInfoEntities = cvcOrderInfoService.getExcelAll(cvcOrderInfo);
+			List<CvcOrderInfoEntity> cvcOrderInfoEntities = cvcOrderInfoService.getCanCangKu();
 			if(CollectionUtils.isEmpty(cvcOrderInfoEntities)) {
 				j.setSuccess(false);
 				j.setMsg("无可仓库配货，请刷新页面重试！");

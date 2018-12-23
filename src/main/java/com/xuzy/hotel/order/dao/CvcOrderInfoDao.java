@@ -27,7 +27,7 @@ public interface CvcOrderInfoDao{
 	 * @param id
 	 * @return
 	 */
-	@Sql("SELECT o.tk_order_status orderStatus,o.order_id id,d_o.shipping_name as shippingName,d_o.invoice_no as invoiceNo,d_o.pre_arrival_date as preArrivalDate FROM  cvc_order_info AS o LEFT JOIN cvc_delivery_order AS d_o  ON o.order_id=d_o.order_id WHERE o.order_id = :id")
+	@Sql("SELECT distinct o.order_id id,o.tk_order_status orderStatus,d_o.shipping_name as shippingName,d_o.invoice_no as invoiceNo,d_o.pre_arrival_date as preArrivalDate FROM  cvc_order_info AS o LEFT JOIN cvc_delivery_order AS d_o  ON o.order_id=d_o.order_id WHERE o.order_id = :id")
 	CvcOrderInfoEntity get(@Param("id") int id);
 	
 	@Sql("SELECT order_id as id,tk_order_status FROM  cvc_order_info  WHERE order_id = :id")
@@ -69,6 +69,9 @@ public interface CvcOrderInfoDao{
 	
 	@Sql("SELECT order_id as id FROM  cvc_order_info where tk_order_status='0'")
 	public List<CvcOrderInfoEntity> getCanReadOrders();
+	
+	@Sql("SELECT order_id as id FROM  cvc_order_info where tk_order_status='1'")
+	public List<CvcOrderInfoEntity> getCanCangKu();
 	
 	@Sql("UPDATE cvc_order_info SET yl_order_status= '1',tk_order_status='1' WHERE batch_no=:batchNo and tk_order_status='0'")
 	public void updateOrderRead(@Param("batchNo")  String batchNo);

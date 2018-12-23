@@ -72,7 +72,7 @@ public interface CvcDeliveryInfoDao {
 	 * @return
 	 */
 	@ResultType(CvcDeliveryInfoEntity.class)
-	@Sql("SELECT data,state FROM  cvc_delivery_info WHERE number = :invoice_no ORDER BY id DESC LIMIT 1")
+	@Sql("SELECT id,data,state FROM  cvc_delivery_info WHERE number = :invoice_no ORDER BY id DESC LIMIT 1")
 	public CvcDeliveryInfoEntity getAll(@Param("invoice_no") String invoice_no);
 
 }

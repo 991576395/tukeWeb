@@ -62,6 +62,7 @@ public class OrderCallBack extends BaseController {
 	  private CvcYlDeliveryInfoService cvcYlDeliveryInfoService;
 	
 	
+	
 	 /**
 	 * Logger for this class
 	 */
@@ -94,23 +95,23 @@ public class OrderCallBack extends BaseController {
 				//快递信息
 				cvcDeliveryInfoService.insert(cvcDeliveryInfo);
 				
-				CvcDeliveryInfoEntity entity = cvcDeliveryInfoService.getDeliveryInfosByInvoiceNo(nu);
+				CvcDeliveryOrderEntity entity = cvcDeliveryOrderService.getEntityByinvoiceNo(nu);
 				if(entity != null) {
 					//查询订单状态
-					CvcOrderInfoEntity cvcOrderInfoEntity = cvcOrderInfoService.get(entity.getId());
+					CvcOrderInfoEntity cvcOrderInfoEntity = cvcOrderInfoService.get(entity.getOrderId());
 					
-					if(cvcOrderInfoEntity.getTkOrderStatus() == 5) {
+					if(cvcOrderInfoEntity.getOrderStatus() == 5) {
 						//已签收
 						return callBackResponse;
 					}
 					
 					if(CollectionUtils.isNotEmpty(callbaseRequest.getLastResult().getData())) {
 						for(Data data:callbaseRequest.getLastResult().getData()) {
-							CvcYlDeliveryInfoEntity ylDeliveryInfoEntity =cvcYlDeliveryInfoService.get(entity.getId(),nu,data.getContext());
+							CvcYlDeliveryInfoEntity ylDeliveryInfoEntity =cvcYlDeliveryInfoService.get(entity.getOrderId(),nu,data.getContext());
 							if(ylDeliveryInfoEntity == null) {
 								//未发送过
 								RequestExchangeProcessHistoryAddJson request = new RequestExchangeProcessHistoryAddJson();
-								request.setOrderID(entity.getId());
+								request.setOrderID(entity.getOrderId());
 								request.setSwitNumber(PhpDateUtils.getOrderSn());
 								request.setDescription(data.getContext());
 								request.setProcessTime(data.getFtime());
@@ -120,7 +121,7 @@ public class OrderCallBack extends BaseController {
 								if(responseHead.getReturn() >= 0) {
 									//记录推送成功
 									ylDeliveryInfoEntity = new CvcYlDeliveryInfoEntity();
-									ylDeliveryInfoEntity.setOrderId(entity.getId());
+									ylDeliveryInfoEntity.setOrderId(entity.getOrderId());
 									ylDeliveryInfoEntity.setNumber(nu);
 									ylDeliveryInfoEntity.setContext(data.getContext());
 									ylDeliveryInfoEntity.setFtime(data.getFtime());
@@ -132,23 +133,23 @@ public class OrderCallBack extends BaseController {
 					
 					//推送yl
 					if(cvcDeliveryInfo.getState() == 0 || cvcDeliveryInfo.getState() == 5
-							|| (cvcDeliveryInfo.getState() == 3 && cvcOrderInfoEntity.getTkOrderStatus() == 3)) {
+							|| (cvcDeliveryInfo.getState() == 3 && cvcOrderInfoEntity.getOrderStatus() == 3)) {
 						//推送至配送中 
 						RequestDeliveryExchangeOrderJson  requestBody = new RequestDeliveryExchangeOrderJson();
-						requestBody.setOrderID(entity.getId());
+						requestBody.setOrderID(entity.getOrderId());
 						requestBody.setDeliveryingDate(DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
 						ResponseHead responseHead = ConmentHttp.sendHttp(new TukeRequestBody.Builder()
 								.setSequence(2)
 								.setServiceCode("CRMIF.DeliveryExchangeOrderJson")
 								.setParams(requestBody).builder(), null);
 						if(responseHead.getReturn() >= 0) {
-							cvcOrderInfoService.updateStatusByOrderId(entity.getId(), 4);
+							cvcOrderInfoService.updateStatusByOrderId(entity.getOrderId(), 4);
 						}
 						return callBackResponse;
 					}else if(cvcDeliveryInfo.getState() == 3){
 						//推送至签收 
 						RequestSignInExchangeOrderJson  requestBody = new RequestSignInExchangeOrderJson();
-						requestBody.setOrderID(entity.getId());
+						requestBody.setOrderID(entity.getOrderId());
 						requestBody.setSignInMan(callbaseRequest.getLastResult().getData().get(0).getContext());
 						requestBody.setSignInDate(callbaseRequest.getLastResult().getData().get(0).getFtime() );
 						ResponseHead responseHead = ConmentHttp.sendHttp(new TukeRequestBody.Builder()
@@ -156,20 +157,20 @@ public class OrderCallBack extends BaseController {
 								.setServiceCode("CRMIF.SignInExchangeOrderJson")
 								.setParams(requestBody).builder(), null);
 						if(responseHead.getReturn() >= 0) {
-							cvcOrderInfoService.updateStatusByOrderId(entity.getId(), 5);
+							cvcOrderInfoService.updateStatusByOrderId(entity.getOrderId(), 5);
 						}
 						return callBackResponse;
 					}else if(cvcDeliveryInfo.getState() == 2){
 						//设置疑难
-						cvcOrderInfoService.updateErrorStatusByOrderId(entity.getId(), 1);
+						cvcOrderInfoService.updateErrorStatusByOrderId(entity.getOrderId(), 1);
 						return callBackResponse;
 					}else if(cvcDeliveryInfo.getState() == 4) {
 						//退签
-						cvcOrderInfoService.updateErrorStatusByOrderId(entity.getId(), 2);
+						cvcOrderInfoService.updateErrorStatusByOrderId(entity.getOrderId(), 2);
 						return callBackResponse;
 					}else if(cvcDeliveryInfo.getState() == 6) {
 						//退回
-						cvcOrderInfoService.updateErrorStatusByOrderId(entity.getId(), 3);
+						cvcOrderInfoService.updateErrorStatusByOrderId(entity.getOrderId(), 3);
 						return callBackResponse;
 					}
 				}
@@ -208,6 +209,7 @@ public class OrderCallBack extends BaseController {
 			callBackResponse.setMessage("失败");
 			callBackResponse.setResult("false");
 			callBackResponse.setReturnCode("500");
+			logger.error("推送信息异常", e);
 		}
 		return callBackResponse;
 	}

@@ -60,6 +60,10 @@ public interface CvcShippingBatchDao{
 	 */
 	 @Sql("DELETE from cvc_shipping_batch WHERE ID = :id")
 	 public void deleteById(@Param("id") String id);
+	 
+	 
+	@Sql("UPDATE cvc_shipping_batch SET shipping_count_ok=shipping_count_ok + :sucSize WHERE batch_no=:batchNo")
+	void addSucSizeCount(@Param("batchNo")String batchNo,@Param("sucSize")int sucSize);
 	
 }
 

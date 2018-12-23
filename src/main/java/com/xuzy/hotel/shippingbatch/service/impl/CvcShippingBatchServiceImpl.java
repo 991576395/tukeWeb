@@ -66,4 +66,9 @@ public class CvcShippingBatchServiceImpl implements CvcShippingBatchService {
 	public int getCount(CvcShippingBatchEntity cvcShippingBatch) {
 		return cvcShippingBatchDao.getCount(cvcShippingBatch);
 	}
+
+	@Override
+	public void addSucSizeCount(String batchNo, int sucSize) {
+		cvcShippingBatchDao.addSucSizeCount(batchNo, sucSize);
+	}
 }

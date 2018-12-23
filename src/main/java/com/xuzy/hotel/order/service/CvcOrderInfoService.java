@@ -113,4 +113,6 @@ public interface CvcOrderInfoService {
 	public AjaxJson sendOrder(CvcOrderInfoEntity cvcOrderInfoEntity, String shippingName, String batchSendNo,String invoiceNo,String preArrivalDate);
 
 	public void updateAllocateOrder();
+	
+	public List<CvcOrderInfoEntity> getCanCangKu();
 }
