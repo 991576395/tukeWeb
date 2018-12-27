@@ -22,8 +22,8 @@ public class CvcYlDeliveryInfoServiceImpl implements CvcYlDeliveryInfoService {
 	private CvcYlDeliveryInfoDao cvcYlDeliveryInfoDao;
 
 	@Override
-	public CvcYlDeliveryInfoEntity get( int id,String number,String context){
-		return cvcYlDeliveryInfoDao.get(id,number,context);
+	public CvcYlDeliveryInfoEntity get( int id,String number){
+		return cvcYlDeliveryInfoDao.get(id,number);
 	}
 
 	@Override

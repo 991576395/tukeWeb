@@ -107,8 +107,8 @@ public class OrderCallBack extends BaseController {
 					
 					if(CollectionUtils.isNotEmpty(callbaseRequest.getLastResult().getData())) {
 						for(Data data:callbaseRequest.getLastResult().getData()) {
-							CvcYlDeliveryInfoEntity ylDeliveryInfoEntity =cvcYlDeliveryInfoService.get(entity.getOrderId(),nu,data.getContext());
-							if(ylDeliveryInfoEntity == null) {
+							CvcYlDeliveryInfoEntity ylDeliveryInfoEntity =cvcYlDeliveryInfoService.get(entity.getOrderId(),nu);
+							if(ylDeliveryInfoEntity == null || !ylDeliveryInfoEntity.getContext().equals(ylDeliveryInfoEntity.getContext())) {
 								//未发送过
 								RequestExchangeProcessHistoryAddJson request = new RequestExchangeProcessHistoryAddJson();
 								request.setOrderID(entity.getOrderId());
@@ -157,7 +157,9 @@ public class OrderCallBack extends BaseController {
 								.setServiceCode("CRMIF.SignInExchangeOrderJson")
 								.setParams(requestBody).builder(), null);
 						if(responseHead.getReturn() >= 0) {
+							entity.setSigninDate(callbaseRequest.getLastResult().getData().get(0).getFtime());
 							cvcOrderInfoService.updateStatusByOrderId(entity.getOrderId(), 5);
+							cvcDeliveryOrderService.updateSignDate(callbaseRequest.getLastResult().getData().get(0).getFtime(),nu);
 						}
 						return callBackResponse;
 					}else if(cvcDeliveryInfo.getState() == 2){

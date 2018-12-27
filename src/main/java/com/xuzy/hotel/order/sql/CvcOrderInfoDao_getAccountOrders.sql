@@ -12,7 +12,7 @@ cvc_delivery_order AS d_o ON o.order_id=d_o.order_id where  is_show=1 AND is_bal
 
 <#if (endTime)?? && endTime ?length gt 0>
 	/* 积分账户 */
-	and d_o.signin_date >= :endTime
+	and d_o.signin_date <= :endTime
 </#if> 
 
 AND tk_order_status=5

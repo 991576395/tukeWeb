@@ -3,35 +3,39 @@ package com.xuzy.hotel.order.module;
 import java.io.Serializable;
 
 public class Data implements Serializable{
-	private String time;
-
-	private String ftime;
-
-	private String context;
+private String time;
 	
+	private String ftime;
+	
+	private String context;
+
+	public String getTime() {
+		return time;
+	}
 
 	public void setTime(String time) {
 		this.time = time;
 	}
 
-	public String getTime() {
-		return this.time;
+	public String getFtime() {
+		return ftime;
 	}
 
 	public void setFtime(String ftime) {
 		this.ftime = ftime;
 	}
 
-	public String getFtime() {
-		return this.ftime;
+	public String getContext() {
+		return context;
 	}
 
 	public void setContext(String context) {
 		this.context = context;
 	}
 
-	public String getContext() {
-		return this.context;
+	@Override
+	public String toString() {
+		return "DelivetyJson [time=" + time + ", ftime=" + ftime + ", context=" + context + "]";
 	}
 }
 

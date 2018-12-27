@@ -11,7 +11,7 @@ import com.xuzy.hotel.yldeliveryinfo.entity.CvcYlDeliveryInfoEntity;
  * @version:1.0
  */
 public interface CvcYlDeliveryInfoService {
-	CvcYlDeliveryInfoEntity get( int id,String number,String context);
+	CvcYlDeliveryInfoEntity get( int id,String number);
 
 	public int update(CvcYlDeliveryInfoEntity cvcYlDeliveryInfo);
 

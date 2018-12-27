@@ -1,9 +1,11 @@
 package com.xuzy.hotel.order.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.jeecgframework.core.util.ResourceUtil;
@@ -12,14 +14,19 @@ import org.jeecgframework.p3.core.common.utils.AjaxJson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.util.PHPAndJavaSerialize;
 import com.util.PhpDateUtils;
 import com.xuzy.hotel.deliverygoods.dao.CvcDeliveryGoodsDao;
 import com.xuzy.hotel.deliverygoods.entity.CvcDeliveryGoodsEntity;
+import com.xuzy.hotel.deliveryinfo.entity.CvcDeliveryInfoEntity;
+import com.xuzy.hotel.deliveryinfo.service.CvcDeliveryInfoService;
 import com.xuzy.hotel.deliveryorder.dao.CvcDeliveryOrderDao;
 import com.xuzy.hotel.deliveryorder.entity.CvcDeliveryOrderEntity;
 import com.xuzy.hotel.deliveryorder.service.CvcDeliveryOrderService;
 import com.xuzy.hotel.order.dao.CvcOrderInfoDao;
 import com.xuzy.hotel.order.entity.CvcOrderInfoEntity;
+import com.xuzy.hotel.order.module.Data;
+import com.xuzy.hotel.order.module.DelivetyJson;
 import com.xuzy.hotel.order.service.CvcOrderInfoService;
 import com.xuzy.hotel.shipping.dao.CvcShippingDao;
 import com.xuzy.hotel.shipping.entity.CvcShippingEntity;
@@ -57,6 +64,8 @@ public class CvcOrderInfoServiceImpl implements CvcOrderInfoService {
 	
 	@Resource
 	private CvcShippingDao cvcShippingDao;
+	
+	
 	
 
 	 /**
@@ -328,5 +337,31 @@ public class CvcOrderInfoServiceImpl implements CvcOrderInfoService {
 	@Override
 	public List<CvcOrderInfoEntity> getCanCangKu() {
 		return cvcOrderInfoDao.getCanCangKu();
+	}
+	
+	@Autowired
+	private CvcDeliveryInfoService cvcDeliveryInfoService;
+
+	@Override
+	public void doErrorList() {
+		List<CvcOrderInfoEntity> cvcOrderInfoEntities = cvcOrderInfoDao.getErrorList();
+		if(!CollectionUtils.isEmpty(cvcOrderInfoEntities)){
+			for (CvcOrderInfoEntity cvcOrderInfoEntity : cvcOrderInfoEntities) {
+				if(StringUtils.isNotEmpty(cvcOrderInfoEntity.getInvoiceNo()) && !StringUtils.isNotEmpty(cvcOrderInfoEntity.getSigninDate())) {
+//					CvcDeliveryOrderEntity cvcDeliveryOrderEntity = cvcDeliveryOrderService.getEntityByinvoiceNo(cvcOrderInfoEntity.getInvoiceNo());
+					
+					List<Data> deliveryInfos = new ArrayList<>();
+					CvcDeliveryInfoEntity entity = cvcDeliveryInfoService.getDeliveryInfosByInvoiceNo(cvcOrderInfoEntity.getInvoiceNo());
+					if(entity != null && StringUtils.isNotEmpty(entity.getData())) {
+						deliveryInfos = PHPAndJavaSerialize.unserializePHParray(entity.getData(),DelivetyJson.class);
+					}
+					if(CollectionUtils.isNotEmpty(deliveryInfos)) {
+						int x = cvcDeliveryOrderService.updateSignDate(deliveryInfos.get(0).getFtime(),cvcOrderInfoEntity.getInvoiceNo());
+						System.out.println(x);
+					}
+				}
+			}
+		}
+		
 	}
 }

@@ -53,6 +53,9 @@ public interface CvcDeliveryOrderService {
 	 */
 	public void updateErrorCode( String shippingCode, String invoiceNo);
 	
+	int updateSignDate(String signDate,String invoiceNo);
+	
+	
 	/**
 	 * 根据物流单号获取记录
 	 * @param invoiceNo

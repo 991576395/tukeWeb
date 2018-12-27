@@ -215,4 +215,9 @@ public class CvcDeliveryOrderServiceImpl implements CvcDeliveryOrderService {
 			throw new XuException("订单发货异常！");
 		}
 	}
+
+	@Override
+	public int updateSignDate(String signDate, String invoiceNo) {
+		return cvcDeliveryOrderDao.updateSignDate(signDate, invoiceNo);
+	}
 }

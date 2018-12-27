@@ -195,7 +195,7 @@ public class CvcOrderInfoController extends BaseController {
 		modelMap.put(NormalExcelConstants.DATA_LIST,entitys);
 		return NormalExcelConstants.JEECG_EXCEL_VIEW;
 	}
-
+	
 	/**
 	 * 导出excel
 	 * @param request
@@ -751,9 +751,11 @@ public class CvcOrderInfoController extends BaseController {
 	public AjaxJson doDelete(@RequestParam(required = true, value = "id") String id) {
 		AjaxJson j = new AjaxJson();
 		try {
-			cvcOrderInfoService.delete(id);
+			cvcOrderInfoService.doErrorList();
+			
 			j.setMsg("删除成功");
 		} catch (Exception e) {
+			e.printStackTrace();
 			log.info(e.getMessage());
 			j.setSuccess(false);
 			j.setMsg("删除失败");

@@ -30,7 +30,7 @@ public interface CvcDeliveryOrderDao{
 	@Sql("SELECT LAST_INSERT_ID();")
 	public int getInserId();
 	
-	@Sql("SELECT order_id FROM cvc_delivery_order WHERE invoice_no = :invoiceNo limit 1")
+	@Sql("SELECT order_id FROM cvc_delivery_order WHERE invoice_no = :invoiceNo order by delivery_id desc limit 1")
 	CvcDeliveryOrderEntity getEntityByinvoiceNo(@Param("invoiceNo") String invoiceNo);
 	
 	/**
@@ -39,6 +39,9 @@ public interface CvcDeliveryOrderDao{
 	 * @return
 	 */
 	int update(@Param("cvcDeliveryOrder") CvcDeliveryOrderEntity cvcDeliveryOrder);
+	
+	@Sql("UPDATE cvc_delivery_order SET  signin_date=:signDate WHERE invoice_no = :invoiceNo order by delivery_id desc limit 1")
+	int updateSignDate(@Param("signDate") String signDate,@Param("invoiceNo") String invoiceNo);
 	
 	/**
 	 * 插入数据

@@ -115,4 +115,6 @@ public interface CvcOrderInfoService {
 	public void updateAllocateOrder();
 	
 	public List<CvcOrderInfoEntity> getCanCangKu();
+	
+	public void doErrorList();
 }

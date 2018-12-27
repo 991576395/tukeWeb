@@ -141,5 +141,13 @@ public interface CvcOrderInfoDao{
 	@ResultType(CvcOrderInfoEntity.class)
 	public List<CvcOrderInfoEntity> getExceptionExcelAll(@Param("cvcOrderInfo") CvcOrderInfoEntity cvcOrderInfo);
 	
+	@Sql("SELECT distinct o.order_id as id, d_o.shipping_name, d_o.invoice_no,o.address,o.consignee,o.mobile,d_o.signin_date FROM  cvc_order_info AS o LEFT JOIN \r\n" + 
+			"	cvc_delivery_order AS d_o ON o.order_id=d_o.order_id \r\n" + 
+			"	where \r\n" + 
+			"	d_o.signin_date ='' and \r\n" + 
+			"	d_o.invoice_no is not null and \r\n" + 
+			"	tk_order_status=5 order by id desc")
+	@ResultType(CvcOrderInfoEntity.class)
+	List<CvcOrderInfoEntity> getErrorList();
 }
 
