@@ -172,7 +172,7 @@ public class GenerateController extends BaseController {
 		try {
 			//step.2 判断表是否存在
 			boolean tableexist = new JeecgReadTable().checkTableExist(tableName);
-			if(tableexist){
+//			if(tableexist){
 
 				OnlineGenerateEnum modeEnum = OnlineGenerateEnum.toEnum(createFileProperty.getJspMode());
 				if(modeEnum!=null){
@@ -196,9 +196,9 @@ public class GenerateController extends BaseController {
 					j.setMsg("代码生成器不支持该页面风格");
 				}
 
-			}else{
-				j.setMsg("表["+tableName+"] 在数据库中，不存在");
-			}
+//			}else{
+//				j.setMsg("表["+tableName+"] 在数据库中，不存在");
+//			}
 			
 		} catch (Exception e1) {
 			e1.printStackTrace();

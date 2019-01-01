@@ -70,6 +70,7 @@ public class CvcCheckingAccountServiceImpl implements CvcCheckingAccountService 
 			cvcCheckingAccountOrder.setConsignee(cvcOrderInfoEntity.getConsignee());
 			cvcCheckingAccountOrder.setMobile(cvcOrderInfoEntity.getMobile());
 			cvcCheckingAccountOrder.setSigninDate(cvcOrderInfoEntity.getSigninDate());
+			cvcCheckingAccountOrder.setAddCheckingAccountTime(cvcCheckingAccount.getAddTime());
 			cvcCheckingAccountOrderDao.insert(cvcCheckingAccountOrder);
 		}
 	}

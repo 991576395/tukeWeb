@@ -52,6 +52,10 @@ import oracle.net.aso.MD5;
  * Created by uatzx03548 on 2018/10/29.
  */
 public class ConmentHttp {
+	
+ 	public static  Integer  size = 0;  
+	
+	
 	/**
 	 * Logger for this class
 	 */

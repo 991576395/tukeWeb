@@ -14,6 +14,7 @@ import org.jeecgframework.p3.core.common.utils.AjaxJson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.appinterface.app.base.exception.XuException;
 import com.util.PHPAndJavaSerialize;
 import com.util.PhpDateUtils;
 import com.xuzy.hotel.deliverygoods.dao.CvcDeliveryGoodsDao;
@@ -279,7 +280,12 @@ public class CvcOrderInfoServiceImpl implements CvcOrderInfoService {
 				j.setSuccess(true);
 				j.setMsg("发货成功");
 			}
-		} catch (Exception e) {
+		}catch (XuException e) {
+			j.setSuccess(false);
+			j.setMsg("调用异常:"+e.getMessage());
+			logger.error("发货异常", e);
+			return j;
+		}catch (Exception e) {
 			j.setSuccess(false);
 			j.setMsg("接口调用异常");
 			logger.error("发货异常", e);
@@ -353,7 +359,7 @@ public class CvcOrderInfoServiceImpl implements CvcOrderInfoService {
 					List<Data> deliveryInfos = new ArrayList<>();
 					CvcDeliveryInfoEntity entity = cvcDeliveryInfoService.getDeliveryInfosByInvoiceNo(cvcOrderInfoEntity.getInvoiceNo());
 					if(entity != null && StringUtils.isNotEmpty(entity.getData())) {
-						deliveryInfos = PHPAndJavaSerialize.unserializePHParray(entity.getData(),DelivetyJson.class);
+						deliveryInfos = PHPAndJavaSerialize.unserializePHParray(entity.getData(),Data.class);
 					}
 					if(CollectionUtils.isNotEmpty(deliveryInfos)) {
 						int x = cvcDeliveryOrderService.updateSignDate(deliveryInfos.get(0).getFtime(),cvcOrderInfoEntity.getInvoiceNo());

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -42,7 +43,9 @@ import com.xuzy.hotel.deliveryinfo.entity.CvcDeliveryInfoEntity;
 import com.xuzy.hotel.deliveryinfo.service.CvcDeliveryInfoService;
 import com.xuzy.hotel.deliveryorder.entity.CvcDeliveryOrderEntity;
 import com.xuzy.hotel.deliveryorder.service.CvcDeliveryOrderService;
+import com.xuzy.hotel.inventory.service.CvcInventoryTableServiceI;
 import com.xuzy.hotel.order.entity.CvcOrderInfoEntity;
+import com.xuzy.hotel.order.module.Data;
 import com.xuzy.hotel.order.module.DelivetyJson;
 import com.xuzy.hotel.order.service.CvcOrderInfoService;
 import com.xuzy.hotel.orderaction.entity.CvcOrderActionEntity;
@@ -94,6 +97,8 @@ public class CvcOrderInfoController extends BaseController {
 	@Autowired
 	private CvcDeliveryInfoService cvcDeliveryInfoService;
 	
+	@Autowired
+	private CvcInventoryTableServiceI cvcInventoryTableService;
 	
 	/**
 	 * 页面跳转
@@ -280,11 +285,11 @@ public class CvcOrderInfoController extends BaseController {
 			throw new XuException("订单查询失败！");
 		}
 		CvcDeliveryOrderEntity deliveryOrder = cvcOrderInfoService.getDeliveryOrderByOrderId(id);
-		List<DelivetyJson> deliveryInfos = new ArrayList<>();
+		List<Data> deliveryInfos = new ArrayList<>();
 		if(deliveryOrder != null) {
 			CvcDeliveryInfoEntity entity = cvcDeliveryInfoService.getDeliveryInfosByInvoiceNo(deliveryOrder.getInvoiceNo());
 			if(entity != null && StringUtils.isNotEmpty(entity.getData())) {
-				deliveryInfos = PHPAndJavaSerialize.unserializePHParray(entity.getData(),DelivetyJson.class);
+				deliveryInfos = PHPAndJavaSerialize.unserializePHParray(entity.getData(),Data.class);
 			}
 		}
 		///*异常订单类型*/
@@ -318,6 +323,14 @@ public class CvcOrderInfoController extends BaseController {
 		//getPayStatus 
 		//define('PS_PAYING',                 1); // 付款中
 		//define('PS_PAYED',                  2); // 已付款
+		if(cvcOrderInfoEntity.getShippingStatus() == null) {
+			cvcOrderInfoEntity.setShippingStatus(0);
+		}
+		
+		if(cvcOrderInfoEntity.getPayStatus() == null) {
+			cvcOrderInfoEntity.setPayStatus(0);
+		}
+		
 	    if ( 1== cvcOrderInfoEntity.getOrderStatus() && (cvcOrderInfoEntity.getShippingStatus() == 1 || cvcOrderInfoEntity.getShippingStatus() == 2 )
 	    		&& (cvcOrderInfoEntity.getPayStatus()==2 || cvcOrderInfoEntity.getPayStatus()==1)) {
 	    	//检查权限
@@ -667,7 +680,7 @@ public class CvcOrderInfoController extends BaseController {
 					j.setMsg("暂未查询到物流信息");
 					return j;
 				}
-				List<DelivetyJson> datas = PHPAndJavaSerialize.unserializePHParray(cvcDeliveryInfoEntity.getData(),DelivetyJson.class);
+				List<Data> datas = PHPAndJavaSerialize.unserializePHParray(cvcDeliveryInfoEntity.getData(),DelivetyJson.class);
 				if(CollectionUtils.isEmpty(datas)) {
 					j.setSuccess(false);
 					j.setMsg("暂未查询到物流信息");
@@ -751,9 +764,37 @@ public class CvcOrderInfoController extends BaseController {
 	public AjaxJson doDelete(@RequestParam(required = true, value = "id") String id) {
 		AjaxJson j = new AjaxJson();
 		try {
-			cvcOrderInfoService.doErrorList();
+//			cvcOrderInfoService.doErrorList();
+			final CountDownLatch countDownLatch = new CountDownLatch(100); 
+			Runnable Runnable = new Runnable() {
+				
+				@Override
+				public void run() {
+					try {
+						countDownLatch.await();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					
+					int reulst = cvcInventoryTableService.subInventory("qqqq111",1, 0);
+					synchronized (ConmentHttp.size) {
+						if(reulst == 1) {
+							ConmentHttp.size ++;
+							System.out.println("抢到一个商品，已抢："+ConmentHttp.size);
+						}
+					}
+				}
+			};
+			for(int i = 0; i < 100;i++) {
+				Thread thread = new Thread(Runnable);
+				thread.run();
+				countDownLatch.countDown();
+			}
 			
-			j.setMsg("删除成功");
+//			j.setMsg("删除成功");
+//			while(true) {
+				
+//			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.info(e.getMessage());
@@ -762,7 +803,8 @@ public class CvcOrderInfoController extends BaseController {
 		}
 		return j;
 	}
-
+	
+	
 	/**
 	 * 批量删除数据
 	 * 

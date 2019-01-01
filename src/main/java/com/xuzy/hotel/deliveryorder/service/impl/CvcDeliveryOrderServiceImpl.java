@@ -12,6 +12,7 @@ import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.log4j.Logger;
 import org.jeecgframework.core.util.ResourceUtil;
 import org.jeecgframework.minidao.pojo.MiniDaoPage;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +23,7 @@ import com.xuzy.hotel.deliverygoods.entity.CvcDeliveryGoodsEntity;
 import com.xuzy.hotel.deliveryorder.dao.CvcDeliveryOrderDao;
 import com.xuzy.hotel.deliveryorder.entity.CvcDeliveryOrderEntity;
 import com.xuzy.hotel.deliveryorder.service.CvcDeliveryOrderService;
+import com.xuzy.hotel.inventory.service.CvcInventoryTableServiceI;
 import com.xuzy.hotel.order.dao.CvcOrderInfoDao;
 import com.xuzy.hotel.order.entity.CvcOrderInfoEntity;
 import com.xuzy.hotel.orderaction.dao.CvcOrderActionDao;
@@ -63,6 +65,9 @@ public class CvcDeliveryOrderServiceImpl implements CvcDeliveryOrderService {
 	
 	@Resource
 	private CvcOrderActionDao cvcOrderActionDao;
+	
+	@Autowired
+	private CvcInventoryTableServiceI cvcInventoryTableService;
 
 	@Override
 	public CvcDeliveryOrderEntity get(String id) {
@@ -179,6 +184,9 @@ public class CvcDeliveryOrderServiceImpl implements CvcDeliveryOrderService {
 						cvcDeliveryGoods.setGoodsId(cvcOrderGoodsEntity.getGoodsId());
 						cvcDeliveryGoods.setSendNumber(cvcOrderGoodsEntity.getGoodsNumber());
 						cvcDeliveryGoodsDao.insert(cvcDeliveryGoods);
+						
+						//减去库存
+						cvcInventoryTableService.subInventory(cvcOrderGoodsEntity.getGoodsId()+"",cvcOrderGoodsEntity.getGoodsNumber(), 0);
 					}
 				}
 			}
