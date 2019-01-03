@@ -1,8 +1,6 @@
-package com.xuzy.hotel.inventory.controller;
-import com.xuzy.hotel.inventory.entity.CvcInventoryTableEntity;
-import com.xuzy.hotel.inventory.service.CvcInventoryTableServiceI;
+package com.xuzy.hotel.message.controller;
 import com.xuzy.hotel.message.entity.CvcMessageTableEntity;
-
+import com.xuzy.hotel.message.service.CvcMessageTableServiceI;
 import java.util.ArrayList;
 import java.util.List;
 import java.text.SimpleDateFormat;
@@ -66,7 +64,6 @@ import javax.validation.Validator;
 import java.net.URI;
 import org.springframework.http.MediaType;
 import org.springframework.web.util.UriComponentsBuilder;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jeecgframework.jwt.util.GsonUtil;
 import org.jeecgframework.jwt.util.ResponseMessage;
@@ -79,23 +76,23 @@ import io.swagger.annotations.ApiParam;
 
 /**   
  * @Title: Controller  
- * @Description: 商品库存表
+ * @Description: 消息报表
  * @author onlineGenerator
- * @date 2019-01-01 07:17:49
+ * @date 2019-01-01 20:28:41
  * @version V1.0   
  *
  */
-@Api(value="CvcInventoryTable",description="商品库存表",tags="cvcInventoryTableController")
+@Api(value="CvcMessageTable",description="消息报表",tags="cvcMessageTableController")
 @Controller
-@RequestMapping("/cvcInventoryTableController")
-public class CvcInventoryTableController extends BaseController {
+@RequestMapping("/cvcMessageTableController")
+public class CvcMessageTableController extends BaseController {
 	/**
 	 * Logger for this class
 	 */
-	private static final Logger logger = Logger.getLogger(CvcInventoryTableController.class);
+	private static final Logger logger = Logger.getLogger(CvcMessageTableController.class);
 
 	@Autowired
-	private CvcInventoryTableServiceI cvcInventoryTableService;
+	private CvcMessageTableServiceI cvcMessageTableService;
 	@Autowired
 	private SystemService systemService;
 	@Autowired
@@ -104,13 +101,13 @@ public class CvcInventoryTableController extends BaseController {
 
 
 	/**
-	 * 商品库存表列表 页面跳转
+	 * 消息报表列表 页面跳转
 	 * 
 	 * @return
 	 */
 	@RequestMapping(params = "list")
 	public ModelAndView list(HttpServletRequest request) {
-		return new ModelAndView("com/xuzy/hotel/inventory/cvcInventoryTableList");
+		return new ModelAndView("com/xuzy/hotel/message/cvcMessageTableList");
 	}
 
 	/**
@@ -123,38 +120,38 @@ public class CvcInventoryTableController extends BaseController {
 	 */
 
 	@RequestMapping(params = "datagrid")
-	public void datagrid(CvcInventoryTableEntity cvcInventoryTable,HttpServletRequest request, HttpServletResponse response, DataGrid dataGrid) {
-		CriteriaQuery cq = new CriteriaQuery(CvcInventoryTableEntity.class, dataGrid);
+	public void datagrid(CvcMessageTableEntity cvcMessageTable,HttpServletRequest request, HttpServletResponse response, DataGrid dataGrid) {
+		CriteriaQuery cq = new CriteriaQuery(CvcMessageTableEntity.class, dataGrid);
 		//查询条件组装器
-		org.jeecgframework.core.extend.hqlsearch.HqlGenerateUtil.installHql(cq, cvcInventoryTable, request.getParameterMap());
+		org.jeecgframework.core.extend.hqlsearch.HqlGenerateUtil.installHql(cq, cvcMessageTable, request.getParameterMap());
 		try{
 		//自定义追加查询条件
 		}catch (Exception e) {
 			throw new BusinessException(e.getMessage());
 		}
 		cq.add();
-		this.cvcInventoryTableService.getDataGridReturn(cq, true);
+		this.cvcMessageTableService.getDataGridReturn(cq, true);
 		TagUtil.datagrid(response, dataGrid);
 	}
 	
 	/**
-	 * 删除商品库存表
+	 * 删除消息报表
 	 * 
 	 * @return
 	 */
 	@RequestMapping(params = "doDel")
 	@ResponseBody
-	public AjaxJson doDel(CvcInventoryTableEntity cvcInventoryTable, HttpServletRequest request) {
+	public AjaxJson doDel(CvcMessageTableEntity cvcMessageTable, HttpServletRequest request) {
 		String message = null;
 		AjaxJson j = new AjaxJson();
-		cvcInventoryTable = systemService.getEntity(CvcInventoryTableEntity.class, cvcInventoryTable.getId());
-		message = "商品库存表删除成功";
+		cvcMessageTable = systemService.getEntity(CvcMessageTableEntity.class, cvcMessageTable.getId());
+		message = "消息报表删除成功";
 		try{
-			cvcInventoryTableService.delete(cvcInventoryTable);
+			cvcMessageTableService.delete(cvcMessageTable);
 			systemService.addLog(message, Globals.Log_Type_DEL, Globals.Log_Leavel_INFO);
 		}catch(Exception e){
 			e.printStackTrace();
-			message = "商品库存表删除失败";
+			message = "消息报表删除失败";
 			throw new BusinessException(e.getMessage());
 		}
 		j.setMsg(message);
@@ -162,7 +159,31 @@ public class CvcInventoryTableController extends BaseController {
 	}
 	
 	/**
-	 * 批量删除商品库存表
+	 * 删除消息报表
+	 * 
+	 * @return
+	 */
+	@RequestMapping(params = "setHaveRead")
+	@ResponseBody
+	public AjaxJson setHaveRead(CvcMessageTableEntity cvcMessageTable, HttpServletRequest request) {
+		String message = null;
+		AjaxJson j = new AjaxJson();
+		cvcMessageTable = systemService.getEntity(CvcMessageTableEntity.class, cvcMessageTable.getId());
+		message = "消息报表设置已读成功";
+		try{
+			cvcMessageTable.setIfRead(1);
+			systemService.saveOrUpdate(cvcMessageTable);
+			systemService.addLog(message, Globals.Log_Type_DEL, Globals.Log_Leavel_INFO);
+		}catch(Exception e){
+			message = "消息报表设置已读失败";
+			throw new BusinessException(e.getMessage());
+		}
+		j.setMsg(message);
+		return j;
+	}
+	
+	/**
+	 * 批量删除消息报表
 	 * 
 	 * @return
 	 */
@@ -171,18 +192,18 @@ public class CvcInventoryTableController extends BaseController {
 	public AjaxJson doBatchDel(String ids,HttpServletRequest request){
 		String message = null;
 		AjaxJson j = new AjaxJson();
-		message = "商品库存表删除成功";
+		message = "消息报表删除成功";
 		try{
 			for(String id:ids.split(",")){
-				CvcInventoryTableEntity cvcInventoryTable = systemService.getEntity(CvcInventoryTableEntity.class, 
+				CvcMessageTableEntity cvcMessageTable = systemService.getEntity(CvcMessageTableEntity.class, 
 				id
 				);
-				cvcInventoryTableService.delete(cvcInventoryTable);
+				cvcMessageTableService.delete(cvcMessageTable);
 				systemService.addLog(message, Globals.Log_Type_DEL, Globals.Log_Leavel_INFO);
 			}
 		}catch(Exception e){
 			e.printStackTrace();
-			message = "商品库存表删除失败";
+			message = "消息报表删除失败";
 			throw new BusinessException(e.getMessage());
 		}
 		j.setMsg(message);
@@ -191,23 +212,23 @@ public class CvcInventoryTableController extends BaseController {
 
 
 	/**
-	 * 添加商品库存表
+	 * 添加消息报表
 	 * 
 	 * @param ids
 	 * @return
 	 */
 	@RequestMapping(params = "doAdd")
 	@ResponseBody
-	public AjaxJson doAdd(CvcInventoryTableEntity cvcInventoryTable, HttpServletRequest request) {
+	public AjaxJson doAdd(CvcMessageTableEntity cvcMessageTable, HttpServletRequest request) {
 		String message = null;
 		AjaxJson j = new AjaxJson();
-		message = "商品库存表添加成功";
+		message = "消息报表添加成功";
 		try{
-			cvcInventoryTableService.save(cvcInventoryTable);
+			cvcMessageTableService.save(cvcMessageTable);
 			systemService.addLog(message, Globals.Log_Type_INSERT, Globals.Log_Leavel_INFO);
 		}catch(Exception e){
 			e.printStackTrace();
-			message = "商品库存表添加失败";
+			message = "消息报表添加失败";
 			throw new BusinessException(e.getMessage());
 		}
 		j.setMsg(message);
@@ -215,57 +236,77 @@ public class CvcInventoryTableController extends BaseController {
 	}
 	
 	/**
-	 * 更新商品库存表
+	 * 更新消息报表
 	 * 
 	 * @param ids
 	 * @return
 	 */
 	@RequestMapping(params = "doUpdate")
 	@ResponseBody
-	public AjaxJson doUpdate(CvcInventoryTableEntity cvcInventoryTable, HttpServletRequest request) {
+	public AjaxJson doUpdate(CvcMessageTableEntity cvcMessageTable, HttpServletRequest request) {
 		String message = null;
 		AjaxJson j = new AjaxJson();
-		message = "商品库存表更新成功";
-		CvcInventoryTableEntity t = cvcInventoryTableService.get(CvcInventoryTableEntity.class, cvcInventoryTable.getId());
+		message = "消息报表更新成功";
+		CvcMessageTableEntity t = cvcMessageTableService.get(CvcMessageTableEntity.class, cvcMessageTable.getId());
 		try {
-			MyBeanUtils.copyBeanNotNull2Bean(cvcInventoryTable, t);
-			cvcInventoryTableService.saveOrUpdate(t);
+			MyBeanUtils.copyBeanNotNull2Bean(cvcMessageTable, t);
+			cvcMessageTableService.saveOrUpdate(t);
 			systemService.addLog(message, Globals.Log_Type_UPDATE, Globals.Log_Leavel_INFO);
 		} catch (Exception e) {
 			e.printStackTrace();
-			message = "商品库存表更新失败";
+			message = "消息报表更新失败";
 			throw new BusinessException(e.getMessage());
 		}
 		j.setMsg(message);
 		return j;
 	}
 	
+	@RequestMapping(params = "setRead")
+	@ResponseBody
+	public AjaxJson setRead(HttpServletRequest request) {
+		String message = null;
+		AjaxJson j = new AjaxJson();
+		message = "消息设置已读成功";
+		String id = request.getParameter("id");
+		CvcMessageTableEntity t = cvcMessageTableService.get(CvcMessageTableEntity.class, id);
+		try {
+			t.setIfRead(1);
+			cvcMessageTableService.saveOrUpdate(t);
+			systemService.addLog(message, Globals.Log_Type_UPDATE, Globals.Log_Leavel_INFO);
+		} catch (Exception e) {
+			e.printStackTrace();
+			message = "消息设置已读失败";
+			throw new BusinessException(e.getMessage());
+		}
+		j.setMsg(message);
+		return j;
+	}
 
 	/**
-	 * 商品库存表新增页面跳转
+	 * 消息报表新增页面跳转
 	 * 
 	 * @return
 	 */
 	@RequestMapping(params = "goAdd")
-	public ModelAndView goAdd(CvcInventoryTableEntity cvcInventoryTable, HttpServletRequest req) {
-		if (StringUtil.isNotEmpty(cvcInventoryTable.getId())) {
-			cvcInventoryTable = cvcInventoryTableService.getEntity(CvcInventoryTableEntity.class, cvcInventoryTable.getId());
-			req.setAttribute("cvcInventoryTablePage", cvcInventoryTable);
+	public ModelAndView goAdd(CvcMessageTableEntity cvcMessageTable, HttpServletRequest req) {
+		if (StringUtil.isNotEmpty(cvcMessageTable.getId())) {
+			cvcMessageTable = cvcMessageTableService.getEntity(CvcMessageTableEntity.class, cvcMessageTable.getId());
+			req.setAttribute("cvcMessageTablePage", cvcMessageTable);
 		}
-		return new ModelAndView("com/xuzy/hotel/inventory/cvcInventoryTable-add");
+		return new ModelAndView("com/xuzy/hotel/message/cvcMessageTable-add");
 	}
 	/**
-	 * 商品库存表编辑页面跳转
+	 * 消息报表编辑页面跳转
 	 * 
 	 * @return
 	 */
 	@RequestMapping(params = "goUpdate")
-	public ModelAndView goUpdate(CvcInventoryTableEntity cvcInventoryTable, HttpServletRequest req) {
-		if (StringUtil.isNotEmpty(cvcInventoryTable.getId())) {
-			cvcInventoryTable = cvcInventoryTableService.getEntity(CvcInventoryTableEntity.class, cvcInventoryTable.getId());
-			req.setAttribute("cvcInventoryTablePage", cvcInventoryTable);
+	public ModelAndView goUpdate(CvcMessageTableEntity cvcMessageTable, HttpServletRequest req) {
+		if (StringUtil.isNotEmpty(cvcMessageTable.getId())) {
+			cvcMessageTable = cvcMessageTableService.getEntity(CvcMessageTableEntity.class, cvcMessageTable.getId());
+			req.setAttribute("cvcMessageTablePage", cvcMessageTable);
 		}
-		return new ModelAndView("com/xuzy/hotel/inventory/cvcInventoryTable-update");
+		return new ModelAndView("com/xuzy/hotel/message/cvcMessageTable-update");
 	}
 	
 	/**
@@ -275,7 +316,7 @@ public class CvcInventoryTableController extends BaseController {
 	 */
 	@RequestMapping(params = "upload")
 	public ModelAndView upload(HttpServletRequest req) {
-		req.setAttribute("controller_name","cvcInventoryTableController");
+		req.setAttribute("controller_name","cvcMessageTableController");
 		return new ModelAndView("common/upload/pub_excel_upload");
 	}
 	
@@ -286,16 +327,16 @@ public class CvcInventoryTableController extends BaseController {
 	 * @param response
 	 */
 	@RequestMapping(params = "exportXls")
-	public String exportXls(CvcInventoryTableEntity cvcInventoryTable,HttpServletRequest request,HttpServletResponse response
+	public String exportXls(CvcMessageTableEntity cvcMessageTable,HttpServletRequest request,HttpServletResponse response
 			, DataGrid dataGrid,ModelMap modelMap) {
-		CriteriaQuery cq = new CriteriaQuery(CvcInventoryTableEntity.class, dataGrid);
-		org.jeecgframework.core.extend.hqlsearch.HqlGenerateUtil.installHql(cq, cvcInventoryTable, request.getParameterMap());
-		List<CvcInventoryTableEntity> cvcInventoryTables = this.cvcInventoryTableService.getListByCriteriaQuery(cq,false);
-		modelMap.put(NormalExcelConstants.FILE_NAME,"商品库存表");
-		modelMap.put(NormalExcelConstants.CLASS,CvcInventoryTableEntity.class);
-		modelMap.put(NormalExcelConstants.PARAMS,new ExportParams("商品库存表列表", "导出人:"+ResourceUtil.getSessionUser().getRealName(),
+		CriteriaQuery cq = new CriteriaQuery(CvcMessageTableEntity.class, dataGrid);
+		org.jeecgframework.core.extend.hqlsearch.HqlGenerateUtil.installHql(cq, cvcMessageTable, request.getParameterMap());
+		List<CvcMessageTableEntity> cvcMessageTables = this.cvcMessageTableService.getListByCriteriaQuery(cq,false);
+		modelMap.put(NormalExcelConstants.FILE_NAME,"消息报表");
+		modelMap.put(NormalExcelConstants.CLASS,CvcMessageTableEntity.class);
+		modelMap.put(NormalExcelConstants.PARAMS,new ExportParams("消息报表列表", "导出人:"+ResourceUtil.getSessionUser().getRealName(),
 			"导出信息"));
-		modelMap.put(NormalExcelConstants.DATA_LIST,cvcInventoryTables);
+		modelMap.put(NormalExcelConstants.DATA_LIST,cvcMessageTables);
 		return NormalExcelConstants.JEECG_EXCEL_VIEW;
 	}
 	/**
@@ -305,11 +346,11 @@ public class CvcInventoryTableController extends BaseController {
 	 * @param response
 	 */
 	@RequestMapping(params = "exportXlsByT")
-	public String exportXlsByT(CvcInventoryTableEntity cvcInventoryTable,HttpServletRequest request,HttpServletResponse response
+	public String exportXlsByT(CvcMessageTableEntity cvcMessageTable,HttpServletRequest request,HttpServletResponse response
 			, DataGrid dataGrid,ModelMap modelMap) {
-    	modelMap.put(NormalExcelConstants.FILE_NAME,"商品库存表");
-    	modelMap.put(NormalExcelConstants.CLASS,CvcInventoryTableEntity.class);
-    	modelMap.put(NormalExcelConstants.PARAMS,new ExportParams("商品库存表列表", "导出人:"+ResourceUtil.getSessionUser().getRealName(),
+    	modelMap.put(NormalExcelConstants.FILE_NAME,"消息报表");
+    	modelMap.put(NormalExcelConstants.CLASS,CvcMessageTableEntity.class);
+    	modelMap.put(NormalExcelConstants.PARAMS,new ExportParams("消息报表列表", "导出人:"+ResourceUtil.getSessionUser().getRealName(),
     	"导出信息"));
     	modelMap.put(NormalExcelConstants.DATA_LIST,new ArrayList());
     	return NormalExcelConstants.JEECG_EXCEL_VIEW;
@@ -330,9 +371,9 @@ public class CvcInventoryTableController extends BaseController {
 			params.setHeadRows(1);
 			params.setNeedSave(true);
 			try {
-				List<CvcInventoryTableEntity> listCvcInventoryTableEntitys = ExcelImportUtil.importExcel(file.getInputStream(),CvcInventoryTableEntity.class,params);
-				for (CvcInventoryTableEntity cvcInventoryTable : listCvcInventoryTableEntitys) {
-					cvcInventoryTableService.save(cvcInventoryTable);
+				List<CvcMessageTableEntity> listCvcMessageTableEntitys = ExcelImportUtil.importExcel(file.getInputStream(),CvcMessageTableEntity.class,params);
+				for (CvcMessageTableEntity cvcMessageTable : listCvcMessageTableEntitys) {
+					cvcMessageTableService.save(cvcMessageTable);
 				}
 				j.setMsg("文件导入成功！");
 			} catch (Exception e) {
@@ -349,90 +390,70 @@ public class CvcInventoryTableController extends BaseController {
 		return j;
 	}
 	
-	@RequestMapping(params = "checkIfWillAlter", method = RequestMethod.POST)
-	@ResponseBody
-	public AjaxJson checkIfWillAlter(HttpServletRequest request, HttpServletResponse response) {
-		AjaxJson j = new AjaxJson();
-		try {
-			List<CvcMessageTableEntity>  messageTableEntities = cvcInventoryTableService.checkIfWillAlter();
-			if(CollectionUtils.isEmpty(messageTableEntities)){
-				j.setSuccess(false);
-				return j;
-			}
-			j.setObj(messageTableEntities);
-			j.setMsg("文件导入成功！");
-		} catch (Exception e) {
-			j.setSuccess(false);
-			j.setMsg("文件导入失败！");
-			logger.error(ExceptionUtil.getExceptionMessage(e));
-		} 
-		return j;
-	}
-	
 	@RequestMapping(method = RequestMethod.GET)
 	@ResponseBody
-	@ApiOperation(value="商品库存表列表信息",produces="application/json",httpMethod="GET")
-	public ResponseMessage<List<CvcInventoryTableEntity>> list() {
-		List<CvcInventoryTableEntity> listCvcInventoryTables=cvcInventoryTableService.getList(CvcInventoryTableEntity.class);
-		return Result.success(listCvcInventoryTables);
+	@ApiOperation(value="消息报表列表信息",produces="application/json",httpMethod="GET")
+	public ResponseMessage<List<CvcMessageTableEntity>> list() {
+		List<CvcMessageTableEntity> listCvcMessageTables=cvcMessageTableService.getList(CvcMessageTableEntity.class);
+		return Result.success(listCvcMessageTables);
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	@ResponseBody
-	@ApiOperation(value="根据ID获取商品库存表信息",notes="根据ID获取商品库存表信息",httpMethod="GET",produces="application/json")
+	@ApiOperation(value="根据ID获取消息报表信息",notes="根据ID获取消息报表信息",httpMethod="GET",produces="application/json")
 	public ResponseMessage<?> get(@ApiParam(required=true,name="id",value="ID")@PathVariable("id") String id) {
-		CvcInventoryTableEntity task = cvcInventoryTableService.get(CvcInventoryTableEntity.class, id);
+		CvcMessageTableEntity task = cvcMessageTableService.get(CvcMessageTableEntity.class, id);
 		if (task == null) {
-			return Result.error("根据ID获取商品库存表信息为空");
+			return Result.error("根据ID获取消息报表信息为空");
 		}
 		return Result.success(task);
 	}
 
 	@RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	@ApiOperation(value="创建商品库存表")
-	public ResponseMessage<?> create(@ApiParam(name="商品库存表对象")@RequestBody CvcInventoryTableEntity cvcInventoryTable, UriComponentsBuilder uriBuilder) {
+	@ApiOperation(value="创建消息报表")
+	public ResponseMessage<?> create(@ApiParam(name="消息报表对象")@RequestBody CvcMessageTableEntity cvcMessageTable, UriComponentsBuilder uriBuilder) {
 		//调用JSR303 Bean Validator进行校验，如果出错返回含400错误码及json格式的错误信息.
-		Set<ConstraintViolation<CvcInventoryTableEntity>> failures = validator.validate(cvcInventoryTable);
+		Set<ConstraintViolation<CvcMessageTableEntity>> failures = validator.validate(cvcMessageTable);
 		if (!failures.isEmpty()) {
 			return Result.error(JSONArray.toJSONString(BeanValidators.extractPropertyAndMessage(failures)));
 		}
 
 		//保存
 		try{
-			cvcInventoryTableService.save(cvcInventoryTable);
+			cvcMessageTableService.save(cvcMessageTable);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return Result.error("商品库存表信息保存失败");
+			return Result.error("消息报表信息保存失败");
 		}
-		return Result.success(cvcInventoryTable);
+		return Result.success(cvcMessageTable);
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	@ApiOperation(value="更新商品库存表",notes="更新商品库存表")
-	public ResponseMessage<?> update(@ApiParam(name="商品库存表对象")@RequestBody CvcInventoryTableEntity cvcInventoryTable) {
+	@ApiOperation(value="更新消息报表",notes="更新消息报表")
+	public ResponseMessage<?> update(@ApiParam(name="消息报表对象")@RequestBody CvcMessageTableEntity cvcMessageTable) {
 		//调用JSR303 Bean Validator进行校验，如果出错返回含400错误码及json格式的错误信息.
-		Set<ConstraintViolation<CvcInventoryTableEntity>> failures = validator.validate(cvcInventoryTable);
+		Set<ConstraintViolation<CvcMessageTableEntity>> failures = validator.validate(cvcMessageTable);
 		if (!failures.isEmpty()) {
 			return Result.error(JSONArray.toJSONString(BeanValidators.extractPropertyAndMessage(failures)));
 		}
 
 		//保存
 		try{
-			cvcInventoryTableService.saveOrUpdate(cvcInventoryTable);
+			cvcMessageTableService.saveOrUpdate(cvcMessageTable);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return Result.error("更新商品库存表信息失败");
+			return Result.error("更新消息报表信息失败");
 		}
 
 		//按Restful约定，返回204状态码, 无内容. 也可以返回200状态码.
-		return Result.success("更新商品库存表信息成功");
+		return Result.success("更新消息报表信息成功");
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	@ApiOperation(value="删除商品库存表")
+	@ApiOperation(value="删除消息报表")
 	public ResponseMessage<?> delete(@ApiParam(name="id",value="ID",required=true)@PathVariable("id") String id) {
 		logger.info("delete[{}]" + id);
 		// 验证
@@ -440,10 +461,10 @@ public class CvcInventoryTableController extends BaseController {
 			return Result.error("ID不能为空");
 		}
 		try {
-			cvcInventoryTableService.deleteEntityById(CvcInventoryTableEntity.class, id);
+			cvcMessageTableService.deleteEntityById(CvcMessageTableEntity.class, id);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return Result.error("商品库存表删除失败");
+			return Result.error("消息报表删除失败");
 		}
 
 		return Result.success();

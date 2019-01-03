@@ -59,6 +59,7 @@ import com.xuzy.hotel.shipping.service.CvcShippingService;
 import com.xuzy.hotel.ylrequest.ConmentHttp;
 import com.xuzy.hotel.ylrequest.ResponseHead;
 import com.xuzy.hotel.ylrequest.TukeRequestBody;
+import com.xuzy.hotel.ylrequest.module.Kuaidi100Response;
 import com.xuzy.hotel.ylrequest.module.RequestDeliveryExchangeOrderJson;
 import com.xuzy.hotel.ylrequest.module.RequestOFFHarbourExchangeOrderJson;
 import com.xuzy.hotel.ylrequest.module.RequestReNewExchangeEMSJson;
@@ -465,6 +466,7 @@ public class CvcOrderInfoController extends BaseController {
 				ResponseHead head = ConmentHttp.sendHttp(new TukeRequestBody.Builder().setSequence(2)
 						.setParams(emsJson).setServiceCode("CRMIF.ReNewExchangeEMSJson").builder(), null);
 				if(head.getReturn() >= 0) {
+					ConmentHttp.postorder(cvcShippingEntity.getShippingCode(), invoiceNo);
 					cvcDeliveryOrderService.updateNu(orderId, cvcShippingEntity.getShippingId(),cvcShippingEntity.getShippingName(),invoiceNo);
 					if(cvcOrderInfo1.getExceptionStatus() != null &&
 							4 ==cvcOrderInfo1.getExceptionStatus()|| 5 == cvcOrderInfo1.getExceptionStatus()) {

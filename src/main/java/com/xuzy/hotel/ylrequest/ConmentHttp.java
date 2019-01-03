@@ -68,6 +68,7 @@ public class ConmentHttp {
 	
 	private static final String KEY = "MfxXXpWd8126";
 	private static final String URL = "http://www.kuaidi100.com/poll";
+	private static final String URLNOW = "https://poll.kuaidi100.com/poll/query.do";
 	private static final String CALLBACK = "http://47.96.119.244:8080/jeecg/callBack.do?result";
 	
     /**
@@ -99,6 +100,44 @@ public class ConmentHttp {
 		// 开始请求
         Request request = new Request.Builder().url(URL)
                 .post(new FormBody.Builder().add("schema", "json").add("param", gson.toJson(kuaidi100Request)).build())
+                .build();
+        Response response = null;
+		try {
+			response = ConmentHttp.okHttpClient.newCall(request).execute();
+			String result = response.body().string();
+			logger.info("result:"+result);
+			return gson.fromJson(result, Kuaidi100Response.class);
+		} catch (IOException e) {
+			logger.error("订阅快递100异常",e);
+		}
+		return null;
+    }
+    
+    /**
+     * 物流状态监听
+     * @param company 
+     * @param number 
+     * @throws Exception 
+     */
+    public static Kuaidi100Response postorderNow(String company, String number) throws Exception { 
+    	Kuaidi100Request kuaidi100Request = new Kuaidi100Request();
+    	kuaidi100Request.setCompany(company);
+    	kuaidi100Request.setNumber(number);
+    	kuaidi100Request.setKey(KEY);
+//    	kuaidi100Request.getParameters().setCallbackurl(CALLBACK);
+    	
+    	String param ="{\"com\":\""+company+"\",\"num\":\""+number+"\"}";
+    	String customer = KEY;
+		String key = KEY;
+		String sign = md5(param+key+customer);
+		HashMap params = new HashMap();
+		params.put("param",param);
+		params.put("sign",sign);
+		params.put("customer",customer);
+    	
+		// 开始请求
+        Request request = new Request.Builder().url(URLNOW)
+                .post(new FormBody.Builder().add("schema", "json").add("param", gson.toJson(params)).build())
                 .build();
         Response response = null;
 		try {
@@ -524,5 +563,111 @@ public class ConmentHttp {
 //		postorder("shentong","3391283730163");
 //		postorder("shentong","3391283729650");
 
+		
+//		postorderNow("shunfeng","297236769433");
+//		postorder("shentong","3392772492063");
+		
+//		postorder("shunfeng","296909731486");	
+		
+		
+//		postorder("shentong","3391456772945");
+//		postorder("shentong","3391456303085");
+//		postorder("shentong","3391456149335");
+//		postorder("shentong","3391457043990");
+//		postorder("shentong","3391456980524");
+//		postorder("shentong","3391456297415");
+//		postorder("shentong","3391456620831");
+//		postorder("shentong","3391456758075");
+//		postorder("shentong","3391456980548");
+//		postorder("shentong","3391456149354");
+//		postorder("shentong","3391456303103");
+//		postorder("shentong","3391456902327");
+//		postorder("shentong","3391456823399");
+//		postorder("shentong","3391457119169");
+//		postorder("shentong","3391457133395");
+//		postorder("shentong","3391457059257");
+//		postorder("shentong","3391456149366");
+//		postorder("shentong","3391456823405");
+//		postorder("shentong","3391457059275");
+//		postorder("shentong","3391456634927");
+//		postorder("shentong","3391456902339");
+//		postorder("shentong","3391456758105");
+//		postorder("shentong","3391456902345");
+//		postorder("shentong","3391457133474");
+//		postorder("shentong","3391456823521");
+//		postorder("shentong","3391456895793");
+//		postorder("shentong","3391456823533");
+//		postorder("shentong","3391457059336");
+//		postorder("shentong","3391457133619");
+//		postorder("shentong","3391457133632");
+//		postorder("shentong","3391456823569");
+//		postorder("shentong","3391456635106");
+//		postorder("shentong","3391456902388");
+//		postorder("shentong","3391456823605");
+//		postorder("shentong","3391457059415");
+//		postorder("shentong","3391456823624");
+//		postorder("shentong","3391456823648");
+//		postorder("shentong","3391457133814");
+//		postorder("shentong","3391456902406");
+//		postorder("shentong","3391456708936");
+//		postorder("shentong","3391456709050");
+//		postorder("shentong","3391456773385");
+//		postorder("shentong","3391456149457");
+//		postorder("shentong","3391456149469");
+//		postorder("shentong","3391456303346");
+//		postorder("shentong","3391457059531");
+//		postorder("shentong","3391456620915");
+//		postorder("shentong","3391456297460");
+//		postorder("shentong","3391456823685");
+//		postorder("shentong","3391456149494");
+//		postorder("shentong","3391457133929");
+//		postorder("shentong","3391456823697");
+//		postorder("shentong","3391456149536");
+//		postorder("shentong","3391456694287");
+//		postorder("shentong","3391456898189");
+//		postorder("shentong","3391456635507");
+//		postorder("shentong","3391456149561");
+//		postorder("shentong","3391456709218");
+//		postorder("shentong","3391456635532");
+//		postorder("shentong","3391456980937");
+//		postorder("shentong","3391457059755");
+//		postorder("shentong","3391456902467");
+//		postorder("shentong","3391456149615");
+//		postorder("shentong","3391457059798");
+//		postorder("shentong","3391456980974");
+//		postorder("shentong","3391456149676");
+//		postorder("shentong","3391457134169");
+//		postorder("shunfeng","252397283386");
+//		postorder("shunfeng","252397283304");
+//		postorder("shunfeng","252397283491");
+//		postorder("shunfeng","252397283816");
+//		postorder("shentong","3391457059830");
+//		postorder("shentong","3391456303425");
+//		postorder("shentong","3391456709437");
+//		postorder("shentong","3391456303437");
+//		postorder("shentong","3391456981025");
+//		postorder("shentong","3391456303455");
+//		postorder("shentong","3391456303462");
+//		postorder("shentong","3391457134339");
+//		postorder("shentong","3391456902583");
+//		postorder("shentong","3391456981074");
+//		postorder("shentong","3391457134479");
+//		postorder("shentong","3391456709528");
+//		postorder("shentong","3391456709530");
+//		postorder("shentong","3391456762335");
+//		postorder("shentong","3391457060105");
+//		postorder("shentong","3391456823820");
+//		postorder("shentong","3391457060124");
+//		postorder("shentong","3391456144958");
+//		postorder("shentong","3391456981116");
+//		postorder("shentong","3391457134583");
+//		postorder("shentong","3391456902315");
+//		postorder("shentong","3391456823326");
+//		postorder("shentong","3391456303516");
+//		postorder("shentong","3391456709607");
+//		postorder("shentong","3391456902716");
+//		postorder("shentong","3391456981268");
+//		postorder("shentong","3391456902303");
+//		postorder("shentong","3391456149785");
 	}
 }

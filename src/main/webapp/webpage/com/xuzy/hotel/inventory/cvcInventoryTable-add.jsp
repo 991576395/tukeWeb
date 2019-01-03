@@ -25,7 +25,7 @@
 							<label class="Validform_label" style="display: none;">商品编号</label>
 						</td>
 				</tr>
-				<tr>
+				<!-- <tr>
 					<td align="right">
 						<label class="Validform_label">
 							商品总量:
@@ -36,7 +36,7 @@
 							<span class="Validform_checktip"></span>
 							<label class="Validform_label" style="display: none;">商品总量</label>
 						</td>
-				</tr>
+				</tr> -->
 				<tr>
 					<td align="right">
 						<label class="Validform_label">

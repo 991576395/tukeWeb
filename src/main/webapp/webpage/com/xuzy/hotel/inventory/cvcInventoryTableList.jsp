@@ -9,7 +9,7 @@
    <t:dgCol title="所属公司"  field="sysCompanyCode"  hidden="true"  queryMode="single"  width="120"></t:dgCol>
    <t:dgCol title="流程状态"  field="bpmStatus"  hidden="true"  queryMode="single"  dictionary="bpm_status"  width="120"></t:dgCol>
    <t:dgCol title="商品编号"  field="goodNumber"  queryMode="single"  width="120"></t:dgCol>
-   <t:dgCol title="商品总量"  field="goodTotleSize"  queryMode="single"  width="120"></t:dgCol>
+   <t:dgCol title="商品总量"  field="goodTotleSize" hidden="true"  queryMode="single"  width="120"></t:dgCol>
    <t:dgCol title="商品剩余数量"  field="goodSize"  queryMode="single"  width="120"></t:dgCol>
 	 <t:dgCol title="修改版本"  field="uodateVersion"  hidden="true"  queryMode="single"  width="120"></t:dgCol>
    <t:dgCol title="创建人名称"  field="createName"  queryMode="single"  width="120"></t:dgCol>

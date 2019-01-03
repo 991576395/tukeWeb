@@ -1,14 +1,22 @@
 package com.xuzy.hotel.inventory.service.impl;
 import com.xuzy.hotel.inventory.service.CvcInventoryTableServiceI;
+import com.xuzy.hotel.message.entity.CvcMessageTableEntity;
+import com.xuzy.hotel.message.service.CvcMessageTableServiceI;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateFormatUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.jeecgframework.core.common.service.impl.CommonServiceImpl;
 
 import com.appinterface.app.base.exception.XuException;
 import com.xuzy.hotel.inventory.entity.CvcInventoryTableEntity;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,13 +25,16 @@ import java.util.UUID;
 import java.io.Serializable;
 import org.jeecgframework.core.util.ApplicationContextUtil;
 import org.jeecgframework.core.util.MyClassLoader;
+import org.jeecgframework.core.util.ResourceUtil;
 import org.jeecgframework.core.util.StringUtil;
 import org.jeecgframework.web.cgform.enhance.CgformEnhanceJavaInter;
 
 @Service("cvcInventoryTableService")
 @Transactional
 public class CvcInventoryTableServiceImpl extends CommonServiceImpl implements CvcInventoryTableServiceI {
-
+	
+	@Autowired
+	private CvcMessageTableServiceI cvcMessageTableService;
 	
  	public void delete(CvcInventoryTableEntity entity) throws Exception{
  		super.delete(entity);
@@ -185,5 +196,62 @@ public class CvcInventoryTableServiceImpl extends CommonServiceImpl implements C
 			subInventory(goodNumber,size,++tryTime);
 		}
 		return 0;
+	}
+
+	@Override
+	public List<CvcMessageTableEntity> checkIfWillAlter() throws Exception {
+		String valueNumber = ResourceUtil.searchAllTypesByCode("min","invetoryms");
+		if(StringUtils.isEmpty(valueNumber)) {
+			return null;
+		}
+		List<CvcInventoryTableEntity> inventoryTableEntities = findHql("from CvcInventoryTableEntity where goodSize <= ? ", Integer.parseInt(valueNumber));
+		if(CollectionUtils.isNotEmpty(inventoryTableEntities)) {
+			List<CvcMessageTableEntity> cvcMessageTableEntities = new ArrayList<CvcMessageTableEntity>();
+			for (CvcInventoryTableEntity cvcInventoryTableEntity : inventoryTableEntities) {
+				List<CvcMessageTableEntity> messageTableEntities = cvcMessageTableService.findHql("from CvcMessageTableEntity where type='I' and  baoLiuValue = ?", cvcInventoryTableEntity.getGoodNumber());
+				if(CollectionUtils.isNotEmpty(messageTableEntities)) {
+					for(CvcMessageTableEntity cvcMessageTableEntity : messageTableEntities) {
+						if(0 == cvcMessageTableEntity.getIfRead()) {
+							//消息未读
+							cvcMessageTableEntities.add(messageTableEntities.get(0));
+							break;
+						}else {
+							//消息已读 时间是否一致
+							if(!cvcMessageTableEntity.getCreateDate().equals(cvcInventoryTableEntity.getUpdateDate())) {
+								cvcMessageTableEntity.setCreateDate(cvcInventoryTableEntity.getUpdateDate());
+								cvcMessageTableService.saveOrUpdate(cvcMessageTableEntity);
+								//创建新消息
+								cvcMessageTableEntity = new CvcMessageTableEntity();
+								cvcMessageTableEntity.setCreateDate(cvcInventoryTableEntity.getUpdateDate());
+								cvcMessageTableEntity.setType("I");
+								cvcMessageTableEntity.setIfRead(0);
+								cvcMessageTableEntity.setBaoLiuValue(cvcInventoryTableEntity.getGoodNumber());
+								cvcMessageTableEntity.setMessageContent("商品"+cvcInventoryTableEntity.getGoodNumber()+"库存已不足"+valueNumber+"，请确认知晓！");
+								cvcMessageTableService.save(cvcMessageTableEntity);
+								cvcMessageTableEntities.add(cvcMessageTableEntity);
+								break;
+							}
+						}
+					}
+					
+				}else {
+					//创建新消息
+					CvcMessageTableEntity cvcMessageTableEntity = new CvcMessageTableEntity();
+					cvcMessageTableEntity.setCreateDate(cvcInventoryTableEntity.getUpdateDate());
+					cvcMessageTableEntity.setType("I");
+					cvcMessageTableEntity.setIfRead(0);
+					cvcMessageTableEntity.setBaoLiuValue(cvcInventoryTableEntity.getGoodNumber());
+					cvcMessageTableEntity.setMessageContent("商品"+cvcInventoryTableEntity.getGoodNumber()+"库存已不足"+valueNumber+"，请确认知晓！");
+					try {
+						cvcMessageTableService.save(cvcMessageTableEntity);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					cvcMessageTableEntities.add(cvcMessageTableEntity);
+				}
+			}
+			return cvcMessageTableEntities;
+		}
+		return null;
 	}
 }

@@ -1,8 +1,11 @@
 package com.xuzy.hotel.inventory.service;
-import com.xuzy.hotel.inventory.entity.CvcInventoryTableEntity;
+import java.io.Serializable;
+import java.util.List;
+
 import org.jeecgframework.core.common.service.CommonService;
 
-import java.io.Serializable;
+import com.xuzy.hotel.inventory.entity.CvcInventoryTableEntity;
+import com.xuzy.hotel.message.entity.CvcMessageTableEntity;
 
 public interface CvcInventoryTableServiceI extends CommonService{
 	
@@ -17,5 +20,11 @@ public interface CvcInventoryTableServiceI extends CommonService{
  	 * @return
  	 */
  	public int subInventory(String goodNumber,int size,int tryTime);
+ 	
+ 	/**
+ 	 * 判断是否需要提示
+ 	 * @return
+ 	 */
+ 	public List<CvcMessageTableEntity> checkIfWillAlter() throws Exception;
  	
 }
