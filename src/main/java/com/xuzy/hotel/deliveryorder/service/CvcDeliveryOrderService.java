@@ -61,7 +61,7 @@ public interface CvcDeliveryOrderService {
 	 * @param invoiceNo
 	 * @return
 	 */
-	CvcDeliveryOrderEntity getEntityByinvoiceNo(@Param("invoiceNo") String invoiceNo);
+	List<CvcDeliveryOrderEntity> getEntityByinvoiceNo(@Param("invoiceNo") String invoiceNo);
 	
 	/**
 	 * 通过订单添加快递信息

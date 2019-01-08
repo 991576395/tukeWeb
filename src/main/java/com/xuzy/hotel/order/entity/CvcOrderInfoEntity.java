@@ -77,7 +77,7 @@ public class CvcOrderInfoEntity implements Serializable{
 	/**
 	 *address
 	 */
-	@Excel(name="收货地址",orderNum="9")
+	@Excel(name="收货地址",width=20,orderNum="9")
 	private String address;
 	/**
 	 *zipcode
@@ -212,7 +212,7 @@ public class CvcOrderInfoEntity implements Serializable{
 	/**
 	 *add_time
 	 */
-	@Excel(name="下单时间",orderNum="3")
+	@Excel(name="下单时间",width=20,orderNum="3")
 	private String addTime;
 	/**
 	 * 未转换格式后的时间
@@ -260,7 +260,7 @@ public class CvcOrderInfoEntity implements Serializable{
 	/**
 	 *invoice_no
 	 */
-	@Excel(name="快递单号",orderNum="12")
+	@Excel(name="快递单号",width=20,orderNum="12")
 	private String invoiceNo;
 	/**
 	 *extension_code
@@ -439,7 +439,7 @@ public class CvcOrderInfoEntity implements Serializable{
 	/**
 	 *抓单时间
 	 */
-	@Excel(name="抓单时间",orderNum="4")
+	@Excel(name="抓单时间",width=20,orderNum="4")
 	private String getTime;
 	/**
 	 *退货原因（0：无；1：包裹损坏；2：地址不详；3：退积分）

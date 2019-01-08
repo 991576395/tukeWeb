@@ -126,7 +126,7 @@ public class CvcDeliveryOrderServiceImpl implements CvcDeliveryOrderService {
 	}
 
 	@Override
-	public CvcDeliveryOrderEntity getEntityByinvoiceNo(String invoiceNo) {
+	public List<CvcDeliveryOrderEntity> getEntityByinvoiceNo(String invoiceNo) {
 		return cvcDeliveryOrderDao.getEntityByinvoiceNo(invoiceNo);
 	}
 
@@ -184,9 +184,8 @@ public class CvcDeliveryOrderServiceImpl implements CvcDeliveryOrderService {
 						cvcDeliveryGoods.setGoodsId(cvcOrderGoodsEntity.getGoodsId());
 						cvcDeliveryGoods.setSendNumber(cvcOrderGoodsEntity.getGoodsNumber());
 						cvcDeliveryGoodsDao.insert(cvcDeliveryGoods);
-						
 						//减去库存
-						cvcInventoryTableService.subInventory(cvcOrderGoodsEntity.getGoodsId()+"",cvcOrderGoodsEntity.getGoodsNumber(), 0);
+//						cvcInventoryTableService.subInventory(cvcOrderGoodsEntity.getGoodsId()+"",cvcOrderGoodsEntity.getGoodsNumber(), 0);
 					}
 				}
 			}

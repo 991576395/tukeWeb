@@ -1,6 +1,8 @@
 package com.xuzy.hotel.deliveryinfo.service.impl;
 
 import javax.annotation.Resource;
+
+import java.util.List;
 import java.util.UUID;
 import org.jeecgframework.minidao.pojo.MiniDaoPage;
 import org.springframework.stereotype.Service;
@@ -59,5 +61,10 @@ public class CvcDeliveryInfoServiceImpl implements CvcDeliveryInfoService {
 	@Override
 	public CvcDeliveryInfoEntity getDeliveryInfosByInvoiceNo(String invoiceNo) {
 		return cvcDeliveryInfoDao.getAll(invoiceNo);
+	}
+
+	@Override
+	public List<CvcDeliveryInfoEntity> getAllError() {
+		return cvcDeliveryInfoDao.getAllError();
 	}
 }

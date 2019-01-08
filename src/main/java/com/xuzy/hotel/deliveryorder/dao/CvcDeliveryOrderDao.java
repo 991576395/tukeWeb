@@ -30,8 +30,9 @@ public interface CvcDeliveryOrderDao{
 	@Sql("SELECT LAST_INSERT_ID();")
 	public int getInserId();
 	
-	@Sql("SELECT order_id FROM cvc_delivery_order WHERE invoice_no = :invoiceNo order by delivery_id desc limit 1")
-	CvcDeliveryOrderEntity getEntityByinvoiceNo(@Param("invoiceNo") String invoiceNo);
+	@Sql("SELECT order_id FROM cvc_delivery_order WHERE invoice_no = :invoiceNo  group by order_id")
+	@ResultType(CvcDeliveryOrderEntity.class)
+	List<CvcDeliveryOrderEntity> getEntityByinvoiceNo(@Param("invoiceNo") String invoiceNo);
 	
 	/**
 	 * 修改数据

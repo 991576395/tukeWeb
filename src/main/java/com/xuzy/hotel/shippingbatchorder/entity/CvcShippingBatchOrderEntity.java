@@ -19,7 +19,7 @@ public class CvcShippingBatchOrderEntity implements Serializable{
 	@Excel(name="订单号")	private String orderId;	/**	 *快递名称	 */
 	@Excel(name="快递名称")	private String shippingName;	/**	 *快递单号	 */
 	@Excel(name="快递单号")	private String invoiceNo;	/**	 *预计送到时间	 */
-	@Excel(name="预计达到时间")	private String preArrivalDate;	/**	 *导入时间	 */	private String addTime;	/**	 *发货时间	 */	private Integer shippingTime;	/**	 *是否离港（0：未离港；1：已离港）	 */	private Integer isOffharbour;	/**	 *是否已物流订阅（0：未订阅；1：已订阅）	 */	private Integer isPostorder;	/**	 *是否已发货（0：未发货；1：已发货）	 */	private Integer status ;	/**	 *是否为本批次订单(0:否；1:是)	 */	private Integer isOrderBatchNoOk;
+	@Excel(name="预计达到时间",width=20)	private String preArrivalDate;	/**	 *导入时间	 */	private String addTime;	/**	 *发货时间	 */	private Integer shippingTime;	/**	 *是否离港（0：未离港；1：已离港）	 */	private Integer isOffharbour;	/**	 *是否已物流订阅（0：未订阅；1：已订阅）	 */	private Integer isPostorder;	/**	 *是否已发货（0：未发货；1：已发货）	 */	private Integer status ;	/**	 *是否为本批次订单(0:否；1:是)	 */	private Integer isOrderBatchNoOk;
 	
 	private String  isOrderBatchNoOkStr;	/**	 *抓单批次号	 */	private String orderBatchNo;
 	/**

@@ -1,5 +1,7 @@
 package com.xuzy.hotel.deliveryinfo.dao;
 
+import java.util.List;
+
 import org.jeecgframework.minidao.annotation.Param;
 import org.jeecgframework.minidao.annotation.ResultType;
 import org.jeecgframework.minidao.annotation.Sql;
@@ -75,4 +77,11 @@ public interface CvcDeliveryInfoDao {
 	@Sql("SELECT id,data,state FROM  cvc_delivery_info WHERE number = :invoice_no ORDER BY id DESC LIMIT 1")
 	public CvcDeliveryInfoEntity getAll(@Param("invoice_no") String invoice_no);
 
+	
+	@ResultType(CvcDeliveryInfoEntity.class)
+	@Sql("select * from cvc_delivery_info i where i.number in (\r\n" + 
+			"select d_o.invoice_no from cvc_order_info o left join cvc_delivery_order d_o on o.order_id = d_o.order_id   \r\n" + 
+			"where o.tk_order_status=3 or o.tk_order_status=4\r\n" + 
+			") and i.state = 3")
+	public List<CvcDeliveryInfoEntity> getAllError();
 }

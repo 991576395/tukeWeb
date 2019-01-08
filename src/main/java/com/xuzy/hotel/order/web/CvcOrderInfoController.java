@@ -24,6 +24,7 @@ import org.jeecgframework.p3.core.web.BaseController;
 import org.jeecgframework.poi.excel.entity.ExportParams;
 import org.jeecgframework.poi.excel.entity.vo.NormalExcelConstants;
 import org.jeecgframework.tag.core.easyui.TagUtil;
+import org.phprpc.util.PHPSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -700,6 +701,7 @@ public class CvcOrderInfoController extends BaseController {
 						.setParams(requestBody).builder(), null);
 				if(responseHead.getReturn() >= 0) {
 					cvcOrderInfoService.updateStatusByOrderId(id, 5);
+					cvcDeliveryOrderService.updateSignDate(datas.get(0).getFtime(),cvcOrderInfoEntity.getInvoiceNo());
 					j.setMsg("订单签收成功");
 				}else {
 					j.setSuccess(false);
@@ -767,35 +769,54 @@ public class CvcOrderInfoController extends BaseController {
 		AjaxJson j = new AjaxJson();
 		try {
 //			cvcOrderInfoService.doErrorList();
-			final CountDownLatch countDownLatch = new CountDownLatch(100); 
-			Runnable Runnable = new Runnable() {
-				
-				@Override
-				public void run() {
-					try {
-						countDownLatch.await();
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-					
-					int reulst = cvcInventoryTableService.subInventory("qqqq111",1, 0);
-					synchronized (ConmentHttp.size) {
-						if(reulst == 1) {
-							ConmentHttp.size ++;
-							System.out.println("抢到一个商品，已抢："+ConmentHttp.size);
-						}
-					}
-				}
-			};
-			for(int i = 0; i < 100;i++) {
-				Thread thread = new Thread(Runnable);
-				thread.run();
-				countDownLatch.countDown();
-			}
+//			final CountDownLatch countDownLatch = new CountDownLatch(100); 
+//			Runnable Runnable = new Runnable() {
+//				
+//				@Override
+//				public void run() {
+//					try {
+//						countDownLatch.await();
+//					} catch (InterruptedException e) {
+//						e.printStackTrace();
+//					}
+//					
+//					int reulst = cvcInventoryTableService.subInventory("qqqq111",1, 0);
+//					synchronized (ConmentHttp.size) {
+//						if(reulst == 1) {
+//							ConmentHttp.size ++;
+//							System.out.println("抢到一个商品，已抢："+ConmentHttp.size);
+//						}
+//					}
+//				}
+//			};
+//			for(int i = 0; i < 100;i++) {
+//				Thread thread = new Thread(Runnable);
+//				thread.run();
+//				countDownLatch.countDown();
+//			}
 			
 //			j.setMsg("删除成功");
 //			while(true) {
 				
+//			}
+			
+			CvcOrderInfoEntity query = new CvcOrderInfoEntity();
+			query.setOrderStatus(4);
+			MiniDaoPage<CvcOrderInfoEntity> list = cvcOrderInfoService.getAll(query, 1, 2000);
+			for (CvcOrderInfoEntity entity : list.getResults()) {
+				CvcShippingEntity cvcShipping = new CvcShippingEntity();
+				cvcShipping.setEnabled(1);
+				cvcShipping.setShippingName(entity.getShippingName());
+				//查询快递公司
+				MiniDaoPage<CvcShippingEntity> daoPage = cvcShippingService.getAll(cvcShipping, 1, 1);
+				CvcShippingEntity cvcShippingEntity = daoPage.getResults().get(0);
+				ConmentHttp.postorder(cvcShippingEntity.getShippingCode(), entity.getInvoiceNo());
+			}
+			
+//			List<CvcDeliveryInfoEntity> entities = cvcDeliveryInfoService.getAllError();
+//			for (CvcDeliveryInfoEntity entity : entities) {
+//				List<Data> datas = PHPAndJavaSerialize.unserializePHParray(entity.getData(),DelivetyJson.class);
+//				ConmentHttp.postErrorOrder(datas, entity);
 //			}
 		} catch (Exception e) {
 			e.printStackTrace();
