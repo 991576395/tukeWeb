@@ -41,7 +41,7 @@ public interface CvcDeliveryOrderDao{
 	 */
 	int update(@Param("cvcDeliveryOrder") CvcDeliveryOrderEntity cvcDeliveryOrder);
 	
-	@Sql("UPDATE cvc_delivery_order SET  signin_date=:signDate WHERE invoice_no = :invoiceNo order by delivery_id desc limit 1")
+	@Sql("UPDATE cvc_delivery_order SET  signin_date=:signDate WHERE invoice_no = :invoiceNo")
 	int updateSignDate(@Param("signDate") String signDate,@Param("invoiceNo") String invoiceNo);
 	
 	/**

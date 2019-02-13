@@ -97,6 +97,7 @@ public class CvcGetOrderStatisticsServiceImpl implements CvcGetOrderStatisticsSe
 		for (ExchangeOrder exchangeOrder : exchangeOrders) {
 			CvcOrderInfoEntity cvcOrderInfoEntity = cvcOrderInfoDao.get(exchangeOrder.getID());
 			if(cvcOrderInfoEntity == null) {
+				System.out.println(exchangeOrder.getID());
 				cvcOrderInfoEntity = new CvcOrderInfoEntity();
 				cvcOrderInfoEntity.setBatchNo(unified_batch_no);
 				cvcOrderInfoEntity.setId(exchangeOrder.getID());
@@ -122,7 +123,7 @@ public class CvcGetOrderStatisticsServiceImpl implements CvcGetOrderStatisticsSe
 				for (ExchangeOrderDetail exchangeOrderDetail : exchangeOrder.getItems()) {
 					CvcOrderGoodsEntity  cvcOrderGoods = new CvcOrderGoodsEntity();
 					cvcOrderGoods.setOrderId(exchangeOrder.getID());
-					cvcOrderGoods.setGoodsId(Integer.parseInt(exchangeOrderDetail.getProduct()));
+					cvcOrderGoods.setGoodsId(exchangeOrderDetail.getProduct());
 					cvcOrderGoods.setGoodsSn(exchangeOrderDetail.getProduct());
 					cvcOrderGoods.setGoodsNumber(exchangeOrderDetail.getBookQuantity());
 					cvcOrderGoodsDao.insert(cvcOrderGoods);

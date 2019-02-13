@@ -813,11 +813,11 @@ public class CvcOrderInfoController extends BaseController {
 				ConmentHttp.postorder(cvcShippingEntity.getShippingCode(), entity.getInvoiceNo());
 			}
 			
-//			List<CvcDeliveryInfoEntity> entities = cvcDeliveryInfoService.getAllError();
-//			for (CvcDeliveryInfoEntity entity : entities) {
-//				List<Data> datas = PHPAndJavaSerialize.unserializePHParray(entity.getData(),DelivetyJson.class);
-//				ConmentHttp.postErrorOrder(datas, entity);
-//			}
+			List<CvcDeliveryInfoEntity> entities = cvcDeliveryInfoService.getAllError();
+			for (CvcDeliveryInfoEntity entity : entities) {
+				List<Data> datas = PHPAndJavaSerialize.unserializePHParray(entity.getData(),DelivetyJson.class);
+				ConmentHttp.postErrorOrder(datas, entity);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.info(e.getMessage());

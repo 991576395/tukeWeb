@@ -56,7 +56,7 @@ public interface CvcGetOrderStatisticsDao{
 	 * @param cvcGetOrderStatistics
 	 * @return
 	 */
-	@Sql("UPDATE cvc_get_order_statistics SET order_count=order_count+:orderCount,add_time=addTime WHERE unified_batch_no=:batchNo")
+	@Sql("UPDATE cvc_get_order_statistics SET order_count=order_count+:orderCount,add_time=:addTime WHERE unified_batch_no=:batchNo")
 	void addOrderCount(@Param("orderCount")int  orderCount,@Param("batchNo")String batchNo,@Param("addTime")String addTime);
 	
 	/**
