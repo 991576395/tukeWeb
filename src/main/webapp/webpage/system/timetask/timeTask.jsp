@@ -9,8 +9,10 @@
 <body style="overflow-y: hidden" scroll="no">
 <t:formvalid formid="formobj" dialog="true" usePlugin="password" layout="div" action="timeTaskController.do?save">
 	<input id="id" name="id" type="hidden" value="${timeTaskPage.id }">
-	<input id="isEffect" name="isEffect" type="hidden" value="${(empty timeTaskPage.isEffect)?0:timeTaskPage.isEffect}">
-	<input id="isStart" name="isStart" type="hidden" value="${(empty timeTaskPage.isStart)?0:timeTaskPage.isStart }">
+	<!-- (empty timeTaskPage.isEffect)?0: -->
+	<input id="isEffect" name="isEffect" type="hidden" value="${timeTaskPage.isEffect}">
+	<!-- empty timeTaskPage.isStart?0: -->
+	<input id="isStart" name="isStart" type="hidden" value="${timeTaskPage.isStart }">
 	<fieldset class="step">
 	<div class="form">
 		<label class="Validform_label"><t:mutiLang langKey="common.taskid"/>:</label> 

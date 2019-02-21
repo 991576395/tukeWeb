@@ -725,6 +725,15 @@ public class CvcOrderInfoController extends BaseController {
 					j.setSuccess(false);
 					j.setMsg("订单签收失败 原因:"+head.getReturnInfo());
 				}
+			}else if("quitOrder".equals(tkOrderStatus)) {
+				//用户取消订单
+				if(cvcOrderInfoEntity.getOrderStatus() == 2
+						|| cvcOrderInfoEntity.getOrderStatus() == 3) {
+					cvcOrderInfoService.updateStatusByOrderId(id, 9);
+				}else {
+					j.setSuccess(false);
+					j.setMsg("推送失败:只能取消 配货中与离港状态订单！");
+				}
 			}
 		} catch (Exception e) {
 			log.info(e.getMessage());

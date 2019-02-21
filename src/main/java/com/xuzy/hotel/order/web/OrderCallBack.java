@@ -198,11 +198,13 @@ public class OrderCallBack extends BaseController {
 					.setParams(requestBody).builder(), null);
 			if(responseHead.getReturn() >= 0) {
 				cvcOrderInfoService.updateStatusByOrderId(entity.getOrderId(), 4);
+				Thread.sleep(2000);
 				//修改成功后
 				if(cvcDeliveryInfo.getState() == 3){
 					//推送至签收 
 					RequestSignInExchangeOrderJson  requestBodySign = new RequestSignInExchangeOrderJson();
 					requestBodySign.setOrderID(entity.getOrderId());
+//					requestBodySign.setSignInMan("");
 					requestBodySign.setSignInMan(callbaseRequest.getLastResult().getData().get(0).getContext());
 					requestBodySign.setSignInDate(callbaseRequest.getLastResult().getData().get(0).getFtime() );
 					responseHead = ConmentHttp.sendHttp(new TukeRequestBody.Builder()
@@ -221,6 +223,7 @@ public class OrderCallBack extends BaseController {
 			//推送至签收 
 			RequestSignInExchangeOrderJson  requestBody = new RequestSignInExchangeOrderJson();
 			requestBody.setOrderID(entity.getOrderId());
+//			requestBody.setSignInMan("");
 			requestBody.setSignInMan(callbaseRequest.getLastResult().getData().get(0).getContext());
 			requestBody.setSignInDate(callbaseRequest.getLastResult().getData().get(0).getFtime() );
 			ResponseHead responseHead = ConmentHttp.sendHttp(new TukeRequestBody.Builder()

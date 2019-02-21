@@ -317,7 +317,7 @@ public class CvcOrderInfoEntity implements Serializable{
 	/**
 	 *支付银行code
 	 */
-	private String bank;
+	private String orderSourceName;
 	/**
 	 *enterprise_discount
 	 */
@@ -905,11 +905,12 @@ public class CvcOrderInfoEntity implements Serializable{
 	public void setCustomDate(String customDate) {
 		this.customDate = customDate;
 	}
-	public String getBank() {
-	    return this.bank;
+	
+	public String getOrderSourceName() {
+		return orderSourceName;
 	}
-	public void setBank(String bank) {
-	    this.bank=bank;
+	public void setOrderSourceName(String orderSourceName) {
+		this.orderSourceName = orderSourceName;
 	}
 	public BigDecimal getEnterpriseDiscount() {
 	    return this.enterpriseDiscount;

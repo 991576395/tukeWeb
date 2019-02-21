@@ -119,11 +119,23 @@ public class ExchangeOrder {
 	/// 积分账户
 	/// </summary>
 	public String AccountType = "金领冠";
+	
+	/**
+	 * 订单来源字段
+	 */
+	public String OrderSourceName = "";
+	
 	/// <summary>
 	/// 订单明细
 	/// </summary>
 	public List<ExchangeOrderDetail> Items = new ArrayList<ExchangeOrderDetail>();
 	
+	public String getOrderSourceName() {
+		return OrderSourceName;
+	}
+	public void setOrderSourceName(String orderSourceName) {
+		OrderSourceName = orderSourceName;
+	}
 	public int getID() {
 		return ID;
 	}

@@ -108,6 +108,7 @@ public class CvcGetOrderStatisticsServiceImpl implements CvcGetOrderStatisticsSe
 				cvcOrderInfoEntity.setConsignee(exchangeOrder.getConsignee());
 				cvcOrderInfoEntity.setAddress(exchangeOrder.getDeliveryAddre());
 				cvcOrderInfoEntity.setRemark(exchangeOrder.getAcceptRemark());
+				cvcOrderInfoEntity.setOrderSourceName(exchangeOrder.getOrderSourceName());
 				try {
 					cvcOrderInfoEntity.setAddTime(""+PhpDateUtils.getTime(DateUtils.parseDate(exchangeOrder.getAcceptDate(),new String[] {"yyyy-MM-dd'T'HH:mm:ss.sss","yyyy-MM-dd'T'HH:mm:ss"})));
 				} catch (ParseException e) {

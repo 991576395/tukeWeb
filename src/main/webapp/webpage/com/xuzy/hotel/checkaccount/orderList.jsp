@@ -48,8 +48,8 @@
 			
 			function responseCall(url,d){
 				if (d.obj.totelSize == (d.obj.sucSize + d.obj.faildSize)) {
-					reloadtCheckOrderList();
-					tip("发货完成！");
+					tCheckOrderListsearch();
+					tip("上传完成！");
 				} else{
 					requestall(url,0,d.obj.totelSize,d.obj.sucSize,d.obj.faildSize);
 				}

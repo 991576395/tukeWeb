@@ -33,7 +33,7 @@
    <t:dgToolBar title="推送至配送中" icon="icon-edit" url="cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=send"  funname="toUpdate"></t:dgToolBar>
    <t:dgToolBar title="推送至签收" icon="icon-edit" url="cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=signin"  funname="toUpdate"></t:dgToolBar>
    <t:dgToolBar title="推送至签收失败" icon="icon-edit" url="cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=signFailure"  funname="toUpdate"></t:dgToolBar>
-  
+  	<t:dgToolBar title="取消订单" icon="icon-edit" url="cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=quitOrder"  funname="toUpdate"></t:dgToolBar>
   </t:datagrid>
   </div>
   

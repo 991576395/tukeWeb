@@ -50,8 +50,8 @@ public interface CvcOrderInfoDao{
 	 * 插入数据
 	 * @param act
 	 */
-	@Sql("INSERT INTO	cvc_order_info (order_id,order_sn,user_id,user_name,consignee,address,tel,add_time,confirm_time,batch_no,remark,get_time) "
-			+ "values (:cvcOrderInfo.id,:cvcOrderInfo.orderSn,:cvcOrderInfo.userId,:cvcOrderInfo.userName,:cvcOrderInfo.consignee,:cvcOrderInfo.address,:cvcOrderInfo.tel,:cvcOrderInfo.addTime,:cvcOrderInfo.confirmTime,:cvcOrderInfo.batchNo,:cvcOrderInfo.remark,:cvcOrderInfo.getTime)")
+	@Sql("INSERT INTO	cvc_order_info (order_id,order_sn,user_id,user_name,consignee,address,tel,add_time,confirm_time,batch_no,remark,get_time,order_source_name) "
+			+ "values (:cvcOrderInfo.id,:cvcOrderInfo.orderSn,:cvcOrderInfo.userId,:cvcOrderInfo.userName,:cvcOrderInfo.consignee,:cvcOrderInfo.address,:cvcOrderInfo.tel,:cvcOrderInfo.addTime,:cvcOrderInfo.confirmTime,:cvcOrderInfo.batchNo,:cvcOrderInfo.remark,:cvcOrderInfo.getTime,:cvcOrderInfo.orderSourceName)")
 	void insertOrder(@Param("cvcOrderInfo") CvcOrderInfoEntity cvcOrderInfo);
 	
 	/**
