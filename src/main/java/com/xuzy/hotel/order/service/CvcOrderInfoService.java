@@ -117,4 +117,8 @@ public interface CvcOrderInfoService {
 	public List<CvcOrderInfoEntity> getCanCangKu();
 	
 	public void doErrorList();
+	
+	public List<CvcOrderInfoEntity> getWillSignList();
+	
+	public void updateEpStatus(int orderId);
 }

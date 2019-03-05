@@ -370,4 +370,14 @@ public class CvcOrderInfoServiceImpl implements CvcOrderInfoService {
 		}
 		
 	}
+
+	@Override
+	public List<CvcOrderInfoEntity> getWillSignList() {
+		return cvcOrderInfoDao.getWillSignList();
+	}
+
+	@Override
+	public void updateEpStatus(int orderId) {
+		cvcOrderInfoDao.updateEpStatus(orderId);
+	}
 }

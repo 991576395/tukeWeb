@@ -14,6 +14,7 @@ import org.jeecgframework.minidao.pojo.MiniDaoPage;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.appinterface.app.base.exception.XuException;
 import com.util.PhpDateUtils;
 import com.xuzy.hotel.order.dao.CvcOrderInfoDao;
 import com.xuzy.hotel.order.entity.CvcOrderInfoEntity;
@@ -157,6 +158,7 @@ public class CvcShippingBatchOrderServiceImpl implements CvcShippingBatchOrderSe
 		}else {
 			//删除批次订单
 			cvcShippingBatchOrderDao.deleteBybatchNo(orderBatchNo);
+			throw new XuException("存在待配货订单！");
 		}
 	}
 }

@@ -166,6 +166,8 @@ public class CvcOrderInfoController extends BaseController {
 		request.setAttribute("batchNo", batchNo);
 		String exceptionStatus = request.getParameter("exceptionStatus")==null?"":request.getParameter("exceptionStatus");
 		request.setAttribute("exceptionStatus", exceptionStatus);
+		String isShow = request.getParameter("isShow")==null?"":request.getParameter("isShow");
+		request.setAttribute("isShow", isShow);
 		return new ModelAndView("com/xuzy/hotel/order/tOrderTableList");
 	}
 	
@@ -262,7 +264,13 @@ public class CvcOrderInfoController extends BaseController {
 			for (CvcOrderInfoEntity entity : list.getResults()) {
 				entity.setAddTime(PhpDateUtils.parseDate(Long.parseLong(entity.getAddTime()), "yyyy-MM-dd HH:mm:ss"));
 				entity.setGetTime(PhpDateUtils.parseDate(Long.parseLong(entity.getGetTime()), "yyyy-MM-dd HH:mm:ss"));
-				entity.setExceptionStatusString(0 == entity.getExceptionStatus()?"无异常":"有异常");
+				
+				String value = (0 == entity.getExceptionStatus())?"无异常":"有异常";
+				if(0 != entity.getExceptionStatus()) {
+					value += (entity.getIsShow() == 1)?"(未处理)":"(已处理)";
+				}
+				
+				entity.setExceptionStatusString(value);
 			}
 		}
 		dataGrid.setResults(SystemTools.convertPaginatedList(list));
@@ -734,6 +742,35 @@ public class CvcOrderInfoController extends BaseController {
 					j.setSuccess(false);
 					j.setMsg("推送失败:只能取消 配货中与离港状态订单！");
 				}
+			}else if("getOrderWuliu".equals(tkOrderStatus)) {
+				//获取物流信息，并同步
+				if(cvcOrderInfoEntity.getOrderStatus() == 3
+						|| cvcOrderInfoEntity.getOrderStatus() == 4) {
+					CvcShippingEntity cvcShipping = new CvcShippingEntity();
+					cvcShipping.setEnabled(1);
+					cvcShipping.setShippingName(cvcOrderInfoEntity.getShippingName());
+					//查询快递公司
+					MiniDaoPage<CvcShippingEntity> daoPage = cvcShippingService.getAll(cvcShipping, 1, 1);
+					CvcShippingEntity cvcShippingEntity = null;
+					if(CollectionUtils.isEmpty(daoPage.getResults())) {
+						j.setSuccess(false);
+						j.setMsg("该快递公司不存在！");
+						return j;
+					}else {
+						cvcShippingEntity = daoPage.getResults().get(0);
+					}
+					String result = ConmentHttp.getOrderWuliu(cvcShippingEntity.getShippingCode(), cvcOrderInfoEntity.getInvoiceNo(), cvcOrderInfoEntity.getTel());
+					log.info("手动获取物流："+result);
+					if(StringUtils.isNotEmpty(result) && result.contains("\"message\":\"ok\"")) {
+						ConmentHttp.postMyErrorOrder(result);
+					}else {
+						j.setSuccess(false);
+						j.setMsg("同步失败:未查询到物流信息！");
+					}
+				}else {
+					j.setSuccess(false);
+					j.setMsg("同步失败:只能取消 配送中与离港状态订单！");
+				}
 			}
 		} catch (Exception e) {
 			log.info(e.getMessage());
@@ -752,17 +789,17 @@ public class CvcOrderInfoController extends BaseController {
 	 * 
 	 * @return
 	 */
-	@RequestMapping(params = "doEdit", method = { RequestMethod.GET, RequestMethod.POST })
+	@RequestMapping(params = "epUpdate", method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
-	public AjaxJson doEdit(@ModelAttribute CvcOrderInfoEntity cvcOrderInfo) {
+	public AjaxJson epUpdate(@RequestParam(required = true, value = "id") int id) {
 		AjaxJson j = new AjaxJson();
 		try {
-			cvcOrderInfoService.update(cvcOrderInfo);
-			j.setMsg("编辑成功");
+			cvcOrderInfoService.updateEpStatus(id);
+			j.setMsg("处理成功");
 		} catch (Exception e) {
 			log.info(e.getMessage());
 			j.setSuccess(false);
-			j.setMsg("编辑失败");
+			j.setMsg("处理失败");
 		}
 		return j;
 	}
@@ -822,11 +859,11 @@ public class CvcOrderInfoController extends BaseController {
 				ConmentHttp.postorder(cvcShippingEntity.getShippingCode(), entity.getInvoiceNo());
 			}
 			
-			List<CvcDeliveryInfoEntity> entities = cvcDeliveryInfoService.getAllError();
-			for (CvcDeliveryInfoEntity entity : entities) {
-				List<Data> datas = PHPAndJavaSerialize.unserializePHParray(entity.getData(),DelivetyJson.class);
-				ConmentHttp.postErrorOrder(datas, entity);
-			}
+//			List<CvcDeliveryInfoEntity> entities = cvcDeliveryInfoService.getAllError();
+//			for (CvcDeliveryInfoEntity entity : entities) {
+//				List<Data> datas = PHPAndJavaSerialize.unserializePHParray(entity.getData(),DelivetyJson.class);
+//				ConmentHttp.postErrorOrder(datas, entity);
+//			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.info(e.getMessage());

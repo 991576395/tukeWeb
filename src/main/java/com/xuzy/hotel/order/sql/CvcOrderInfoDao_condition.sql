@@ -62,4 +62,9 @@
 			and coi.user_id = :cvcOrderInfo.userId
 		</#if>
 		
+		<#if ( cvcOrderInfo.isShow )?? && cvcOrderInfo.isShow ?length gt 0>
+		    /* 用户id */
+			and coi.is_show = :cvcOrderInfo.isShow
+		</#if>
+		
 		

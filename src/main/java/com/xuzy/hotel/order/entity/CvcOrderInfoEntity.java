@@ -332,6 +332,9 @@ public class CvcOrderInfoEntity implements Serializable{
 	private Integer cpsId;
 	/**
 	 *是否显示
+	 *
+	 *1 默认为1，表示未处理异常
+	 *2 表示处理过异常
 	 */
 	private Integer isShow;
 	/**

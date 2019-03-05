@@ -16,9 +16,21 @@ public class CvcGetOrderStatisticsEntity implements Serializable{
 	/**
 	 * 格式化时间
 	 */
-	private String addTimeFormat;	/**	 *订单数量	 */	private Integer waitDeliveryCount;	/**	 *订单数量	 */	private Integer deliveryCount;	/**	 *订单数量	 */	private Integer offharbourCount;	/**	 *订单数量	 */	private Integer sendCount;	/**	 *订单数量	 */	private Integer signinCount;	/**	 *订单数量	 */	private Integer exceptionCount;	/**	 *订单数量	 */	private Integer signinFailCount;	/**	 *订单数量	 */	private Integer backCount;	/**	 *订单数量	 */	private Integer orderCount;
+	private String addTimeFormat;	/**	 *订单数量	 */	private Integer waitDeliveryCount;	/**	 *订单数量	 */	private Integer deliveryCount;	/**	 *订单数量	 */	private Integer offharbourCount;	/**	 *订单数量	 */	private Integer sendCount;	/**	 *订单数量	 */	private Integer signinCount;	/**	 *异常订单数量	 */	private Integer exceptionCount;
+		
+	/**
+	 * 处理过订单数量
+	 */
+	private Integer exceptionDoCount;	/**	 *订单数量	 */	private Integer signinFailCount;	/**	 *订单数量	 */	private Integer backCount;	/**	 *订单数量	 */	private Integer orderCount;
 	
-		public String getAddTimeFormat() {
+	
+		public Integer getExceptionDoCount() {
+		return exceptionDoCount;
+	}
+	public void setExceptionDoCount(Integer exceptionDoCount) {
+		this.exceptionDoCount = exceptionDoCount;
+	}
+	public String getAddTimeFormat() {
 		return addTimeFormat;
 	}
 	public void setAddTimeFormat(String addTimeFormat) {

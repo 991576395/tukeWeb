@@ -2,6 +2,8 @@ package com.xuzy.hotel.ylrequest;
 
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.jeecgframework.minidao.pojo.MiniDaoPage;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -10,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.util.PHPAndJavaSerialize;
+import com.util.PhpDateUtils;
 import com.xuzy.hotel.deliveryinfo.entity.CvcDeliveryInfoEntity;
 import com.xuzy.hotel.deliveryinfo.service.CvcDeliveryInfoService;
 import com.xuzy.hotel.order.entity.CvcOrderInfoEntity;
@@ -41,10 +44,52 @@ public class OrderCheckTask implements Job{
 			List<Data> datas = PHPAndJavaSerialize.unserializePHParray(entity.getData(),DelivetyJson.class);
 			ConmentHttp.postErrorOrder(datas, entity);
 		}
+		
+		//离港中 且有异常订单
+		CvcOrderInfoEntity query = new CvcOrderInfoEntity();
+		query.setOrderStatus(3);
+		query.setExceptionStatusString("1");
+		MiniDaoPage<CvcOrderInfoEntity> list = cvcOrderInfoService.getAll(query, 1, 500);
+		doOrderArrays(list.getResults());
+		//已签收订单
+		List<CvcOrderInfoEntity>  cvcOrderInfoEntities = cvcOrderInfoService.getWillSignList();
+		doOrderArrays(cvcOrderInfoEntities);
+		
 		org.jeecgframework.core.util.LogUtil.info("===================订单校验定时任务结束===================");
 		long end = System.currentTimeMillis();
 		long times = end - start;
 		org.jeecgframework.core.util.LogUtil.info("总耗时"+times+"毫秒");
+	}
+
+	private void doOrderArrays(List<CvcOrderInfoEntity> results) {
+		if(CollectionUtils.isNotEmpty(results)) {
+			for (CvcOrderInfoEntity entity : results) {
+				try {
+					entity = cvcOrderInfoService.get(entity.getId());
+					CvcShippingEntity cvcShipping = new CvcShippingEntity();
+					cvcShipping.setEnabled(1);
+					cvcShipping.setShippingName(entity.getShippingName());
+					//查询快递公司
+					MiniDaoPage<CvcShippingEntity> daoPage = cvcShippingService.getAll(cvcShipping, 1, 1);
+					CvcShippingEntity cvcShippingEntity = null;
+					if(CollectionUtils.isEmpty(daoPage.getResults())) {
+						org.jeecgframework.core.util.LogUtil.info("该快递公司不存在！");
+						continue;
+					}else {
+						cvcShippingEntity = daoPage.getResults().get(0);
+					}
+					String result = "";
+					result = ConmentHttp.getOrderWuliu(cvcShippingEntity.getShippingCode(), entity.getInvoiceNo(), entity.getTel());
+					if(StringUtils.isNotEmpty(result) && result.contains("\"message\":\"ok\"")) {
+						ConmentHttp.postMyErrorOrder(result);
+						org.jeecgframework.core.util.LogUtil.info("手动获取物流："+result);
+					}
+				} catch (Exception e) {
+					org.jeecgframework.core.util.LogUtil.error("处理异常："+ entity.getId(), e);
+				}
+			}
+		}
+		
 	}
 
 	@Override

@@ -149,5 +149,17 @@ public interface CvcOrderInfoDao{
 			"	tk_order_status=5 order by id desc")
 	@ResultType(CvcOrderInfoEntity.class)
 	List<CvcOrderInfoEntity> getErrorList();
+	
+	
+	@Sql("SELECT distinct o.order_id as id FROM  cvc_order_info AS o \r\n" + 
+			"	LEFT JOIN cvc_delivery_order AS d_o ON o.order_id=d_o.order_id \r\n" + 
+			"	LEFT JOIN cvc_delivery_info AS d_i ON d_o.invoice_no=d_i.number\r\n" + 
+			"where (tk_order_status=4 or tk_order_status=3) and (d_i.state = 3 or d_i.state = 5)")
+	@ResultType(CvcOrderInfoEntity.class)
+	List<CvcOrderInfoEntity> getWillSignList();
+	
+	
+	@Sql("UPDATE cvc_order_info SET is_show=2 WHERE order_id=:orderId limit 1")
+	public void updateEpStatus(@Param("orderId")  int orderId);
 }
 

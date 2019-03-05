@@ -35,6 +35,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.appinterface.app.base.exception.XuException;
 import com.util.PhpDateUtils;
 import com.xuzy.hotel.order.entity.CvcOrderInfoEntity;
 import com.xuzy.hotel.order.service.CvcOrderInfoService;
@@ -136,6 +137,10 @@ public class CvcShippingBatchController extends BaseController{
 					j.setMsg("识别内容为空");
 					j.setSuccess(false);
 				}
+			} catch (XuException e) {
+				j.setSuccess(false);
+				j.setMsg(e.getMessage());
+				logger.error(ExceptionUtil.getExceptionMessage(e));
 			} catch (Exception e) {
 				j.setSuccess(false);
 				j.setMsg("文件导入失败！");
