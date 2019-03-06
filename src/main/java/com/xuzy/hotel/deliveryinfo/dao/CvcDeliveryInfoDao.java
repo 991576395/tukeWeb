@@ -84,4 +84,10 @@ public interface CvcDeliveryInfoDao {
 			"where o.tk_order_status=3 or o.tk_order_status=4\r\n" + 
 			") and i.state = 3")
 	public List<CvcDeliveryInfoEntity> getAllError();
+	
+	
+	@ResultType(CvcDeliveryInfoEntity.class)
+	@Sql("SELECT id,number,state FROM cvc_delivery_info where create_date is not NULL and create_date >= :startTime and create_date <= :endTime"
+			+ " and state = 2")
+	public List<CvcDeliveryInfoEntity> getListOneHours(String startTime,String endTime);
 }

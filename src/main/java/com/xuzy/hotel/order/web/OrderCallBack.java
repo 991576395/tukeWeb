@@ -95,6 +95,7 @@ public class OrderCallBack extends BaseController {
 				cvcDeliveryInfo.setMessage(callbaseRequest.getMessage());
 				cvcDeliveryInfo.setData(PHPAndJavaSerialize.serialize(callbaseRequest.getLastResult().getData()));
 				cvcDeliveryInfo.setState(callbaseRequest.getLastResult().getState());
+				cvcDeliveryInfo.setCreateDate(DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH24:mm:ss"));
 				//快递信息
 				cvcDeliveryInfoService.insert(cvcDeliveryInfo);
 				

@@ -5,7 +5,8 @@ INSERT  INTO
       ,number                         
       ,message                        
       ,data                           
-      ,state                          
+      ,state   
+      ,create_date                       
       ) 
 values
       (
@@ -13,5 +14,6 @@ values
       ,:cvcDeliveryInfo.number                        
       ,:cvcDeliveryInfo.message                       
       ,:cvcDeliveryInfo.data                          
-      ,:cvcDeliveryInfo.state                         
+      ,:cvcDeliveryInfo.state 
+      ,:cvcDeliveryInfo.createDate                        
       )

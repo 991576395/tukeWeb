@@ -20,7 +20,7 @@ import freemarker.template.Template;
 public class SendMailUtil
 {
   //private static final String smtphost = "192.168.1.70";
-  private static final String from = "zhangdh@163.com";
+  private static final String from = "1282585171@163.com";
   private static final String fromName = "测试公司";
   private static final String charSet = "utf-8";
   private static final String username = "zhangdh@163.com";

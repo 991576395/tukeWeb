@@ -2,8 +2,11 @@ package com.xuzy.hotel.deliveryinfo.service.impl;
 
 import javax.annotation.Resource;
 
+import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
+
+import org.apache.commons.lang.time.DateFormatUtils;
 import org.jeecgframework.minidao.pojo.MiniDaoPage;
 import org.springframework.stereotype.Service;
 
@@ -66,5 +69,14 @@ public class CvcDeliveryInfoServiceImpl implements CvcDeliveryInfoService {
 	@Override
 	public List<CvcDeliveryInfoEntity> getAllError() {
 		return cvcDeliveryInfoDao.getAllError();
+	}
+
+	@Override
+	public List<CvcDeliveryInfoEntity> getListOneHours() {
+		Calendar calendar = Calendar.getInstance();
+		String endTime = DateFormatUtils.format(calendar, "yyyy-MM-dd HH24");
+		calendar.add(Calendar.HOUR_OF_DAY, -1);
+		String startTime = DateFormatUtils.format(calendar, "yyyy-MM-dd HH24");
+		return cvcDeliveryInfoDao.getListOneHours(startTime,endTime);
 	}
 }

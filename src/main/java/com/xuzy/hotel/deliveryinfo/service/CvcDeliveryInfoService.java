@@ -34,4 +34,10 @@ public interface CvcDeliveryInfoService {
 	
 	
 	public List<CvcDeliveryInfoEntity> getAllError();
+	
+	/**
+	 * 获取一个小时内所有 为状态为2 的订单
+	 * @return
+	 */
+	public List<CvcDeliveryInfoEntity> getListOneHours();
 }

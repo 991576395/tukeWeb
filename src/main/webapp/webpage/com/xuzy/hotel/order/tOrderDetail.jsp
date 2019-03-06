@@ -79,6 +79,26 @@
 				});
 		  }
 		 
+		 //处理异常订单
+		 function epChuLi(order_id){
+			 layer.open({
+					title:"系统提示",
+					content:"是否处理异常订单",
+					icon:7,
+					shade: 0.3,
+					yes:function(index){
+						request('cvcOrderInfo.do?epUpdate&id='+order_id,function (d){
+							window.location.href= 'cvcOrderInfo.do?toDetail&id='+order_id;  
+						});
+					},
+					btn:['确定','取消'],
+					btn2:function(index){
+						layer.close(index);
+					}
+				});
+		 }
+		 
+		 
 		  //请求
 			 function request(url,fn){
 				 $.ajax({
@@ -185,17 +205,30 @@
 		<table cellpadding="3" cellspacing="0" class="table table-bordered">
 			<tr>
 				<td style="text-indent: 2.5em" colspan="6" align="left"><strong>当前可执行操作：</strong>
-					<!-- 发货 --> <c:if test="${cvcOrderInfoEntity.orderStatus eq 2}">
+					<!-- 发货 --> 
+					<c:if test="${cvcOrderInfoEntity.orderStatus eq 2}">
 						<!-- 						<input name="ship" type="submit" value="去发货" class="button" /> -->
 
 						<button type="button" name="ship" class="btn btn-primary btn-sm"
 							style="margin-left: 20px;" onclick="toShip('${cvcOrderInfoEntity.id}')">去发货</button>
 
-					</c:if> <!-- 退货 --> <c:if test="${cvcOrderInfoEntity.orderStatus eq 5}">
+					</c:if> 
+					<!-- 退货 --> 
+					<c:if test="${cvcOrderInfoEntity.orderStatus eq 5}">
 						<!--input name="return" type="submit" value="{$lang.op_return}" class="button" /-->
 					</c:if> <input name="order_id" type="hidden"
-					value="${smarty.request.order_id}"></td>
+					value="${smarty.request.order_id}">
+					
+					
+					<!-- 处理异常 -->
+					<c:if test="${cvcOrderInfoEntity.exceptionStatus > 0}">
+						<button type="button" name="epChuLi" class="btn btn-primary btn-sm"
+								style="margin-left: 20px;" onclick="epChuLi('${cvcOrderInfoEntity.id}')">处理异常</button>
 
+					</c:if> 
+					
+					</td>
+					
 			</tr>
 		</table>
 	</div>
