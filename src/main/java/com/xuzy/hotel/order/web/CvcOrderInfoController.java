@@ -61,6 +61,7 @@ import com.xuzy.hotel.ylrequest.ConmentHttp;
 import com.xuzy.hotel.ylrequest.ResponseHead;
 import com.xuzy.hotel.ylrequest.TukeRequestBody;
 import com.xuzy.hotel.ylrequest.module.Kuaidi100Response;
+import com.xuzy.hotel.ylrequest.module.RequestBackingExchangeOrderJson;
 import com.xuzy.hotel.ylrequest.module.RequestDeliveryExchangeOrderJson;
 import com.xuzy.hotel.ylrequest.module.RequestOFFHarbourExchangeOrderJson;
 import com.xuzy.hotel.ylrequest.module.RequestReNewExchangeEMSJson;
@@ -636,7 +637,8 @@ public class CvcOrderInfoController extends BaseController {
 	@RequestMapping(params = "orderStatusUpdate", method = RequestMethod.GET)
 	@ResponseBody
 	public AjaxJson orderStatusUpdate(@RequestParam(required = true, value = "id") int id,
-			@RequestParam(required = true, value = "tkOrderStatus") String tkOrderStatus) {
+			@RequestParam(required = true, value = "tkOrderStatus") String tkOrderStatus,
+			@RequestParam(required = false, value = "backingReason") String backingReason) {
 		AjaxJson j = new AjaxJson();
 		try {
 			if(StringUtils.isEmpty(tkOrderStatus)) {
@@ -719,6 +721,23 @@ public class CvcOrderInfoController extends BaseController {
 				//退货
 				cvcOrderInfoService.updateStatusByOrderId(id, 7);
 				j.setMsg("订单退货成功");
+			}else if("returnWareHouse".equals(tkOrderStatus)) {
+				//申请返仓
+				RequestBackingExchangeOrderJson exchangeOrderJson = new RequestBackingExchangeOrderJson();
+				exchangeOrderJson.setOrderID(id);
+				exchangeOrderJson.setBackingReason(backingReason);
+				ResponseHead head = ConmentHttp.sendHttp(new TukeRequestBody.Builder()
+							.setParams(exchangeOrderJson).setSequence(2)
+							.setServiceCode("CRMIF.BackingExchangeOrderJson").builder(), null);
+				if(head.getReturn() >= 0) {
+					//申请返仓
+					cvcOrderInfoService.updateStatusByOrderId(id, 23);
+					j.setMsg("申请返仓成功");
+				}else {
+					j.setSuccess(false);
+					j.setMsg("申请返仓失败 原因:"+head.getReturnInfo());
+				}
+				
 			}else if("signFailure".equals(tkOrderStatus)) {
 				//签收失败
 				RequestRefuseExchangeOrderJson exchangeOrderJson = new RequestRefuseExchangeOrderJson();
@@ -846,9 +865,10 @@ public class CvcOrderInfoController extends BaseController {
 				
 //			}
 			
+			
 			CvcOrderInfoEntity query = new CvcOrderInfoEntity();
-			query.setOrderStatus(4);
-			MiniDaoPage<CvcOrderInfoEntity> list = cvcOrderInfoService.getAll(query, 1, 2000);
+			query.setOrderStatus(3);
+			MiniDaoPage<CvcOrderInfoEntity> list = cvcOrderInfoService.getAll(query, 1, 5000);
 			for (CvcOrderInfoEntity entity : list.getResults()) {
 				CvcShippingEntity cvcShipping = new CvcShippingEntity();
 				cvcShipping.setEnabled(1);
@@ -859,11 +879,18 @@ public class CvcOrderInfoController extends BaseController {
 				ConmentHttp.postorder(cvcShippingEntity.getShippingCode(), entity.getInvoiceNo());
 			}
 			
-//			List<CvcDeliveryInfoEntity> entities = cvcDeliveryInfoService.getAllError();
-//			for (CvcDeliveryInfoEntity entity : entities) {
-//				List<Data> datas = PHPAndJavaSerialize.unserializePHParray(entity.getData(),DelivetyJson.class);
-//				ConmentHttp.postErrorOrder(datas, entity);
-//			}
+			query = new CvcOrderInfoEntity();
+			query.setOrderStatus(4);
+			list = cvcOrderInfoService.getAll(query, 1, 5000);
+			for (CvcOrderInfoEntity entity : list.getResults()) {
+				CvcShippingEntity cvcShipping = new CvcShippingEntity();
+				cvcShipping.setEnabled(1);
+				cvcShipping.setShippingName(entity.getShippingName());
+				//查询快递公司
+				MiniDaoPage<CvcShippingEntity> daoPage = cvcShippingService.getAll(cvcShipping, 1, 1);
+				CvcShippingEntity cvcShippingEntity = daoPage.getResults().get(0);
+				ConmentHttp.postorder(cvcShippingEntity.getShippingCode(), entity.getInvoiceNo());
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.info(e.getMessage());

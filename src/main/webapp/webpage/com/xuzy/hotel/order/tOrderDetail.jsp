@@ -87,7 +87,7 @@
 					icon:7,
 					shade: 0.3,
 					yes:function(index){
-						request('cvcOrderInfo.do?epUpdate&id='+order_id,function (d){
+						request('cvcOrderInfo.do?orderStatusUpdate&id='+order_id,function (d){
 							window.location.href= 'cvcOrderInfo.do?toDetail&id='+order_id;  
 						});
 					},
@@ -98,6 +98,24 @@
 				});
 		 }
 		 
+		 //申请返货
+		 function returnWareHouse(order_id){
+			 layer.open({
+					title:"系统提示",
+					content:"是否申请返货",
+					icon:7,
+					shade: 0.3,
+					yes:function(index){
+						request('cvcOrderInfo.do?epUpdate&tkOrderStatus=returnWareHouse&id='+order_id+'&backingReason='+$('#backingReason').val(),function (d){
+							window.location.href= 'cvcOrderInfo.do?toDetail&id='+order_id;  
+						});
+					},
+					btn:['确定','取消'],
+					btn2:function(index){
+						layer.close(index);
+					}
+				});
+		 }
 		 
 		  //请求
 			 function request(url,fn){
@@ -227,7 +245,15 @@
 
 					</c:if> 
 					
-					</td>
+					
+					
+					 &nbsp;&nbsp;返货原因：
+					<input type="text" name="backingReason" style="width: 40px">
+					<!-- 申请返仓 -->
+					 &nbsp;&nbsp;
+					<button type="button" name="returnWareHouse" class="btn btn-primary btn-sm"
+						style="margin-left: 20px;"
+						onclick="returnWareHouse('${cvcOrderInfoEntity.id}')">申请返仓</button></td>
 					
 			</tr>
 		</table>
