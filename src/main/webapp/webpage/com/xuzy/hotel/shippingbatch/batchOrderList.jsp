@@ -99,7 +99,7 @@
 				tip(d.msg);
 
 				//检查发货单状况
-			//	checkSize();
+				checkSize();
 			} else {
 				requestall(url, 0, d.obj.totelSize, d.obj.sucSize,
 						d.obj.faildSize);

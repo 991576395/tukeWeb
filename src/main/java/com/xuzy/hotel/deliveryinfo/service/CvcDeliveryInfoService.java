@@ -2,6 +2,7 @@ package com.xuzy.hotel.deliveryinfo.service;
 
 import java.util.List;
 
+import org.jeecgframework.minidao.annotation.Param;
 import org.jeecgframework.minidao.pojo.MiniDaoPage;
 
 import com.xuzy.hotel.deliveryinfo.entity.CvcDeliveryInfoEntity;
@@ -40,4 +41,6 @@ public interface CvcDeliveryInfoService {
 	 * @return
 	 */
 	public List<CvcDeliveryInfoEntity> getListOneHours();
+	
+	public CvcDeliveryInfoEntity getFirstTime(String invoice_no);
 }

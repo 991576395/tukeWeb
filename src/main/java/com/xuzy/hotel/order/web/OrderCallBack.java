@@ -95,7 +95,7 @@ public class OrderCallBack extends BaseController {
 				cvcDeliveryInfo.setMessage(callbaseRequest.getMessage());
 				cvcDeliveryInfo.setData(PHPAndJavaSerialize.serialize(callbaseRequest.getLastResult().getData()));
 				cvcDeliveryInfo.setState(callbaseRequest.getLastResult().getState());
-				cvcDeliveryInfo.setCreateDate(DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH24:mm:ss"));
+				cvcDeliveryInfo.setCreateDate(DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
 				//快递信息
 				cvcDeliveryInfoService.insert(cvcDeliveryInfo);
 				
@@ -200,7 +200,6 @@ public class OrderCallBack extends BaseController {
 					.setParams(requestBody).builder(), null);
 			if(responseHead.getReturn() >= 0) {
 				cvcOrderInfoService.updateStatusByOrderId(entity.getOrderId(), 4);
-				Thread.sleep(1000 * 30);
 				//修改成功后
 				if(cvcDeliveryInfo.getState() == 3){
 					//推送至签收 

@@ -79,4 +79,9 @@ public class CvcDeliveryInfoServiceImpl implements CvcDeliveryInfoService {
 		String startTime = DateFormatUtils.format(calendar, "yyyy-MM-dd HH24");
 		return cvcDeliveryInfoDao.getListOneHours(startTime,endTime);
 	}
+
+	@Override
+	public CvcDeliveryInfoEntity getFirstTime(String invoice_no) {
+		return cvcDeliveryInfoDao.getFirstTime(invoice_no);
+	}
 }
