@@ -634,7 +634,7 @@ public class CvcOrderInfoController extends BaseController {
 	 * @param ids
 	 * @return
 	 */
-	@RequestMapping(params = "orderStatusUpdate", method = RequestMethod.GET)
+	@RequestMapping(params = "orderStatusUpdate", method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
 	public AjaxJson orderStatusUpdate(@RequestParam(required = true, value = "id") int id,
 			@RequestParam(required = true, value = "tkOrderStatus") String tkOrderStatus,
@@ -737,7 +737,6 @@ public class CvcOrderInfoController extends BaseController {
 					j.setSuccess(false);
 					j.setMsg("申请返仓失败 原因:"+head.getReturnInfo());
 				}
-				
 			}else if("signFailure".equals(tkOrderStatus)) {
 				//签收失败
 				RequestRefuseExchangeOrderJson exchangeOrderJson = new RequestRefuseExchangeOrderJson();

@@ -128,7 +128,7 @@
 						function(d) {
 							window.location.href= 'cvcOrderInfo.do?toDetail&id='+order_id;
 							//发货成功检查发货消息
-							//checkSize();
+							checkSize();
 						});
 			},
 			btn : [ '确定', '取消' ],

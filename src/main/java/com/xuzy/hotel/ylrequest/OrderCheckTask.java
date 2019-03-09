@@ -79,11 +79,12 @@ public class OrderCheckTask implements Job{
 						cvcShippingEntity = daoPage.getResults().get(0);
 					}
 					String result = "";
-					result = ConmentHttp.getOrderWuliu(cvcShippingEntity.getShippingCode(), entity.getInvoiceNo(), entity.getTel());
-					if(StringUtils.isNotEmpty(result) && result.contains("\"message\":\"ok\"")) {
-						ConmentHttp.postMyErrorOrder(result);
-						org.jeecgframework.core.util.LogUtil.info("手动获取物流："+result);
-					}
+					ConmentHttp.postorder(cvcShippingEntity.getShippingCode(), entity.getInvoiceNo());
+//					result = ConmentHttp.getOrderWuliu(cvcShippingEntity.getShippingCode(), entity.getInvoiceNo(), entity.getTel());
+//					if(StringUtils.isNotEmpty(result) && result.contains("\"message\":\"ok\"")) {
+//						ConmentHttp.postMyErrorOrder(result);
+//						org.jeecgframework.core.util.LogUtil.info("手动获取物流："+result);
+//					}
 				} catch (Exception e) {
 					org.jeecgframework.core.util.LogUtil.error("处理异常："+ entity.getId(), e);
 				}
