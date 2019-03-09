@@ -210,7 +210,11 @@ public class ConmentHttp {
      * @throws Exception 
      */
     public static String getOrderWuliu(String company, String number,String phone) throws Exception { 
-    	String param ="{\"com\":\""+company+"\",\"num\":\""+number+"\",\"phone\":\""+phone+"\"}";
+    	String param ="{\"com\":\""+company+"\",\"num\":\""+number+"\"";
+    	if(!StringUtils.isEmpty(phone)) {
+    		param +=",\"phone\":\""+phone+"\"";
+    	}
+    	param += "}";
 		String customer ="ABF71AF3D23EF47F16FBF79D965042AC";
 		String key = KEY;
 		String sign = md5(param+key+customer).toUpperCase();

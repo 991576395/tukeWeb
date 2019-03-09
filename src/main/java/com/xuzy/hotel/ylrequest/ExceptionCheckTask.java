@@ -45,16 +45,16 @@ public class ExceptionCheckTask implements Job{
 			for (CvcDeliveryInfoEntity cvcDeliveryInfoEntity : cvcDeliveryInfoEntities) {
 				CvcOrderInfoEntity cvcOrderInfo = new CvcOrderInfoEntity();
 				cvcOrderInfo.setInvoiceNo(cvcDeliveryInfoEntity.getNumber());
-				MiniDaoPage<CvcOrderInfoEntity> daoPage = cvcOrderInfoService.getAll(cvcOrderInfo, 1, 10);
-				List<CvcOrderInfoEntity> cvcOrderInfoEntities = daoPage.getResults();
-				if(CollectionUtils.isNotEmpty(cvcOrderInfoEntities)) {
+				cvcOrderInfo = cvcOrderInfoService.getOrder(cvcOrderInfo);
+				if(cvcOrderInfo != null) {
 					Map<String, Object> map = new HashMap<String, Object>();
-					map.put("orderId", cvcOrderInfoEntities.get(0).getOrderSn());
-					map.put("name", cvcOrderInfoEntities.get(0).getConsignee());
-					map.put("phone", StringUtils.isEmpty(cvcOrderInfoEntities.get(0).getTel())?cvcOrderInfoEntities.get(0).getMobile():cvcOrderInfoEntities.get(0).getTel());
+					map.put("orderId", cvcOrderInfo.getId()+"");
+					map.put("name", cvcOrderInfo.getConsignee());
+					map.put("phone", StringUtils.isEmpty(cvcOrderInfo.getTel())?StringUtils.isEmpty(cvcOrderInfo.getMobile())?"":cvcOrderInfo.getMobile():cvcOrderInfo.getTel());
 					
 					CvcDeliveryInfoEntity cvcDeliveryInfoEntity2 = cvcDeliveryInfoService.getFirstTime(cvcDeliveryInfoEntity.getNumber());
-					map.put("firtTime", cvcDeliveryInfoEntity2 != null ?cvcDeliveryInfoEntity2.getCreateDate():"");
+					map.put("firtTime", (cvcDeliveryInfoEntity2 != null && StringUtils.isNotEmpty(cvcDeliveryInfoEntity2.getCreateDate()))?
+							cvcDeliveryInfoEntity2.getCreateDate():cvcDeliveryInfoEntity.getCreateDate());
 					objs.add(map);
 				}
 			}
@@ -62,13 +62,12 @@ public class ExceptionCheckTask implements Job{
 			values.put("sendLists", objs);
 			String templatePath = "mailtemplate/test.ftl";
 			List<TSType> typeList = ResourceUtil.allTypes.get("sendEmail".toLowerCase());
-			if(CollectionUtils.isNotEmpty(typeList)) {
-				StringBuffer sBuffer = new StringBuffer();
+			if(CollectionUtils.isNotEmpty(typeList) && CollectionUtils.isNotEmpty(objs)) {
+				List<String> jieshourens = new ArrayList<>();
 				for (TSType tsType : typeList) {
-					sBuffer.append(tsType.getTypecode());
-					sBuffer.append(";");
+					jieshourens.add(tsType.getTypecode());
 				}
-				SendMailUtil.sendFtlMail(sBuffer.toString(), "异常物流信息监控，系统自动发送邮件!", templatePath, values);
+				SendMailUtil.sendFtlMail(jieshourens, "异常物流信息监控，系统自动发送邮件!", templatePath, values);
 			}
 		}
 		org.jeecgframework.core.util.LogUtil.info("===================异常订单监控定时任务结束===================");

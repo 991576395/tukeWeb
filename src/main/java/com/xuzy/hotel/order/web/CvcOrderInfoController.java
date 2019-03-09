@@ -865,31 +865,38 @@ public class CvcOrderInfoController extends BaseController {
 //			}
 			
 			
-			CvcOrderInfoEntity query = new CvcOrderInfoEntity();
-			query.setOrderStatus(3);
-			MiniDaoPage<CvcOrderInfoEntity> list = cvcOrderInfoService.getAll(query, 1, 5000);
-			for (CvcOrderInfoEntity entity : list.getResults()) {
-				CvcShippingEntity cvcShipping = new CvcShippingEntity();
-				cvcShipping.setEnabled(1);
-				cvcShipping.setShippingName(entity.getShippingName());
-				//查询快递公司
-				MiniDaoPage<CvcShippingEntity> daoPage = cvcShippingService.getAll(cvcShipping, 1, 1);
-				CvcShippingEntity cvcShippingEntity = daoPage.getResults().get(0);
-				ConmentHttp.postorder(cvcShippingEntity.getShippingCode(), entity.getInvoiceNo());
+			List<CvcDeliveryInfoEntity> entities = cvcDeliveryInfoService.getAllError();
+			for (CvcDeliveryInfoEntity entity : entities) {
+				List<Data> datas = PHPAndJavaSerialize.unserializePHParray(entity.getData(),DelivetyJson.class);
+				ConmentHttp.postErrorOrder(datas, entity);
 			}
 			
-			query = new CvcOrderInfoEntity();
-			query.setOrderStatus(4);
-			list = cvcOrderInfoService.getAll(query, 1, 5000);
-			for (CvcOrderInfoEntity entity : list.getResults()) {
-				CvcShippingEntity cvcShipping = new CvcShippingEntity();
-				cvcShipping.setEnabled(1);
-				cvcShipping.setShippingName(entity.getShippingName());
-				//查询快递公司
-				MiniDaoPage<CvcShippingEntity> daoPage = cvcShippingService.getAll(cvcShipping, 1, 1);
-				CvcShippingEntity cvcShippingEntity = daoPage.getResults().get(0);
-				ConmentHttp.postorder(cvcShippingEntity.getShippingCode(), entity.getInvoiceNo());
-			}
+//			CvcOrderInfoEntity query = new CvcOrderInfoEntity();
+//			query.setOrderStatus(3);
+//			MiniDaoPage<CvcOrderInfoEntity> list = cvcOrderInfoService.getAll(query, 1, 5000);
+//			for (CvcOrderInfoEntity entity : list.getResults()) {
+//				CvcShippingEntity cvcShipping = new CvcShippingEntity();
+//				cvcShipping.setEnabled(1);
+//				cvcShipping.setShippingName(entity.getShippingName());
+//				//查询快递公司
+//				MiniDaoPage<CvcShippingEntity> daoPage = cvcShippingService.getAll(cvcShipping, 1, 1);
+//				CvcShippingEntity cvcShippingEntity = daoPage.getResults().get(0);
+//				ConmentHttp.postorder(cvcShippingEntity.getShippingCode(), entity.getInvoiceNo());
+////				cvcDeliveryOrderService.updateNu(entity.getId(), cvcShippingEntity.getShippingId(), cvcShippingEntity.getShippingName(), entity.getInvoiceNo().trim());
+//			}
+			
+//			query = new CvcOrderInfoEntity();
+//			query.setOrderStatus(4);
+//			list = cvcOrderInfoService.getAll(query, 1, 5000);
+//			for (CvcOrderInfoEntity entity : list.getResults()) {
+//				CvcShippingEntity cvcShipping = new CvcShippingEntity();
+//				cvcShipping.setEnabled(1);
+//				cvcShipping.setShippingName(entity.getShippingName());
+//				//查询快递公司
+//				MiniDaoPage<CvcShippingEntity> daoPage = cvcShippingService.getAll(cvcShipping, 1, 1);
+//				CvcShippingEntity cvcShippingEntity = daoPage.getResults().get(0);
+//				ConmentHttp.postorder(cvcShippingEntity.getShippingCode(), entity.getInvoiceNo());
+//			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.info(e.getMessage());
