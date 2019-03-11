@@ -832,7 +832,7 @@ public class CvcOrderInfoController extends BaseController {
 	public AjaxJson doDelete(@RequestParam(required = true, value = "id") String id) {
 		AjaxJson j = new AjaxJson();
 		try {
-//			cvcOrderInfoService.doErrorList();
+			cvcOrderInfoService.doErrorList();
 //			final CountDownLatch countDownLatch = new CountDownLatch(100); 
 //			Runnable Runnable = new Runnable() {
 //				
@@ -865,11 +865,11 @@ public class CvcOrderInfoController extends BaseController {
 //			}
 			
 			
-			List<CvcDeliveryInfoEntity> entities = cvcDeliveryInfoService.getAllError();
-			for (CvcDeliveryInfoEntity entity : entities) {
-				List<Data> datas = PHPAndJavaSerialize.unserializePHParray(entity.getData(),DelivetyJson.class);
-				ConmentHttp.postErrorOrder(datas, entity);
-			}
+//			List<CvcDeliveryInfoEntity> entities = cvcDeliveryInfoService.getAllError();
+//			for (CvcDeliveryInfoEntity entity : entities) {
+//				List<Data> datas = PHPAndJavaSerialize.unserializePHParray(entity.getData(),DelivetyJson.class);
+//				ConmentHttp.postErrorOrder(datas, entity);
+//			}
 			
 //			CvcOrderInfoEntity query = new CvcOrderInfoEntity();
 //			query.setOrderStatus(3);

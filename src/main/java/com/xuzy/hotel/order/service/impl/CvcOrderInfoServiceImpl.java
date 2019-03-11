@@ -353,7 +353,9 @@ public class CvcOrderInfoServiceImpl implements CvcOrderInfoService {
 		List<CvcOrderInfoEntity> cvcOrderInfoEntities = cvcOrderInfoDao.getErrorList();
 		if(!CollectionUtils.isEmpty(cvcOrderInfoEntities)){
 			for (CvcOrderInfoEntity cvcOrderInfoEntity : cvcOrderInfoEntities) {
-				if(StringUtils.isNotEmpty(cvcOrderInfoEntity.getInvoiceNo()) && !StringUtils.isNotEmpty(cvcOrderInfoEntity.getSigninDate())) {
+				if(StringUtils.isNotEmpty(cvcOrderInfoEntity.getInvoiceNo()) 
+//						&& !StringUtils.isNotEmpty(cvcOrderInfoEntity.getSigninDate())
+								) {
 //					CvcDeliveryOrderEntity cvcDeliveryOrderEntity = cvcDeliveryOrderService.getEntityByinvoiceNo(cvcOrderInfoEntity.getInvoiceNo());
 					
 					List<Data> deliveryInfos = new ArrayList<>();
