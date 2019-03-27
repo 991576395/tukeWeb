@@ -760,6 +760,20 @@ public class CvcOrderInfoController extends BaseController {
 					j.setSuccess(false);
 					j.setMsg("推送失败:只能取消 配货中与离港状态订单！");
 				}
+			}else if("backedExchangeOrder".equals(tkOrderStatus)) {
+				//用户反仓完成
+				RequestRefuseExchangeOrderJson exchangeOrderJson = new RequestRefuseExchangeOrderJson();
+				exchangeOrderJson.setOrderID(id);
+				ResponseHead head = ConmentHttp.sendHttp(new TukeRequestBody.Builder()
+							.setParams(exchangeOrderJson).setSequence(2)
+							.setServiceCode("CRMIF.BackedExchangeOrderJson").builder(), null);
+				if(head.getReturn() >= 0) {
+					cvcOrderInfoService.updateStatusByOrderId(id, 24);
+					j.setMsg("订单推送返仓完成操作成功");
+				}else {
+					j.setSuccess(false);
+					j.setMsg("订单推送返仓完成操作失败 原因:"+head.getReturnInfo());
+				}
 			}else if("getOrderWuliu".equals(tkOrderStatus)) {
 				//获取物流信息，并同步
 				if(cvcOrderInfoEntity.getOrderStatus() == 3
