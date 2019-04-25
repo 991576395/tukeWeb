@@ -1,5 +1,6 @@
 package com.xuzy.hotel.order.web;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -57,12 +58,15 @@ import com.xuzy.hotel.revokegoods.entity.CvcRevokeGoodsEntity;
 import com.xuzy.hotel.revokegoods.service.CvcRevokeGoodsService;
 import com.xuzy.hotel.shipping.entity.CvcShippingEntity;
 import com.xuzy.hotel.shipping.service.CvcShippingService;
+import com.xuzy.hotel.yldeliveryinfo.entity.CvcYlDeliveryInfoEntity;
+import com.xuzy.hotel.yldeliveryinfo.service.CvcYlDeliveryInfoService;
 import com.xuzy.hotel.ylrequest.ConmentHttp;
 import com.xuzy.hotel.ylrequest.ResponseHead;
 import com.xuzy.hotel.ylrequest.TukeRequestBody;
 import com.xuzy.hotel.ylrequest.module.Kuaidi100Response;
 import com.xuzy.hotel.ylrequest.module.RequestBackingExchangeOrderJson;
 import com.xuzy.hotel.ylrequest.module.RequestDeliveryExchangeOrderJson;
+import com.xuzy.hotel.ylrequest.module.RequestExchangeProcessHistoryAddJson;
 import com.xuzy.hotel.ylrequest.module.RequestOFFHarbourExchangeOrderJson;
 import com.xuzy.hotel.ylrequest.module.RequestReNewExchangeEMSJson;
 import com.xuzy.hotel.ylrequest.module.RequestReNewExchangeSignDateJson;
@@ -103,6 +107,9 @@ public class CvcOrderInfoController extends BaseController {
 	@Autowired
 	private CvcInventoryTableServiceI cvcInventoryTableService;
 	
+	@Autowired
+	private CvcYlDeliveryInfoService cvcYlDeliveryInfoService;
+	
 	/**
 	 * 页面跳转
 	 * 
@@ -121,7 +128,6 @@ public class CvcOrderInfoController extends BaseController {
 	 * @param dataGrid
 	 * @param user
 	 */
-
 	@RequestMapping(params = "exceptionOrderListDatagrid")
 	public void exceptionOrderListDatagrid(CvcOrderInfoEntity query,HttpServletRequest request, HttpServletResponse response, DataGrid dataGrid) {
 		MiniDaoPage<CvcOrderInfoEntity> list = cvcOrderInfoService.getExceptionOrderListAll(query, dataGrid.getPage(), dataGrid.getRows());
@@ -634,7 +640,7 @@ public class CvcOrderInfoController extends BaseController {
 	 * @param ids
 	 * @return
 	 */
-	@RequestMapping(params = "orderStatusUpdate", method = { RequestMethod.GET, RequestMethod.POST })
+	@RequestMapping(params = "orderStatusUpdate", method = RequestMethod.GET)
 	@ResponseBody
 	public AjaxJson orderStatusUpdate(@RequestParam(required = true, value = "id") int id,
 			@RequestParam(required = true, value = "tkOrderStatus") String tkOrderStatus,
@@ -737,6 +743,7 @@ public class CvcOrderInfoController extends BaseController {
 					j.setSuccess(false);
 					j.setMsg("申请返仓失败 原因:"+head.getReturnInfo());
 				}
+				
 			}else if("signFailure".equals(tkOrderStatus)) {
 				//签收失败
 				RequestRefuseExchangeOrderJson exchangeOrderJson = new RequestRefuseExchangeOrderJson();
@@ -759,20 +766,6 @@ public class CvcOrderInfoController extends BaseController {
 				}else {
 					j.setSuccess(false);
 					j.setMsg("推送失败:只能取消 配货中与离港状态订单！");
-				}
-			}else if("backedExchangeOrder".equals(tkOrderStatus)) {
-				//用户反仓完成
-				RequestRefuseExchangeOrderJson exchangeOrderJson = new RequestRefuseExchangeOrderJson();
-				exchangeOrderJson.setOrderID(id);
-				ResponseHead head = ConmentHttp.sendHttp(new TukeRequestBody.Builder()
-							.setParams(exchangeOrderJson).setSequence(2)
-							.setServiceCode("CRMIF.BackedExchangeOrderJson").builder(), null);
-				if(head.getReturn() >= 0) {
-					cvcOrderInfoService.updateStatusByOrderId(id, 24);
-					j.setMsg("订单推送返仓完成操作成功");
-				}else {
-					j.setSuccess(false);
-					j.setMsg("订单推送返仓完成操作失败 原因:"+head.getReturnInfo());
 				}
 			}else if("getOrderWuliu".equals(tkOrderStatus)) {
 				//获取物流信息，并同步
@@ -846,7 +839,7 @@ public class CvcOrderInfoController extends BaseController {
 	public AjaxJson doDelete(@RequestParam(required = true, value = "id") String id) {
 		AjaxJson j = new AjaxJson();
 		try {
-			cvcOrderInfoService.doErrorList();
+//			cvcOrderInfoService.doErrorList();
 //			final CountDownLatch countDownLatch = new CountDownLatch(100); 
 //			Runnable Runnable = new Runnable() {
 //				
@@ -879,43 +872,113 @@ public class CvcOrderInfoController extends BaseController {
 //			}
 			
 			
-//			List<CvcDeliveryInfoEntity> entities = cvcDeliveryInfoService.getAllError();
-//			for (CvcDeliveryInfoEntity entity : entities) {
-//				List<Data> datas = PHPAndJavaSerialize.unserializePHParray(entity.getData(),DelivetyJson.class);
-//				ConmentHttp.postErrorOrder(datas, entity);
-//			}
+			CvcOrderInfoEntity query = new CvcOrderInfoEntity();
+			query.setOrderStatus(3);
+			MiniDaoPage<CvcOrderInfoEntity> list = cvcOrderInfoService.getAll(query, 1, 5000);
+			for (CvcOrderInfoEntity entity : list.getResults()) {
+				CvcShippingEntity cvcShipping = new CvcShippingEntity();
+				cvcShipping.setEnabled(1);
+				cvcShipping.setShippingName(entity.getShippingName());
+				//查询快递公司
+				MiniDaoPage<CvcShippingEntity> daoPage = cvcShippingService.getAll(cvcShipping, 1, 1);
+				CvcShippingEntity cvcShippingEntity = daoPage.getResults().get(0);
+				ConmentHttp.postorder(cvcShippingEntity.getShippingCode(), entity.getInvoiceNo());
+			}
 			
-//			CvcOrderInfoEntity query = new CvcOrderInfoEntity();
-//			query.setOrderStatus(3);
-//			MiniDaoPage<CvcOrderInfoEntity> list = cvcOrderInfoService.getAll(query, 1, 5000);
-//			for (CvcOrderInfoEntity entity : list.getResults()) {
-//				CvcShippingEntity cvcShipping = new CvcShippingEntity();
-//				cvcShipping.setEnabled(1);
-//				cvcShipping.setShippingName(entity.getShippingName());
-//				//查询快递公司
-//				MiniDaoPage<CvcShippingEntity> daoPage = cvcShippingService.getAll(cvcShipping, 1, 1);
-//				CvcShippingEntity cvcShippingEntity = daoPage.getResults().get(0);
-//				ConmentHttp.postorder(cvcShippingEntity.getShippingCode(), entity.getInvoiceNo());
-////				cvcDeliveryOrderService.updateNu(entity.getId(), cvcShippingEntity.getShippingId(), cvcShippingEntity.getShippingName(), entity.getInvoiceNo().trim());
-//			}
-			
-//			query = new CvcOrderInfoEntity();
-//			query.setOrderStatus(4);
-//			list = cvcOrderInfoService.getAll(query, 1, 5000);
-//			for (CvcOrderInfoEntity entity : list.getResults()) {
-//				CvcShippingEntity cvcShipping = new CvcShippingEntity();
-//				cvcShipping.setEnabled(1);
-//				cvcShipping.setShippingName(entity.getShippingName());
-//				//查询快递公司
-//				MiniDaoPage<CvcShippingEntity> daoPage = cvcShippingService.getAll(cvcShipping, 1, 1);
-//				CvcShippingEntity cvcShippingEntity = daoPage.getResults().get(0);
-//				ConmentHttp.postorder(cvcShippingEntity.getShippingCode(), entity.getInvoiceNo());
-//			}
+			query = new CvcOrderInfoEntity();
+			query.setOrderStatus(4);
+			list = cvcOrderInfoService.getAll(query, 1, 5000);
+			for (CvcOrderInfoEntity entity : list.getResults()) {
+				CvcShippingEntity cvcShipping = new CvcShippingEntity();
+				cvcShipping.setEnabled(1);
+				cvcShipping.setShippingName(entity.getShippingName());
+				//查询快递公司
+				MiniDaoPage<CvcShippingEntity> daoPage = cvcShippingService.getAll(cvcShipping, 1, 1);
+				CvcShippingEntity cvcShippingEntity = daoPage.getResults().get(0);
+				ConmentHttp.postorder(cvcShippingEntity.getShippingCode(), entity.getInvoiceNo());
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.info(e.getMessage());
 			j.setSuccess(false);
 			j.setMsg("删除失败");
+		}
+		return j;
+	}
+	
+	/**
+	 * 同步订单物流轨迹
+	 * @param entity
+	 * @param request
+	 * @param response
+	 * @param dataGrid
+	 * @param modelMap
+	 * @return
+	 */
+	@RequestMapping(params = "togelzGuiji")
+	@ResponseBody
+	public AjaxJson togelzGuiji(CvcOrderInfoEntity entity,DataGrid dataGrid,ModelMap modelMap) {
+		AjaxJson j = new AjaxJson();
+		if(StringUtils.isNotEmpty(entity.getAddTime_begin1())) {
+			try {
+				Date date1 = DateUtils.parseDate(entity.getAddTime_begin1(),new String[] {"yyyy-MM-dd HH:mm:ss"}) ;
+				entity.setAddTimeBegin((int)PhpDateUtils.getTime(date1));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		if(StringUtils.isNotEmpty(entity.getAddTime_end2())) {
+			try {
+				Date date1 = DateUtils.parseDate(entity.getAddTime_end2(),new String[] {"yyyy-MM-dd HH:mm:ss"}) ;
+				entity.setAddTimeEnd((int)PhpDateUtils.getTime(date1));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
+		MiniDaoPage<CvcOrderInfoEntity> entitys = cvcOrderInfoService.getAll(entity,1,100000);
+		if(CollectionUtils.isNotEmpty(entitys.getResults())) {
+			for (CvcOrderInfoEntity cvcOrderInfoEntity : entitys.getResults()) {
+				CvcDeliveryOrderEntity deliveryOrder = cvcOrderInfoService.getDeliveryOrderByOrderId(cvcOrderInfoEntity.getId());
+				if(deliveryOrder == null || deliveryOrder.getInvoiceNo() == null) {
+					continue;
+				}
+				List<Data> deliveryInfos = new ArrayList<>();
+				CvcDeliveryInfoEntity entity1 = cvcDeliveryInfoService
+						.getDeliveryInfosByInvoiceNo(deliveryOrder.getInvoiceNo());
+				if (entity1 != null && StringUtils.isNotEmpty(entity1.getData())) {
+					deliveryInfos = PHPAndJavaSerialize.unserializePHParray(entity1.getData(), Data.class);
+				}
+				
+				List<CvcYlDeliveryInfoEntity> ylDeliveryInfoEntitys =cvcYlDeliveryInfoService.getList(cvcOrderInfoEntity.getId(),deliveryOrder.getInvoiceNo());
+				for(Data data:deliveryInfos) {
+					if(ylDeliveryInfoEntitys == null || !ylDeliveryInfoEntitys.contains(new CvcYlDeliveryInfoEntity(cvcOrderInfoEntity.getId(),deliveryOrder.getInvoiceNo(),data.getFtime()))) {
+						//未发送过
+						RequestExchangeProcessHistoryAddJson request = new RequestExchangeProcessHistoryAddJson();
+						request.setOrderID(cvcOrderInfoEntity.getId());
+						request.setSwitNumber(PhpDateUtils.getOrderSn());
+						request.setDescription(data.getContext());
+						request.setProcessTime(data.getFtime());
+						ResponseHead responseHead;
+						try {
+							responseHead = ConmentHttp.sendHttp(new TukeRequestBody.Builder().setSequence(2)
+									.setServiceCode("CRMIF.ExchangeProcessHistoryAddJson")
+									.setParams(request).builder(), null);
+							if(responseHead.getReturn() >= 0) {
+								//记录推送成功
+								CvcYlDeliveryInfoEntity ylDeliveryInfoEntity = new CvcYlDeliveryInfoEntity();
+								ylDeliveryInfoEntity.setOrderId(cvcOrderInfoEntity.getId());
+								ylDeliveryInfoEntity.setNumber(deliveryOrder.getInvoiceNo());
+								ylDeliveryInfoEntity.setContext(data.getContext());
+								ylDeliveryInfoEntity.setFtime(data.getFtime());
+								cvcYlDeliveryInfoService.insert(ylDeliveryInfoEntity);
+							}
+						} catch (IOException e) {
+							e.printStackTrace();
+						} 
+					}
+				}
+			}
 		}
 		return j;
 	}

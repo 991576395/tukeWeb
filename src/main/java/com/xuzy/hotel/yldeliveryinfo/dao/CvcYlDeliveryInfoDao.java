@@ -1,5 +1,7 @@
 package com.xuzy.hotel.yldeliveryinfo.dao;
 
+import java.util.List;
+
 import org.jeecgframework.minidao.annotation.Param;
 import org.jeecgframework.minidao.annotation.ResultType;
 import org.jeecgframework.minidao.annotation.Sql;
@@ -24,6 +26,10 @@ public interface CvcYlDeliveryInfoDao{
 	 */
 	@Sql("SELECT * FROM cvc_yl_delivery_info WHERE order_id = :id and number=:number order by log_id desc limit 1")
 	CvcYlDeliveryInfoEntity get(@Param("id") int id,@Param("number")String number);
+	
+	@Sql("SELECT * FROM cvc_yl_delivery_info WHERE order_id = :id and number=:number order by log_id desc")
+	@ResultType(CvcYlDeliveryInfoEntity.class)
+	List<CvcYlDeliveryInfoEntity> getList(@Param("id") int id,@Param("number")String number);
 	
 	/**
 	 * 修改数据

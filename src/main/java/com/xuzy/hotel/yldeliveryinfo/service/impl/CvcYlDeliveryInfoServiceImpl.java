@@ -1,6 +1,8 @@
 package com.xuzy.hotel.yldeliveryinfo.service.impl;
 
 import javax.annotation.Resource;
+
+import java.util.List;
 import java.util.UUID;
 import org.jeecgframework.minidao.pojo.MiniDaoPage;
 import org.springframework.stereotype.Service;
@@ -53,5 +55,10 @@ public class CvcYlDeliveryInfoServiceImpl implements CvcYlDeliveryInfoService {
 			String id = ids[i];
 			cvcYlDeliveryInfoDao.deleteById(id);
 		}
+	}
+
+	@Override
+	public List<CvcYlDeliveryInfoEntity> getList(int id, String number) {
+		return cvcYlDeliveryInfoDao.getList(id, number);
 	}
 }

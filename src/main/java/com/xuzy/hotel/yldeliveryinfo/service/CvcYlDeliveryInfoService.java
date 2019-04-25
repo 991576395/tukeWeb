@@ -1,5 +1,7 @@
 package com.xuzy.hotel.yldeliveryinfo.service;
 
+import java.util.List;
+
 import org.jeecgframework.minidao.annotation.Param;
 import org.jeecgframework.minidao.pojo.MiniDaoPage;
 import com.xuzy.hotel.yldeliveryinfo.entity.CvcYlDeliveryInfoEntity;
@@ -12,6 +14,8 @@ import com.xuzy.hotel.yldeliveryinfo.entity.CvcYlDeliveryInfoEntity;
  */
 public interface CvcYlDeliveryInfoService {
 	CvcYlDeliveryInfoEntity get( int id,String number);
+	
+	List<CvcYlDeliveryInfoEntity> getList(int id,String number);
 
 	public int update(CvcYlDeliveryInfoEntity cvcYlDeliveryInfo);
 
