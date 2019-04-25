@@ -664,7 +664,7 @@ public class CvcOrderInfoController extends BaseController {
 				requestBody.setOrderID(id);
 				requestBody.setEMSCompany(cvcOrderInfoEntity.getShippingName());
 				requestBody.setEMSOdd(cvcOrderInfoEntity.getInvoiceNo());
-				requestBody.setPreArrivalDate(cvcOrderInfoEntity.getPreferDeliverdate());
+				requestBody.setPreArrivalDate(cvcOrderInfoEntity.getPreArrivalDate());
 				ResponseHead responseHead = ConmentHttp.sendHttp(new TukeRequestBody.Builder()
 						.setSequence(2)
 						.setServiceCode("CRMIF.OFFHarbourExchangeOrderJson")

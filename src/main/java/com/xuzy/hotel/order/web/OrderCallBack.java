@@ -162,9 +162,10 @@ public class OrderCallBack extends BaseController {
 		}
 		
 		if(CollectionUtils.isNotEmpty(callbaseRequest.getLastResult().getData())) {
+			List<CvcYlDeliveryInfoEntity> ylDeliveryInfoEntitys =cvcYlDeliveryInfoService.getList(cvcOrderInfoEntity.getId(),nu);
 			for(Data data:callbaseRequest.getLastResult().getData()) {
-				CvcYlDeliveryInfoEntity ylDeliveryInfoEntity =cvcYlDeliveryInfoService.get(entity.getOrderId(),nu);
-				if(ylDeliveryInfoEntity == null || !ylDeliveryInfoEntity.getContext().equals(ylDeliveryInfoEntity.getContext())) {
+//				CvcYlDeliveryInfoEntity ylDeliveryInfoEntity =cvcYlDeliveryInfoService.get(entity.getOrderId(),nu);
+				if(ylDeliveryInfoEntitys == null || !ylDeliveryInfoEntitys.contains(new CvcYlDeliveryInfoEntity(cvcOrderInfoEntity.getId(),nu,data.getFtime()))) {
 					//未发送过
 					RequestExchangeProcessHistoryAddJson request = new RequestExchangeProcessHistoryAddJson();
 					request.setOrderID(entity.getOrderId());
@@ -176,7 +177,7 @@ public class OrderCallBack extends BaseController {
 							.setParams(request).builder(), null); 
 					if(responseHead.getReturn() >= 0) {
 						//记录推送成功
-						ylDeliveryInfoEntity = new CvcYlDeliveryInfoEntity();
+						CvcYlDeliveryInfoEntity ylDeliveryInfoEntity = new CvcYlDeliveryInfoEntity();
 						ylDeliveryInfoEntity.setOrderId(entity.getOrderId());
 						ylDeliveryInfoEntity.setNumber(nu);
 						ylDeliveryInfoEntity.setContext(data.getContext());

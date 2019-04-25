@@ -1,7 +1,9 @@
 package org.jeecgframework.core.util;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -20,11 +22,11 @@ import freemarker.template.Template;
 public class SendMailUtil
 {
   //private static final String smtphost = "192.168.1.70";
-  private static final String from = "1282585171@163.com";
-  private static final String fromName = "测试公司";
+  private static final String from = "xuzhenyaonew@163.com";
+  private static final String fromName = "系统邮件，请勿回复！";
   private static final String charSet = "utf-8";
-  private static final String username = "zhangdh@163.com";
-  private static final String password = "123456";
+  private static final String username = "xuzhenyaonew@163.com";
+  private static final String password = "a123456";
 	private static Map<String, String> hostMap = new HashMap<String, String>();
 	static {
 		// 126
@@ -90,8 +92,8 @@ public class SendMailUtil
 	 * @param templatePath 模板地址
 	 * @param map 模板map
 	 */
-	public static void sendFtlMail(String toMailAddr, String subject,
-			String templatePath, Map<String, Object> map){
+	public static void sendFtlMail(List<String> toMailAddrs, String subject,
+			String templatePath,Object map){
 	  Template template = null;
 	  Configuration freeMarkerConfig = null;
 	  HtmlEmail hemail = new HtmlEmail();
@@ -99,10 +101,17 @@ public class SendMailUtil
 	      hemail.setHostName(getHost(from));
 		  hemail.setSmtpPort(getSmtpPort(from));
 	      hemail.setCharset(charSet);
-	      hemail.addTo(toMailAddr);
+	      for (String string : toMailAddrs) {
+	    	  hemail.addTo(string);
+	      }
+	      
+	      hemail.addBcc(from);
 	      hemail.setFrom(from, fromName);
 	      hemail.setAuthentication(username, password);
 	      hemail.setSubject(subject);
+	      hemail.setSSL(true);
+	      
+	      
 	      freeMarkerConfig = new Configuration();
 	      freeMarkerConfig.setDirectoryForTemplateLoading(new File(getFilePath()));
 	      // 获取模板
@@ -264,12 +273,26 @@ public class SendMailUtil
 //	      e.printStackTrace();
 //	      org.jeecgframework.core.util.LogUtil.info("email send error!");
 //	    }
-	  Map<String, Object> map = new HashMap<String, Object>();
-	  map.put("subject", "测试标题");
-	  map.put("content", "测试 内容");
-	  String templatePath = "mailtemplate/test.ftl";
-	  sendFtlMail("test@et-bank.com", "sendemail test!",templatePath, map);
+	  List<Map<String, Object>> objs = new ArrayList<Map<String,Object>>();
 	  
+	  Map<String, Object> map = new HashMap<String, Object>();
+	  map.put("orderId", "1232424");
+	  map.put("name", "小明");
+	  map.put("phone", "13782761271");
+	  map.put("firtTime", "2019-01-02");
+	  objs.add(map);
+	  objs.add(map);
+	  objs.add(map);
+	  
+	  Map<String, Object> values = new HashMap<String, Object>();
+	  values.put("sendLists", objs);
+	  String templatePath = "mailtemplate/test.ftl";
+	  sendFtlMail(new ArrayList<String>() {
+		  {
+			  add("991576395@qq.com");
+			  add("1075482109@qq.com");
+		  }
+	  }, "sendemail test!",templatePath, values);
 //	  org.jeecgframework.core.util.LogUtil.info(getFileName("mailtemplate/test.ftl"));
   }
 
