@@ -16,6 +16,7 @@
 <%--   	<t:dgCol title="订单详情" field="userName"  width="80"></t:dgCol> --%>
   	<t:dgToolBar title="抓单" icon="icon-add"  funname="goLoad"></t:dgToolBar>
   	<t:dgToolBar title="确认订单" icon="icon-put"  funname="request"></t:dgToolBar>
+  	<t:dgToolBar title="一键抓单" icon="icon-add"  funname="goLoadAll"></t:dgToolBar>
   </t:datagrid>
   </div>
  
@@ -29,6 +30,22 @@
 						});
 						/* var datas = $('#tGetOrderList').getDataIDs();
 						alert(datas.length); */
+			}
+			
+			function goLoadAll() {
+				$.ajax({
+					url : 'cvcGetOrderStatistics.do?getAllOrderAndRead',
+					type : 'post',
+					cache : false,
+					success : function(data) {
+						var d = $.parseJSON(data);
+						var msg = d.msg;
+						tip(msg);
+						if (d.success) {
+							tGetOrderListSearch();
+						}
+					}
+				});
 			}
 			
 			//请求

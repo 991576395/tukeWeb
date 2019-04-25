@@ -87,7 +87,7 @@
 					icon:7,
 					shade: 0.3,
 					yes:function(index){
-						request('cvcOrderInfo.do?epUpdate&id='+order_id,function (d){
+						request('cvcOrderInfo.do?orderStatusUpdate&id='+order_id,function (d){
 							window.location.href= 'cvcOrderInfo.do?toDetail&id='+order_id;  
 						});
 					},
@@ -106,7 +106,7 @@
 					icon:7,
 					shade: 0.3,
 					yes:function(index){
-						request('cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=returnWareHouse&id='+order_id+'&backingReason='+$('#backingReason').val(),function (d){
+						request('cvcOrderInfo.do?epUpdate&tkOrderStatus=returnWareHouse&id='+order_id+'&backingReason='+$('#backingReason').val(),function (d){
 							window.location.href= 'cvcOrderInfo.do?toDetail&id='+order_id;  
 						});
 					},
@@ -244,16 +244,16 @@
 								style="margin-left: 20px;" onclick="epChuLi('${cvcOrderInfoEntity.id}')">处理异常</button>
 
 					</c:if> 
-					</td>
-					<td style="text-indent: 2.5em" colspan="4" align="left">
-					&nbsp;&nbsp;返货原因：
-					<input type="text" id="backingReason" name="backingReason" style="width: 200px">
+					
+					
+					
+					 &nbsp;&nbsp;返货原因：
+					<input type="text" name="backingReason" style="width: 40px">
 					<!-- 申请返仓 -->
 					 &nbsp;&nbsp;
 					<button type="button" name="returnWareHouse" class="btn btn-primary btn-sm"
 						style="margin-left: 20px;"
-						onclick="returnWareHouse('${cvcOrderInfoEntity.id}')">申请返仓</button>
-					</td>
+						onclick="returnWareHouse('${cvcOrderInfoEntity.id}')">申请返仓</button></td>
 					
 			</tr>
 		</table>
