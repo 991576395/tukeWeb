@@ -217,7 +217,7 @@ public class CvcInventoryTableServiceImpl extends CommonServiceImpl implements C
 							break;
 						}else {
 							//消息已读 时间是否一致
-							if(!cvcMessageTableEntity.getCreateDate().equals(cvcInventoryTableEntity.getUpdateDate())) {
+							if(cvcMessageTableEntity.getCreateDate() != null && !cvcMessageTableEntity.getCreateDate().equals(cvcInventoryTableEntity.getUpdateDate())) {
 								cvcMessageTableEntity.setCreateDate(cvcInventoryTableEntity.getUpdateDate());
 								cvcMessageTableService.saveOrUpdate(cvcMessageTableEntity);
 								//创建新消息

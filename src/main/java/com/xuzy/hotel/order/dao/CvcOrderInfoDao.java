@@ -161,5 +161,13 @@ public interface CvcOrderInfoDao{
 	
 	@Sql("UPDATE cvc_order_info SET is_show=2 WHERE order_id=:orderId limit 1")
 	public void updateEpStatus(@Param("orderId")  int orderId);
+	
+	
+	
+	@Sql("select distinct coi.order_id as id,cdo.invoice_no,cdo.shipping_name from cvc_order_info coi " + 
+			"left join cvc_delivery_order cdo on coi.order_id = cdo.order_id  " + 
+			"where (coi.yl_order_status = 3 or coi.yl_order_status = 4) and cdo.delivery_sn > :startTime and cdo.delivery_sn < :endTime")
+	@ResultType(CvcOrderInfoEntity.class)
+	List<CvcOrderInfoEntity> getTogezelWuliuList(@Param("startTime")  String startTime,@Param("endTime")String endTime);
 }
 

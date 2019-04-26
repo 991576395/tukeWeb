@@ -1,12 +1,14 @@
 package com.xuzy.hotel.order.service.impl;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.log4j.Logger;
 import org.jeecgframework.core.util.ResourceUtil;
 import org.jeecgframework.minidao.pojo.MiniDaoPage;
@@ -379,5 +381,16 @@ public class CvcOrderInfoServiceImpl implements CvcOrderInfoService {
 	@Override
 	public void updateEpStatus(int orderId) {
 		cvcOrderInfoDao.updateEpStatus(orderId);
+	}
+
+	@Override
+	public List<CvcOrderInfoEntity> getTogezelWuliuList() {
+		Calendar calendar = Calendar.getInstance();
+		//3天前
+		calendar.add(Calendar.DAY_OF_YEAR, -3);
+		String startTime = DateFormatUtils.format(calendar, "yyyyMMddHHmmssSSS");
+		calendar.add(Calendar.HOUR_OF_DAY, 4);
+		String endTime = DateFormatUtils.format(calendar, "yyyyMMddHHmmssSSS");
+		return cvcOrderInfoDao.getTogezelWuliuList(startTime, endTime);
 	}
 }

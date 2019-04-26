@@ -121,4 +121,12 @@ public interface CvcOrderInfoService {
 	public List<CvcOrderInfoEntity> getWillSignList();
 	
 	public void updateEpStatus(int orderId);
+	
+	/**
+	 * 获取需要同步时间订单
+	 * @param startTime
+	 * @param endTime
+	 * @return
+	 */
+	List<CvcOrderInfoEntity> getTogezelWuliuList();
 }

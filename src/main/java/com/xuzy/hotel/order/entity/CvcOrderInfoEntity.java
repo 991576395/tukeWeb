@@ -315,8 +315,9 @@ public class CvcOrderInfoEntity implements Serializable{
 	 */
 	private String customDate;
 	/**
-	 *支付银行code
+	 *订单来源
 	 */
+	@Excel(name="订单来源",orderNum="17")
 	private String orderSourceName;
 	/**
 	 *enterprise_discount

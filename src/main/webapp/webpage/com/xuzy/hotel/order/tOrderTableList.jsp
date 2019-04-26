@@ -18,7 +18,9 @@
    <t:dgCol title="下单时间" field="addTime" formatter="yyyy-MM-dd hh:mm:ss"  queryMode="group"  query="true"  width="160"></t:dgCol>
    <t:dgCol title="抓单时间" field="getTime" formatter="yyyy-MM-dd hh:mm:ss"  width="160"></t:dgCol>
    <t:dgCol title="结算标识" field="isBalance"  queryMode="single" dictionary="is_balance"   query="true"  width="70"></t:dgCol>
-   <t:dgCol title="积分账户" field="userName" queryMode="single" dictionary="atType"   query="true"  width="80"></t:dgCol>
+   <t:dgCol title="积分账户" field="userName" queryMode="single" dictionary="atType"   query="true"  width="60"></t:dgCol>
+   <t:dgCol title="订单来源" field="orderSourceName"    query="false"  width="60"></t:dgCol>
+
 <%--    <c:if test="${orderStatus == 7}"> --%>
    		<t:dgCol title="退货原因" field="returnReason" queryMode="single" dictionary="rtReason"  query="true"  width="120"></t:dgCol>
 <%--    </c:if> --%>
@@ -35,9 +37,7 @@
    <t:dgToolBar title="推送至签收" icon="icon-edit" url="cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=signin"  funname="toUpdate"></t:dgToolBar>
    <t:dgToolBar title="推送至签收失败" icon="icon-edit" url="cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=signFailure"  funname="toUpdate"></t:dgToolBar>
   	<t:dgToolBar title="取消订单" icon="icon-edit" url="cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=quitOrder"  funname="toUpdate"></t:dgToolBar>
-  	<t:dgToolBar title="同步物流" icon="icon-edit" url="cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=getOrderWuliu"  funname="toUpdate"></t:dgToolBar>
-  
-  	<t:dgToolBar title="同步伊利轨迹" icon="icon-putout" funname="togelzGuiji"></t:dgToolBar>
+<%--   	<t:dgToolBar title="同步物流" icon="icon-edit" url="cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=getOrderWuliu"  funname="toUpdate"></t:dgToolBar> --%>
   </t:datagrid>
   </div>
   
@@ -134,63 +134,7 @@
 				url+="&returnReason="+returnReason;
 			}
 			window.location.href=url;
-		  }	  
-		
-		
-		//同步物流轨迹
-		  function togelzGuiji() {
-			var batchNo =  $("input[name='batchNo']").val();
-			var id =  $("input[name='id']").val();
-			var orderStatus =  $("select[name='orderStatus']").val();
-			var ylOrderStatus =  $("select[name='ylOrderStatus']").val();
-			var shippingId =  $("select[name='shippingId']").val();
-			var invoiceNo =  $("input[name='invoiceNo']").val();
-			var exceptionStatus =  $("select[name='exceptionStatus']").val();
-			var addTime_begin1 =  $("input[name='addTime_begin1']").val();
-			var addTime_end2 =  $("input[name='addTime_end2']").val();
-			var isBalance =  $("select[name='isBalance']").val();
-			var userName =  $("select[name='userName']").val();
-			var returnReason =  $("select[name='returnReason']").val();
-			
-			var url = "cvcOrderInfo.do?togelzGuiji";
-			if (batchNo != 'undefined' && batchNo.length > 0) {
-				url+="&batchNo="+batchNo;
-			}
-			if (id != 'undefined' && id.length > 0) {
-				url+="&id="+id;
-			}
-			if (orderStatus != 'undefined' && orderStatus.length > 0) {
-				url+="&orderStatus="+orderStatus;
-			}
-			if (ylOrderStatus != 'undefined' && ylOrderStatus.length > 0) {
-				url+="&ylOrderStatus="+ylOrderStatus;
-			}
-			if (shippingId != 'undefined' && shippingId.length > 0) {
-				url+="&shippingId="+shippingId;
-			}
-			if (invoiceNo != 'undefined' && invoiceNo.length > 0) {
-				url+="&invoiceNo="+invoiceNo;
-			}
-			if (exceptionStatus != 'undefined' && exceptionStatus.length > 0) {
-				url+="&exceptionStatus="+exceptionStatus;
-			}
-			if (addTime_begin1 != 'undefined' && addTime_begin1.length > 0) {
-				url+="&addTime_begin1="+addTime_begin1;
-			}
-			if (addTime_end2 != 'undefined' && addTime_end2.length > 0) {
-				url+="&addTime_end2="+addTime_end2;
-			}
-			if (isBalance != 'undefined' && isBalance.length > 0) {
-				url+="&isBalance="+isBalance;
-			}
-			if (userName != 'undefined' && userName.length > 0) {
-				url+="&userName="+userName;
-			}
-			if (returnReason != 'undefined' && returnReason.length > 0) {
-				url+="&returnReason="+returnReason;
-			}
-			window.location.href=url;
-		  }
+		  }	  	
   
 		  function toUpdate(title, url, id, width, height, isRestful) {
 			  	var rowsData = $('#' + id).datagrid('getSelections');

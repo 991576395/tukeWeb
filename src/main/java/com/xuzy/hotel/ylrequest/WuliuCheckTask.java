@@ -23,8 +23,8 @@ import com.xuzy.hotel.shipping.entity.CvcShippingEntity;
 import com.xuzy.hotel.shipping.service.CvcShippingService;
 
 
-@Service("orderCheckTask")
-public class OrderCheckTask implements Job{
+@Service("wuliuCheckTask")
+public class WuliuCheckTask implements Job{
 	
 	@Autowired
 	private CvcOrderInfoService cvcOrderInfoService;
@@ -32,33 +32,14 @@ public class OrderCheckTask implements Job{
 	@Autowired
 	private CvcShippingService cvcShippingService;
 	
-	@Autowired
-	private CvcDeliveryInfoService cvcDeliveryInfoService;
-	
-	/*@Scheduled(cron="0 0/1 * * * ?")*/
 	public void run() {
 		long start = System.currentTimeMillis();
-		org.jeecgframework.core.util.LogUtil.info("===================订单校验定时任务开始===================");
+		org.jeecgframework.core.util.LogUtil.info("===================物流校验定时任务开始===================");
+		//离港时间
 		
-		//已签收
-		List<CvcDeliveryInfoEntity> entities = cvcDeliveryInfoService.getAllError();
-		for (CvcDeliveryInfoEntity entity : entities) {
-			List<Data> datas = PHPAndJavaSerialize.unserializePHParray(entity.getData(),DelivetyJson.class);
-			ConmentHttp.postErrorOrder(datas, entity);
-		}
-		
-		//离港中 且有异常订单
-		CvcOrderInfoEntity query = new CvcOrderInfoEntity();
-		query.setOrderStatus(3);
-		query.setExceptionStatusString("1");
-		MiniDaoPage<CvcOrderInfoEntity> list = cvcOrderInfoService.getAll(query, 1, 500);
-		doOrderArrays(list.getResults());
-		//已签收订单
-		List<CvcOrderInfoEntity>  cvcOrderInfoEntities = cvcOrderInfoService.getWillSignList();
-		doOrderArrays(cvcOrderInfoEntities);
-		
-		
-		org.jeecgframework.core.util.LogUtil.info("===================订单校验定时任务结束===================");
+		List<CvcOrderInfoEntity> results =cvcOrderInfoService.getTogezelWuliuList();
+		doOrderArrays(results);
+		org.jeecgframework.core.util.LogUtil.info("===================物流校验定时任务结束===================");
 		long end = System.currentTimeMillis();
 		long times = end - start;
 		org.jeecgframework.core.util.LogUtil.info("总耗时"+times+"毫秒");
@@ -68,7 +49,6 @@ public class OrderCheckTask implements Job{
 		if(CollectionUtils.isNotEmpty(results)) {
 			for (CvcOrderInfoEntity entity : results) {
 				try {
-					entity = cvcOrderInfoService.get(entity.getId());
 					CvcShippingEntity cvcShipping = new CvcShippingEntity();
 					cvcShipping.setEnabled(1);
 					cvcShipping.setShippingName(entity.getShippingName());
@@ -82,12 +62,11 @@ public class OrderCheckTask implements Job{
 						cvcShippingEntity = daoPage.getResults().get(0);
 					}
 					String result = "";
-					ConmentHttp.postorder(cvcShippingEntity.getShippingCode(), entity.getInvoiceNo());
-//					result = ConmentHttp.getOrderWuliu(cvcShippingEntity.getShippingCode(), entity.getInvoiceNo(), entity.getTel());
-//					if(StringUtils.isNotEmpty(result) && result.contains("\"message\":\"ok\"")) {
-//						ConmentHttp.postMyErrorOrder(result);
-//						org.jeecgframework.core.util.LogUtil.info("手动获取物流："+result);
-//					}
+					result = ConmentHttp.getOrderWuliu(cvcShippingEntity.getShippingCode(), entity.getInvoiceNo(), entity.getTel());
+					if(StringUtils.isNotEmpty(result) && result.contains("\"message\":\"ok\"")) {
+						ConmentHttp.postMyErrorOrder(result);
+						org.jeecgframework.core.util.LogUtil.info("手动获取物流："+result);
+					}
 				} catch (Exception e) {
 					org.jeecgframework.core.util.LogUtil.error("处理异常："+ entity.getId(), e);
 				}

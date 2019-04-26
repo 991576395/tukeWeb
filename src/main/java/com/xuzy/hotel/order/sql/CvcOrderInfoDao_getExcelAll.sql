@@ -1,5 +1,5 @@
 SELECT  distinct coi.order_id id,
-coi.batch_no batchNo,
+coi.batch_no batchNo,coi.order_source_name orderSourceName,
 good.goods_sn goodsSn,
 good.goods_number goodsNumber,
  coi.consignee consignee, 

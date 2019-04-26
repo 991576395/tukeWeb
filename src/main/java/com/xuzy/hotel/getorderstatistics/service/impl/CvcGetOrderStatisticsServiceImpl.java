@@ -97,7 +97,6 @@ public class CvcGetOrderStatisticsServiceImpl implements CvcGetOrderStatisticsSe
 		for (ExchangeOrder exchangeOrder : exchangeOrders) {
 			CvcOrderInfoEntity cvcOrderInfoEntity = cvcOrderInfoDao.get(exchangeOrder.getID());
 			if(cvcOrderInfoEntity == null) {
-				System.out.println(exchangeOrder.getID());
 				cvcOrderInfoEntity = new CvcOrderInfoEntity();
 				cvcOrderInfoEntity.setBatchNo(unified_batch_no);
 				cvcOrderInfoEntity.setId(exchangeOrder.getID());
