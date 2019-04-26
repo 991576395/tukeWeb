@@ -87,7 +87,17 @@ public interface CvcDeliveryInfoDao {
 	
 	
 	@ResultType(CvcDeliveryInfoEntity.class)
-	@Sql("SELECT id,number,state FROM cvc_delivery_info where create_date is not NULL and create_date >= :startTime and create_date <= :endTime"
+	@Sql("SELECT * FROM cvc_delivery_info where create_date is not NULL and create_date >= :startTime and create_date <= :endTime"
 			+ " and state = 2")
-	public List<CvcDeliveryInfoEntity> getListOneHours(String startTime,String endTime);
+	public List<CvcDeliveryInfoEntity> getListOneHours(@Param("startTime")String startTime,@Param("endTime")String endTime);
+	
+	
+	/**
+	 * 首次派送时间
+	 * @param invoice_no
+	 * @return
+	 */
+	@ResultType(CvcDeliveryInfoEntity.class)
+	@Sql("SELECT create_date FROM  cvc_delivery_info WHERE number = :invoice_no and state = 5 ORDER BY id LIMIT 1")
+	public CvcDeliveryInfoEntity getFirstTime(@Param("invoice_no") String invoice_no);
 }
