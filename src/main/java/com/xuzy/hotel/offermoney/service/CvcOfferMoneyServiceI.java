@@ -3,6 +3,7 @@ import com.xuzy.hotel.offermoney.entity.CvcOfferMoneyEntity;
 import org.jeecgframework.core.common.service.CommonService;
 
 import java.io.Serializable;
+import java.util.List;
 
 public interface CvcOfferMoneyServiceI extends CommonService{
 	
@@ -18,6 +19,15 @@ public interface CvcOfferMoneyServiceI extends CommonService{
  	 * @param entity
  	 * @throws Exception
  	 */
- 	public void calculate(CvcOfferMoneyEntity entity) throws Exception;
- 	
+ 	public CvcOfferMoneyEntity calculate(CvcOfferMoneyEntity entity) throws Exception;
+
+ 	/**
+ 	 * 上下调净利润
+ 	 * @param entity
+ 	 * @param number
+ 	 * @throws Exception
+ 	 */
+ 	public void upOrDownCalculate(CvcOfferMoneyEntity entity,double number) throws Exception;
+
+    void batchInsert(List<CvcOfferMoneyEntity> cvcOfferMoneyEntityList);
 }
