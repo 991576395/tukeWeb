@@ -12,6 +12,7 @@ public interface CvcOfferMoneyServiceI extends CommonService{
  	
  	public void saveOrUpdate(CvcOfferMoneyEntity entity) throws Exception;
  	
+
  	/**
  	 * 通过公式计算
  	 * @param entity
