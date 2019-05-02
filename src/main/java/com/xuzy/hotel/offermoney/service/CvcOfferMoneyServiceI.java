@@ -3,6 +3,7 @@ import com.xuzy.hotel.offermoney.entity.CvcOfferMoneyEntity;
 import org.jeecgframework.core.common.service.CommonService;
 
 import java.io.Serializable;
+import java.util.List;
 
 public interface CvcOfferMoneyServiceI extends CommonService{
 	
@@ -19,5 +20,6 @@ public interface CvcOfferMoneyServiceI extends CommonService{
  	 * @throws Exception
  	 */
  	public void calculate(CvcOfferMoneyEntity entity) throws Exception;
- 	
+
+    void batchInsert(List<CvcOfferMoneyEntity> cvcOfferMoneyEntityList);
 }

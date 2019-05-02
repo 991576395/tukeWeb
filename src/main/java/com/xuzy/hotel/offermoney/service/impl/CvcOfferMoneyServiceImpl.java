@@ -1,4 +1,5 @@
 package com.xuzy.hotel.offermoney.service.impl;
+import com.xuzy.hotel.offermoney.dao.CvcOfferMoneyDao;
 import com.xuzy.hotel.offermoney.service.CvcOfferMoneyServiceI;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -30,26 +31,28 @@ public class CvcOfferMoneyServiceImpl extends CommonServiceImpl implements CvcOf
 
 	@Autowired
 	private CvcAddedvalueTaxServiceI cvcAddedvalueTaxService;
-	
+	@Autowired
+	private CvcOfferMoneyDao cvcOfferMoneyDao;
+
  	public void delete(CvcOfferMoneyEntity entity) throws Exception{
  		super.delete(entity);
  		//执行删除操作增强业务
 		this.doDelBus(entity);
  	}
- 	
+
  	public Serializable save(CvcOfferMoneyEntity entity) throws Exception{
  		Serializable t = super.save(entity);
  		//执行新增操作增强业务
  		this.doAddBus(entity);
  		return t;
  	}
- 	
+
  	public void saveOrUpdate(CvcOfferMoneyEntity entity) throws Exception{
  		super.saveOrUpdate(entity);
  		//执行更新操作增强业务
  		this.doUpdateBus(entity);
  	}
- 	
+
  	/**
 	 * 新增操作增强业务
 	 * @param t
@@ -58,7 +61,7 @@ public class CvcOfferMoneyServiceImpl extends CommonServiceImpl implements CvcOf
 	private void doAddBus(CvcOfferMoneyEntity t) throws Exception{
 		//-----------------sql增强 start----------------------------
 	 	//-----------------sql增强 end------------------------------
-	 	
+
 	 	//-----------------java增强 start---------------------------
 	 	//-----------------java增强 end-----------------------------
  	}
@@ -70,7 +73,7 @@ public class CvcOfferMoneyServiceImpl extends CommonServiceImpl implements CvcOf
 	private void doUpdateBus(CvcOfferMoneyEntity t) throws Exception{
 		//-----------------sql增强 start----------------------------
 	 	//-----------------sql增强 end------------------------------
-	 	
+
 	 	//-----------------java增强 start---------------------------
 	 	//-----------------java增强 end-----------------------------
  	}
@@ -82,11 +85,11 @@ public class CvcOfferMoneyServiceImpl extends CommonServiceImpl implements CvcOf
 	private void doDelBus(CvcOfferMoneyEntity t) throws Exception{
 	    //-----------------sql增强 start----------------------------
 	 	//-----------------sql增强 end------------------------------
-	 	
+
 	 	//-----------------java增强 start---------------------------
 	 	//-----------------java增强 end-----------------------------
  	}
- 	
+
  	private Map<String,Object> populationMap(CvcOfferMoneyEntity t){
 		Map<String,Object> map = new HashMap<String,Object>();
 		map.put("id", t.getId());
@@ -128,7 +131,7 @@ public class CvcOfferMoneyServiceImpl extends CommonServiceImpl implements CvcOf
 		map.put("good_name", t.getGoodName());
 		return map;
 	}
- 	
+
  	/**
 	 * 替换sql中的变量
 	 * @param sql
@@ -176,7 +179,7 @@ public class CvcOfferMoneyServiceImpl extends CommonServiceImpl implements CvcOf
  		sql  = sql.replace("#{UUID}",UUID.randomUUID().toString());
  		return sql;
  	}
- 	
+
  	/**
 	 * 执行JAVA增强
 	 */
@@ -197,7 +200,7 @@ public class CvcOfferMoneyServiceImpl extends CommonServiceImpl implements CvcOf
 			} catch (Exception e) {
 				e.printStackTrace();
 				throw new Exception("执行JAVA增强出现异常！");
-			} 
+			}
 		}
  	}
 
@@ -210,7 +213,7 @@ public class CvcOfferMoneyServiceImpl extends CommonServiceImpl implements CvcOf
 		if(CollectionUtils.isNotEmpty(addedvalueTaxEntities)) {
 			zengzhishuishuilv = addedvalueTaxEntities.get(0).getAddedvalueTax();
 		}
-		
+
 		//计算 销售的增值税
 		String xiaoshoubuhanshuijia = entity.getXiaoshoubuhanshuijia();
 		if(StringUtils.isNotEmpty(xiaoshoubuhanshuijia)) {
@@ -222,7 +225,7 @@ public class CvcOfferMoneyServiceImpl extends CommonServiceImpl implements CvcOf
 			entity.setXiaoshouhanshuijia(new BigDecimal(xiaoshoubuhanshuijia)
 					.add(new BigDecimal(entity.getXiaoshoudezhengzhishui())).toString());
 		}
-		
+
 		//采购不含税价
 		String caigoubuhanshuijia = entity.getCaigoubuhanshuijia();
 		if(StringUtils.isNotEmpty(caigoubuhanshuijia)) {
@@ -234,7 +237,7 @@ public class CvcOfferMoneyServiceImpl extends CommonServiceImpl implements CvcOf
 			entity.setCaigoudehanshuijia(new BigDecimal(caigoubuhanshuijia)
 					.add(new BigDecimal(entity.getCaigoudezengzhishui())).toString());
 		}
-		
+
 		// 运费不含税价
 		String yunfeibuhanshuijia = entity.getYunfeibuhanshuijia();
 		if (StringUtils.isNotEmpty(yunfeibuhanshuijia)) {
@@ -245,7 +248,7 @@ public class CvcOfferMoneyServiceImpl extends CommonServiceImpl implements CvcOf
 			entity.setYunfeihanshuijia(
 					new BigDecimal(yunfeibuhanshuijia).add(new BigDecimal(entity.getYunfeizengzhishui())).toString());
 		}
-		
+
 		// 包装费不含税价
 		String baozhuanbuhanshuijia = entity.getBaozhuangfeibuhanshuijia();
 		if (StringUtils.isNotEmpty(baozhuanbuhanshuijia)) {
@@ -256,7 +259,7 @@ public class CvcOfferMoneyServiceImpl extends CommonServiceImpl implements CvcOf
 			entity.setBaozhuangfeihanshuijia(
 					new BigDecimal(baozhuanbuhanshuijia).add(new BigDecimal(entity.getBaozhuangfeizengzhishui())).toString());
 		}
-		
+
 		// 装卸费不含税价
 		String zhuangxiefeibuhanshuijia = entity.getZhuangxiefeibuhanshuijia();
 		if (StringUtils.isNotEmpty(zhuangxiefeibuhanshuijia)) {
@@ -267,7 +270,7 @@ public class CvcOfferMoneyServiceImpl extends CommonServiceImpl implements CvcOf
 			entity.setZhuangxiefeihanshuijia(new BigDecimal(zhuangxiefeibuhanshuijia)
 					.add(new BigDecimal(entity.getZhuangxiefeizengzhishui())).toString());
 		}
-		
+
 		// 仓储费不含税价
 		String cangzhushuibuhanshuijia = entity.getCangchufeibuhanshuijia();
 		if (StringUtils.isNotEmpty(cangzhushuibuhanshuijia)) {
@@ -278,9 +281,9 @@ public class CvcOfferMoneyServiceImpl extends CommonServiceImpl implements CvcOf
 			entity.setCangchufeihanshuijia(new BigDecimal(cangzhushuibuhanshuijia)
 					.add(new BigDecimal(entity.getCangchufeizengzhishui())).toString());
 		}
-		
+
 		//本次货物缴纳的增值税
-		String bencihuowujiaonadezengzhishui = 
+		String bencihuowujiaonadezengzhishui =
 				new BigDecimal(entity.getXiaoshoudezhengzhishui())
 				.subtract(new BigDecimal(entity.getCaigoudezengzhishui()))
 				.subtract(new BigDecimal(entity.getYunfeizengzhishui()))
@@ -292,7 +295,7 @@ public class CvcOfferMoneyServiceImpl extends CommonServiceImpl implements CvcOf
 		// 增值税附加税 = 本次货物缴纳的增值税*0.12
 		entity.setZengzhishuifujiashui(new BigDecimal(bencihuowujiaonadezengzhishui)
 				.multiply(new BigDecimal(0.12).setScale(2, BigDecimal.ROUND_HALF_UP)).toString());
-		
+
 		//经营成本标准（除上面直接成本后的费用：如差旅费、招待费、人员薪酬、房租等等）
 		String jinyinchenben = entity.getJinyingchenbenbiaozhun();
 		if (StringUtils.isNotEmpty(jinyinchenben)) {
@@ -300,7 +303,7 @@ public class CvcOfferMoneyServiceImpl extends CommonServiceImpl implements CvcOf
 			entity.setBendanjinyinchengben(new BigDecimal(jinyinchenben)
 					.multiply(new BigDecimal(entity.getXiaoshouhanshuijia()).setScale(2, BigDecimal.ROUND_HALF_UP)).toString());
 		}
-		
+
 		//本单收入 == 销售不含税价
 		entity.setBendanshouru(entity.getXiaoshoubuhanshuijia());
 		//本单成本
@@ -320,20 +323,20 @@ public class CvcOfferMoneyServiceImpl extends CommonServiceImpl implements CvcOf
 				.subtract(new BigDecimal(entity.getBendanchengben()))
 				.toString()
 				);
-		
+
 		//本单所得税 = 本单利润*0.25
 		entity.setBendansuodeshui(new BigDecimal(entity.getBendanlirun())
 				.multiply(new BigDecimal(0.25).setScale(2, BigDecimal.ROUND_HALF_UP)).toString());
-		
+
 		//本单净利润
 		entity.setBendanjinlirun(
 				new BigDecimal(entity.getBendanlirun())
 				.subtract(new BigDecimal(entity.getBendansuodeshui()))
 				.toString());
-		
+
 		//本单现金流入
 		entity.setBendanxianjinliuru(entity.getXiaoshouhanshuijia());
-		
+
 		//本单成本现金流出
 		entity.setBendanchenbenxianjinliuchu(
 				new BigDecimal(entity.getCaigoudehanshuijia())
@@ -344,7 +347,7 @@ public class CvcOfferMoneyServiceImpl extends CommonServiceImpl implements CvcOf
 				.add(new BigDecimal(entity.getBendanjinyinchengben()))
 				.toString()
 				);
-		
+
 		//本单税金流出
 		entity.setBendanshuijinliuchu(
 				new BigDecimal(entity.getBencihuowunashuidezengzhishui())
@@ -352,7 +355,7 @@ public class CvcOfferMoneyServiceImpl extends CommonServiceImpl implements CvcOf
 				.add(new BigDecimal(entity.getBendansuodeshui()))
 				.toString()
 				);
-		
+
 		//本单净现金流
 		entity.setBendanjinxianjinliu(
 				new BigDecimal(entity.getBendanxianjinliuru())
@@ -360,15 +363,20 @@ public class CvcOfferMoneyServiceImpl extends CommonServiceImpl implements CvcOf
 				.subtract(new BigDecimal(entity.getBendanshuijinliuchu()))
 				.toString()
 				);
-		
+
 		//本单毛利率
 		entity.setBendanmaolilv(
 				new BigDecimal(entity.getBendanlirun())
 				.multiply(new BigDecimal(entity.getXiaoshoubuhanshuijia()))
 				.setScale(2, BigDecimal.ROUND_HALF_UP)
 				.toString());
-		
+
 		entity.setBendandanweichanpinbuhssj(entity.getXiaoshoubuhanshuijia());
 		entity.setBendandanweichanpinhssj(entity.getXiaoshouhanshuijia());
+	}
+
+	@Override
+	public void batchInsert(List<CvcOfferMoneyEntity> cvcOfferMoneyEntityList) {
+		cvcOfferMoneyDao.batchInsert(cvcOfferMoneyEntityList);
 	}
 }

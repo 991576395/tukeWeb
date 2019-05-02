@@ -1,4 +1,5 @@
 package com.xuzy.hotel.offermoney.controller;
+import com.appinterface.app.base.exception.XuException;
 import com.xuzy.hotel.offermoney.entity.CvcOfferMoneyEntity;
 import com.xuzy.hotel.offermoney.service.CvcOfferMoneyServiceI;
 import java.util.ArrayList;
@@ -7,6 +8,8 @@ import java.text.SimpleDateFormat;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.xuzy.hotel.shippingbatchorder.entity.CvcShippingBatchOrderEntity;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -273,6 +276,65 @@ public class CvcOfferMoneyController extends BaseController {
 			req.setAttribute("cvcOfferMoneyPage", cvcOfferMoney);
 		}
 		return new ModelAndView("com/xuzy/hotel/offermoney/cvcOfferMoney-update");
+	}
+
+	/**
+	 * 上传报价单
+	 *
+	 * @return
+	 */
+	@RequestMapping(params = "toUpload", method = { RequestMethod.GET, RequestMethod.POST })
+	public ModelAndView toUpload(HttpServletRequest request) throws Exception {
+		return new ModelAndView("com/xuzy/hotel/offermoney/upload-0ffer-money");
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(params = "importOfferMoneyExcel", method = RequestMethod.POST)
+	@ResponseBody
+	public AjaxJson importOfferMoneyExcel(HttpServletRequest request, HttpServletResponse response) {
+		AjaxJson j = new AjaxJson();
+//		String orderBatchNo = request.getParameter("orderBatchNo");
+//		if(org.apache.commons.lang.StringUtils.isEmpty(orderBatchNo)) {
+//			j.setSuccess(false);
+//			j.setMsg("订单批次号不能为空！");
+//			return j;
+//		}
+
+		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+		Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
+		for (Map.Entry<String, MultipartFile> entity : fileMap.entrySet()) {
+			MultipartFile file = entity.getValue();// 获取上传文件对象
+			ImportParams params = new ImportParams();
+			params.setTitleRows(0);
+			params.setHeadRows(4);
+			params.setNeedSave(true);
+			try {
+				List<CvcOfferMoneyEntity> cvcOfferMoneyEntityList = ExcelImportUtil.importExcel(file.getInputStream(),
+						CvcOfferMoneyEntity.class, params);
+				if (CollectionUtils.isNotEmpty(cvcOfferMoneyEntityList)) {
+					cvcOfferMoneyService.batchInsert(cvcOfferMoneyEntityList);
+					j.setMsg("文件导入成功！");
+				}else {
+					j.setMsg("识别内容为空");
+					j.setSuccess(false);
+				}
+			} catch (XuException e) {
+				j.setSuccess(false);
+				j.setMsg(e.getMessage());
+				logger.error(ExceptionUtil.getExceptionMessage(e));
+			} catch (Exception e) {
+				j.setSuccess(false);
+				j.setMsg("文件导入失败！");
+				logger.error(ExceptionUtil.getExceptionMessage(e));
+			} finally {
+				try {
+					file.getInputStream().close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return j;
 	}
 	
 	/**
