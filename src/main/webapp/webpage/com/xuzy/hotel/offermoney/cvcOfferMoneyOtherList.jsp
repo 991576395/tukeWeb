@@ -50,7 +50,7 @@
    <%--<t:dgToolBar title="导入" icon="icon-put" funname="ImportXls"></t:dgToolBar>--%>
    <t:dgToolBar title="导出" icon="icon-putout" funname="ExportXls"></t:dgToolBar>
    
-   <t:dgToolBar title="对比本公司报价" icon="icon-search" url="cvcOfferMoneyController.do?toCompareView" funname="toUpdate"></t:dgToolBar>
+   <t:dgToolBar title="对比本公司报价" icon="icon-search" url="cvcCompareResultController.do?list" funname="toUpdate"></t:dgToolBar>
    
    <t:dgToolBar title="模板下载" icon="icon-putout" funname="ExportXlsByT"></t:dgToolBar>
   </t:datagrid>

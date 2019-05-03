@@ -21,6 +21,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.xuzy.hotel.addedtax.entity.CvcAddedvalueTaxEntity;
 import com.xuzy.hotel.addedtax.service.CvcAddedvalueTaxServiceI;
+import com.xuzy.hotel.compareresult.entity.CvcCompareResultEntity;
+import com.xuzy.hotel.compareresult.service.CvcCompareResultServiceI;
 import com.xuzy.hotel.offermoney.dao.CvcOfferMoneyDao;
 import com.xuzy.hotel.offermoney.entity.CvcOfferMoneyEntity;
 import com.xuzy.hotel.offermoney.service.CvcOfferMoneyServiceI;
@@ -33,6 +35,9 @@ public class CvcOfferMoneyServiceImpl extends CommonServiceImpl implements CvcOf
 	private CvcAddedvalueTaxServiceI cvcAddedvalueTaxService;
 	@Autowired
 	private CvcOfferMoneyDao cvcOfferMoneyDao;
+	
+	@Autowired
+	private CvcCompareResultServiceI cvcCompareResultService;
 
  	public void delete(CvcOfferMoneyEntity entity) throws Exception{
  		super.delete(entity);
@@ -428,22 +433,53 @@ public class CvcOfferMoneyServiceImpl extends CommonServiceImpl implements CvcOf
      * @param fileName
      */
 	@Override
-	public CvcOfferMoneyEntity calculateOther(CvcOfferMoneyEntity entity) throws Exception {
-		entity = calculate(entity);
-		if("1".equals(entity.getIfMyCompany())) {
+	public void calculateOther() throws Exception {
+		commonDao.executeHql("delete from CvcCompareResultEntity");
+		
+		List<CvcOfferMoneyEntity> cvcOfferMoneyOtherEntities = commonDao.findHql("from CvcOfferMoneyEntity where ifMyCompany = '0' ");
+		for (CvcOfferMoneyEntity cvcOfferMoneyEntity : cvcOfferMoneyOtherEntities) {
 			CvcOfferMoneyEntity ourEntity = null;
-			List<CvcOfferMoneyEntity> cvcOfferMoneyEntities = commonDao.findHql("from CvcOfferMoneyEntity where ifMyCompany = '0' and goodName=?",entity.getGoodName().trim());
+			List<CvcOfferMoneyEntity> cvcOfferMoneyEntities = commonDao.findHql("from CvcOfferMoneyEntity where ifMyCompany = '1' and goodName=?",cvcOfferMoneyEntity.getGoodName().trim());
 			if(CollectionUtils.isNotEmpty(cvcOfferMoneyEntities)) {
 				ourEntity = cvcOfferMoneyEntities.get(0);
 			}
 			if(ourEntity == null) {
 				//本公司该商品为空
-				return null;
+				continue;
 			}
 			
-			//其他公司
+			CvcCompareResultEntity cvcCompareResultEntity = new CvcCompareResultEntity();
+			cvcCompareResultEntity.setCompanyName(cvcOfferMoneyEntity.getCompanyName());
+			cvcCompareResultEntity.setGoodName(cvcOfferMoneyEntity.getGoodName());
+			
+			if(cvcOfferMoneyEntity.getXiaoshoubuhanshuijia() != null && ourEntity.getXiaoshoubuhanshuijia() != null) {
+				BigDecimal tishuiResult = new BigDecimal(cvcOfferMoneyEntity.getXiaoshoubuhanshuijia())
+						.divide(new BigDecimal(ourEntity.getXiaoshoubuhanshuijia()),2, BigDecimal.ROUND_HALF_UP);
+						tishuiResult = new BigDecimal(1).subtract(tishuiResult);
+						tishuiResult = tishuiResult.multiply(new BigDecimal(100)
+								.setScale(2,BigDecimal.ROUND_HALF_UP));
+						cvcCompareResultEntity.setTishuijiadbjg(tishuiResult.toString());
+			}
+			
+			if(cvcOfferMoneyEntity.getXiaoshouhanshuijia() != null && ourEntity.getXiaoshouhanshuijia() != null) {
+				BigDecimal hanshuiResult = new BigDecimal(cvcOfferMoneyEntity.getXiaoshouhanshuijia())
+						.divide(new BigDecimal(ourEntity.getXiaoshouhanshuijia()), 2, BigDecimal.ROUND_HALF_UP);
+				hanshuiResult = new BigDecimal(1).subtract(hanshuiResult);
+				hanshuiResult = hanshuiResult.multiply(new BigDecimal(100).setScale(2, BigDecimal.ROUND_HALF_UP));
+				cvcCompareResultEntity.setHanshuijiadbjg(hanshuiResult.toString());
+			}
+			
+			
+			if(cvcOfferMoneyEntity.getQihuo() != null && ourEntity.getQihuo() != null){
+				BigDecimal qihuoResult = new BigDecimal(cvcOfferMoneyEntity.getQihuo())
+						.divide(new BigDecimal(ourEntity.getQihuo()), 2, BigDecimal.ROUND_HALF_UP);
+				qihuoResult = new BigDecimal(1).subtract(qihuoResult);
+				qihuoResult = qihuoResult.multiply(new BigDecimal(100).setScale(2, BigDecimal.ROUND_HALF_UP));
+				cvcCompareResultEntity.setHuoqidbjg(qihuoResult.toString());
+			}
+			
+			cvcCompareResultService.save(cvcCompareResultEntity);
 		}
-		return null;
 	}
     /**
      * 批量保存报价商品信息

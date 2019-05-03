@@ -36,16 +36,16 @@ public class CvcOfferMoneyEntity implements java.io.Serializable {
 	private java.lang.String ifMyCompany;
 	/**销售不含税价*/
 	@Excel(name="销售不含税价",width=15)
-	private java.lang.String xiaoshoubuhanshuijia;
+	private java.lang.String xiaoshoubuhanshuijia="";
 	/**销售的增值税*/
 	@Excel(name="销售的增值税",width=15)
 	private java.lang.String xiaoshoudezhengzhishui;
 	/**销售含税价*/
 	@Excel(name="销售含税价",width=15)
-	private java.lang.String xiaoshouhanshuijia;
+	private java.lang.String xiaoshouhanshuijia="";
 	/**采购不含税价*/
 	@Excel(name="采购不含税价",width=15)
-	private java.lang.String caigoubuhanshuijia;
+	private java.lang.String caigoubuhanshuijia="";
 	/**采购的增值税*/
 	@Excel(name="采购的增值税",width=15)
 	private java.lang.String caigoudezengzhishui;
@@ -158,7 +158,7 @@ public class CvcOfferMoneyEntity implements java.io.Serializable {
 	 * 货期
 	 */
 	@Excel(name="货期")
-	private String qihuo;
+	private String qihuo = "";
 	/**
 	 * 公司名称
 	 */

@@ -251,7 +251,7 @@ public class CvcOrderInfoServiceImpl implements CvcOrderInfoService {
 				}
 			}
 
-			CvcShippingEntity cvcShippingEntity = cvcShippingDao.get(shippingName);
+			CvcShippingEntity cvcShippingEntity = cvcShippingDao.get(shippingName.trim());
 			
 			if (cvcOrderInfoEntity.getOrderStatus() == 3 || isOffhabour) {
 				int isPostorder = 0;

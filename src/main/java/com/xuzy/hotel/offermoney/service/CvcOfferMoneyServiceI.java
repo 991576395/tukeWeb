@@ -26,7 +26,7 @@ public interface CvcOfferMoneyServiceI extends CommonService{
  	 * @param entity
  	 * @throws Exception
  	 */
- 	public CvcOfferMoneyEntity calculateOther(CvcOfferMoneyEntity entity) throws Exception;
+ 	public void calculateOther() throws Exception;
 
  	/**
  	 * 上下调净利润
