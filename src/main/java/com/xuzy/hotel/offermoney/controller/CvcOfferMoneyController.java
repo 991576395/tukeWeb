@@ -139,6 +139,32 @@ public class CvcOfferMoneyController extends BaseController {
 		//查询条件组装器
 		org.jeecgframework.core.extend.hqlsearch.HqlGenerateUtil.installHql(cq, cvcOfferMoney, request.getParameterMap());
 		try{
+			cq.eq("ifMyCompany", "1");
+		//自定义追加查询条件
+		}catch (Exception e) {
+			throw new BusinessException(e.getMessage());
+		}
+		cq.add();
+		this.cvcOfferMoneyService.getDataGridReturn(cq, true);
+		TagUtil.datagrid(response, dataGrid);
+	}
+	
+	/**
+	 * easyui AJAX请求数据
+	 * 
+	 * @param request
+	 * @param response
+	 * @param dataGrid
+	 * @param user
+	 */
+
+	@RequestMapping(params = "datagridOther")
+	public void datagridOther(CvcOfferMoneyEntity cvcOfferMoney,HttpServletRequest request, HttpServletResponse response, DataGrid dataGrid) {
+		CriteriaQuery cq = new CriteriaQuery(CvcOfferMoneyEntity.class, dataGrid);
+		//查询条件组装器
+		org.jeecgframework.core.extend.hqlsearch.HqlGenerateUtil.installHql(cq, cvcOfferMoney, request.getParameterMap());
+		try{
+			cq.eq("ifMyCompany", "0");
 		//自定义追加查询条件
 		}catch (Exception e) {
 			throw new BusinessException(e.getMessage());
@@ -340,7 +366,8 @@ public class CvcOfferMoneyController extends BaseController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(params = "importOfferMoneyExcel", method = RequestMethod.POST)
 	@ResponseBody
-	public AjaxJson importOfferMoneyExcel(HttpServletRequest request, HttpServletResponse response, String ifMyCompany) {
+	public AjaxJson importOfferMoneyExcel(HttpServletRequest request, HttpServletResponse response
+			,@RequestParam(value="ifMyCompany") String ifMyCompany) {
 		AjaxJson j = new AjaxJson();
 //		String orderBatchNo = request.getParameter("orderBatchNo");
 //		if(org.apache.commons.lang.StringUtils.isEmpty(orderBatchNo)) {
@@ -358,7 +385,7 @@ public class CvcOfferMoneyController extends BaseController {
 			params.setHeadRows(4);
 			params.setNeedSave(true);
 			try {
-				String fileName = file.getName();
+				String fileName = file.getOriginalFilename();
 				if(org.apache.commons.lang.StringUtils.isNotBlank(fileName)){
 					fileName = fileName.substring(0, fileName.lastIndexOf("."));
 				}

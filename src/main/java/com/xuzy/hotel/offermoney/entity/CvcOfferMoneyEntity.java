@@ -832,7 +832,7 @@ public class CvcOfferMoneyEntity implements java.io.Serializable {
 		this.qihuo = qihuo;
 	}
 
-	@Column(name ="COMPANY_NAME",nullable=false,length=100)
+	@Column(name ="COMPANYNAME",nullable=false,length=100)
 	public String getCompanyName() {
 		return companyName;
 	}

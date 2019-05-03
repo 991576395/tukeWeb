@@ -483,5 +483,7 @@ public class CvcOfferMoneyServiceImpl extends CommonServiceImpl implements CvcOf
                 e.printStackTrace();
             }
         }
+        commonDao.deleteAllEntitie(deleteCvcOfferMoneyEntityList);
+        commonDao.batchSave(cvcOfferMoneyEntityList);
     }
 }
