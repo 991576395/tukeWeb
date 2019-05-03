@@ -941,21 +941,4 @@ public class LoginController extends BaseController{
 		}
 		return j;
 	}
-
-    /**
-     * 另一套登录界面
-     * @return
-     */
-    @RequestMapping(params = "login2")
-    public String login2(){
-        return "login/login2";
-    }
-	/**
-	 * ACE登录界面
-	 * @return
-	 */
-	@RequestMapping(params = "login3")
-	public String login3(){
-		return "login/login3";
-	}
 }

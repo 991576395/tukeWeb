@@ -383,6 +383,17 @@ public class CvcOfferMoneyServiceImpl extends CommonServiceImpl implements CvcOf
 
 	@Override
 	public void upOrDownCalculate(CvcOfferMoneyEntity entity, double number) throws Exception {
+		List<CvcAddedvalueTaxEntity> addedvalueTaxEntities = cvcAddedvalueTaxService.getList(CvcAddedvalueTaxEntity.class);
+		//值税税率
+		BigDecimal zengzhishuishuilv = new BigDecimal(0);
+		if(CollectionUtils.isNotEmpty(addedvalueTaxEntities)) {
+			zengzhishuishuilv = new BigDecimal(addedvalueTaxEntities.get(0).getAddedvalueTax());
+			zengzhishuishuilv = zengzhishuishuilv
+								.divide(new BigDecimal(100)
+								.setScale(4,BigDecimal.ROUND_HALF_UP));
+		}
+
+		
 		boolean isAdd = number > 0;
 		//新比例
 		double newMath =  Math.abs(number);
@@ -397,10 +408,12 @@ public class CvcOfferMoneyServiceImpl extends CommonServiceImpl implements CvcOf
 			}else {
 				valueJinlirun = valueJinlirun.subtract(new BigDecimal(entity.getBendanjinlirun()));
 			}
-			valueJinlirun = valueJinlirun.divide(new BigDecimal(0.75)).setScale(2, BigDecimal.ROUND_HALF_UP);
+			valueJinlirun = valueJinlirun.divide(new BigDecimal(0.75),2, BigDecimal.ROUND_HALF_UP);
 			valueJinlirun = valueJinlirun.add(new BigDecimal(entity.getBendanchengben()));
+			valueJinlirun.divide(new BigDecimal(1).add(zengzhishuishuilv),2, BigDecimal.ROUND_HALF_UP);
+			
 		}
-		entity.setXiaoshouhanshuijia(valueJinlirun.toString());
+		entity.setXiaoshoubuhanshuijia(valueJinlirun.toString());
 		entity = calculate(entity);
 		
 		commonDao.updateEntitie(entity);
