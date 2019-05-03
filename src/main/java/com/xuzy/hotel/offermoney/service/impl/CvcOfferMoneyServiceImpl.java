@@ -1,29 +1,29 @@
 package com.xuzy.hotel.offermoney.service.impl;
-import com.xuzy.hotel.offermoney.dao.CvcOfferMoneyDao;
-import com.xuzy.hotel.offermoney.service.CvcOfferMoneyServiceI;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.jeecgframework.core.common.service.impl.CommonServiceImpl;
-
-import com.xuzy.hotel.addedtax.entity.CvcAddedvalueTaxEntity;
-import com.xuzy.hotel.addedtax.service.CvcAddedvalueTaxServiceI;
-import com.xuzy.hotel.offermoney.entity.CvcOfferMoneyEntity;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.io.Serializable;
-import java.math.BigDecimal;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.jeecgframework.core.common.service.impl.CommonServiceImpl;
 import org.jeecgframework.core.util.ApplicationContextUtil;
 import org.jeecgframework.core.util.MyClassLoader;
 import org.jeecgframework.core.util.StringUtil;
 import org.jeecgframework.web.cgform.enhance.CgformEnhanceJavaInter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.xuzy.hotel.addedtax.entity.CvcAddedvalueTaxEntity;
+import com.xuzy.hotel.addedtax.service.CvcAddedvalueTaxServiceI;
+import com.xuzy.hotel.offermoney.dao.CvcOfferMoneyDao;
+import com.xuzy.hotel.offermoney.entity.CvcOfferMoneyEntity;
+import com.xuzy.hotel.offermoney.service.CvcOfferMoneyServiceI;
 
 @Service("cvcOfferMoneyService")
 @Transactional
@@ -419,6 +419,32 @@ public class CvcOfferMoneyServiceImpl extends CommonServiceImpl implements CvcOf
 		commonDao.updateEntitie(entity);
 	}
 
+    
+    
+    /**
+     * 批量保存报价商品信息
+     * @param cvcOfferMoneyEntityList
+     * @param ifMyCompany
+     * @param fileName
+     */
+	@Override
+	public CvcOfferMoneyEntity calculateOther(CvcOfferMoneyEntity entity) throws Exception {
+		entity = calculate(entity);
+		if("1".equals(entity.getIfMyCompany())) {
+			CvcOfferMoneyEntity ourEntity = null;
+			List<CvcOfferMoneyEntity> cvcOfferMoneyEntities = commonDao.findHql("from CvcOfferMoneyEntity where ifMyCompany = '0' and goodName=?",entity.getGoodName().trim());
+			if(CollectionUtils.isNotEmpty(cvcOfferMoneyEntities)) {
+				ourEntity = cvcOfferMoneyEntities.get(0);
+			}
+			if(ourEntity == null) {
+				//本公司该商品为空
+				return null;
+			}
+			
+			//其他公司
+		}
+		return null;
+	}
     /**
      * 批量保存报价商品信息
      * @param cvcOfferMoneyEntityList
@@ -457,33 +483,5 @@ public class CvcOfferMoneyServiceImpl extends CommonServiceImpl implements CvcOf
                 e.printStackTrace();
             }
         }
-//		cvcOfferMoneyDao.batchInsert(cvcOfferMoneyEntityList);
-        commonDao.deleteAllEntitie(deleteCvcOfferMoneyEntityList);
-        commonDao.batchSave(cvcOfferMoneyEntityList);
-	}
-    
-    /**
-     * 批量保存报价商品信息
-     * @param cvcOfferMoneyEntityList
-     * @param ifMyCompany
-     * @param fileName
-     */
-	@Override
-	public CvcOfferMoneyEntity calculateOther(CvcOfferMoneyEntity entity) throws Exception {
-		entity = calculate(entity);
-		if("1".equals(entity.getIfMyCompany())) {
-			CvcOfferMoneyEntity ourEntity = null;
-			List<CvcOfferMoneyEntity> cvcOfferMoneyEntities = commonDao.findHql("from CvcOfferMoneyEntity where ifMyCompany = '0' and goodName=?",entity.getGoodName().trim());
-			if(CollectionUtils.isNotEmpty(cvcOfferMoneyEntities)) {
-				ourEntity = cvcOfferMoneyEntities.get(0);
-			}
-			if(ourEntity == null) {
-				//本公司该商品为空
-				return null;
-			}
-			
-			//其他公司
-		}
-		return null;
-	}
+    }
 }

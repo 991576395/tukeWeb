@@ -340,7 +340,7 @@ public class CvcOfferMoneyController extends BaseController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(params = "importOfferMoneyExcel", method = RequestMethod.POST)
 	@ResponseBody
-	public AjaxJson importOfferMoneyExcel(HttpServletRequest request, HttpServletResponse response) {
+	public AjaxJson importOfferMoneyExcel(HttpServletRequest request, HttpServletResponse response, String ifMyCompany) {
 		AjaxJson j = new AjaxJson();
 //		String orderBatchNo = request.getParameter("orderBatchNo");
 //		if(org.apache.commons.lang.StringUtils.isEmpty(orderBatchNo)) {
@@ -358,10 +358,14 @@ public class CvcOfferMoneyController extends BaseController {
 			params.setHeadRows(4);
 			params.setNeedSave(true);
 			try {
+				String fileName = file.getName();
+				if(org.apache.commons.lang.StringUtils.isNotBlank(fileName)){
+					fileName = fileName.substring(0, fileName.lastIndexOf("."));
+				}
 				List<CvcOfferMoneyEntity> cvcOfferMoneyEntityList = ExcelImportUtil.importExcel(file.getInputStream(),
 						CvcOfferMoneyEntity.class, params);
 				if (CollectionUtils.isNotEmpty(cvcOfferMoneyEntityList)) {
-					cvcOfferMoneyService.batchInsert(cvcOfferMoneyEntityList);
+					cvcOfferMoneyService.batchInsert(cvcOfferMoneyEntityList, ifMyCompany, fileName);
 					j.setMsg("文件导入成功！");
 				}else {
 					j.setMsg("识别内容为空");
