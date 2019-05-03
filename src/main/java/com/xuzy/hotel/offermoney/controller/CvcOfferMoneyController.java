@@ -546,4 +546,37 @@ public class CvcOfferMoneyController extends BaseController {
 
 		return Result.success();
 	}
+	
+	
+	/**
+	 * 报价表列表 页面跳转
+	 * 
+	 * @return
+	 */
+	@RequestMapping(params = "toCompareView")
+	public ModelAndView toCompareView(HttpServletRequest request) {
+		return new ModelAndView("com/xuzy/hotel/offermoney/cvcOMCompareList");
+	}
+	
+//	/**
+//	 * 获取对比数据集合
+//	 * @param cvcOfferMoney
+//	 * @param request
+//	 * @param response
+//	 * @param dataGrid
+//	 */
+//	@RequestMapping(params = "compareDatagrid")
+//	public void compareDatagrid(CvcOfferMoneyEntity cvcOfferMoney,HttpServletRequest request, HttpServletResponse response, DataGrid dataGrid) {
+//		CriteriaQuery cq = new CriteriaQuery(CvcOfferMoneyEntity.class, dataGrid);
+//		//查询条件组装器
+//		org.jeecgframework.core.extend.hqlsearch.HqlGenerateUtil.installHql(cq, cvcOfferMoney, request.getParameterMap());
+//		try{
+//		//自定义追加查询条件
+//		}catch (Exception e) {
+//			throw new BusinessException(e.getMessage());
+//		}
+//		cq.add();
+//		this.cvcOfferMoneyService.getDataGridReturn(cq, true);
+//		TagUtil.datagrid(response, dataGrid);
+//	}
 }

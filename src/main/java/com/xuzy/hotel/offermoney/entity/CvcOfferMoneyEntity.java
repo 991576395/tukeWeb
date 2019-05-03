@@ -139,7 +139,30 @@ public class CvcOfferMoneyEntity implements java.io.Serializable {
 	/**商品名称*/
 	@Excel(name="商品名称",width=15)
 	private java.lang.String goodName;
-	
+	/**
+	 * 资金成本
+	 */
+	@Excel(name="资金成本")
+	private String zijinchengben;
+	/**
+	 * 常规单价（剔税：元）
+	 */
+	@Excel(name="常规单价（剔税：元）")
+	private String changguidanjiatishui;
+	/**
+	 * 常规单价（含税：元）
+	 */
+	@Excel(name="常规单价（含税：元）")
+	private String changguidanjiahanshui;
+	/**
+	 * 货期
+	 */
+	@Excel(name="货期")
+	private String qihuo;
+	/**
+	 * 公司名称
+	 */
+	private String companyName;
 	/**
 	 *方法: 取得java.lang.String
 	 *@return: java.lang.String  主键
@@ -771,5 +794,50 @@ public class CvcOfferMoneyEntity implements java.io.Serializable {
 	 */
 	public void setGoodName(java.lang.String goodName){
 		this.goodName = goodName;
+	}
+
+	@Column(name ="ZIJINCHENGBEN",nullable=true,length=32)
+	public String getZijinchengben() {
+		return zijinchengben;
+	}
+
+	public void setZijinchengben(String zijinchengben) {
+		this.zijinchengben = zijinchengben;
+	}
+
+	@Column(name ="CHANGGUIDANJIATISHUI",nullable=true,length=32)
+	public String getChangguidanjiatishui() {
+		return changguidanjiatishui;
+	}
+
+	public void setChangguidanjiatishui(String changguidanjiatishui) {
+		this.changguidanjiatishui = changguidanjiatishui;
+	}
+
+	@Column(name ="CHANGGUIDANJIAHANSHUI",nullable=true,length=32)
+	public String getChangguidanjiahanshui() {
+		return changguidanjiahanshui;
+	}
+
+	public void setChangguidanjiahanshui(String changguidanjiahanshui) {
+		this.changguidanjiahanshui = changguidanjiahanshui;
+	}
+
+	@Column(name ="QIHUO",nullable=true,length=32)
+	public String getQihuo() {
+		return qihuo;
+	}
+
+	public void setQihuo(String qihuo) {
+		this.qihuo = qihuo;
+	}
+
+	@Column(name ="COMPANY_NAME",nullable=false,length=100)
+	public String getCompanyName() {
+		return companyName;
+	}
+
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
 	}
 }

@@ -43,12 +43,15 @@
    <t:dgCol title="本单单位产品含税售价"  field="bendandanweichanpinhssj"  queryMode="single"  width="80"></t:dgCol>
    <t:dgCol title="操作" field="opt" width="100"></t:dgCol>
    <t:dgDelOpt title="删除" url="cvcOfferMoneyController.do?doDel&id={id}" urlclass="ace_button"  urlfont="fa-trash-o"/>
-   <t:dgToolBar title="录入" icon="icon-add" url="cvcOfferMoneyController.do?goAdd" funname="add"></t:dgToolBar>
    <t:dgToolBar title="编辑" icon="icon-edit" url="cvcOfferMoneyController.do?goUpdate" funname="update"></t:dgToolBar>
    <t:dgToolBar title="批量删除"  icon="icon-remove" url="cvcOfferMoneyController.do?doBatchDel" funname="deleteALLSelect"></t:dgToolBar>
    <t:dgToolBar title="查看" icon="icon-search" url="cvcOfferMoneyController.do?goUpdate" funname="detail"></t:dgToolBar>
-   <t:dgToolBar title="导入" icon="icon-put" funname="ImportXls"></t:dgToolBar>
+   <t:dgToolBar title="上传报价excel" icon="icon-put" url="cvcOfferMoneyController.do?toUpload&ifMyCompany=0" width="600" height="300" funname="add" ></t:dgToolBar>
+   <%--<t:dgToolBar title="导入" icon="icon-put" funname="ImportXls"></t:dgToolBar>--%>
    <t:dgToolBar title="导出" icon="icon-putout" funname="ExportXls"></t:dgToolBar>
+   
+   <t:dgToolBar title="对比本公司报价" icon="icon-search" url="cvcOfferMoneyController.do?toCompareView" funname="toUpdate"></t:dgToolBar>
+   
    <t:dgToolBar title="模板下载" icon="icon-putout" funname="ExportXlsByT"></t:dgToolBar>
   </t:datagrid>
   </div>
@@ -58,7 +61,46 @@
  $(document).ready(function(){
  });
  
-   
+
+	function toUpdate(title, url, id, width, height, isRestful) {
+		/* var rowsData = $('#' + id).datagrid('getSelections');
+		if (!rowsData || rowsData.length == 0) {
+			tip('请选择操作订单');
+			return;
+		}
+		if (rowsData.length > 1) {
+			tip('请选择一条订单再操作');
+			return;
+		}
+		if (isRestful != 'undefined' && isRestful) {
+			url += '/' + rowsData[0].id;
+		} else {
+			url += '&id=' + rowsData[0].id;
+		} */
+		createwindow(title,url,width, height);
+	}
+
+	function createMywindow(title, addurl, width, height) {
+		width = width ? width : 700;
+		height = height ? height : 400;
+		if (width == "100%" || height == "100%") {
+			width = window.top.document.body.offsetWidth;
+			height = window.top.document.body.offsetHeight - 100;
+		}
+		$.dialog({
+			content : 'url:' + addurl,
+			lock : true,
+			zIndex : getzIndex(),
+			width : width,
+			height : height,
+			title : title,
+			opacity : 0.3,
+			cache : false,
+			cancelVal : '关闭',
+			cancel : true
+		/*为true等价于function(){}*/
+		});
+	}
  
 //导入
 function ImportXls() {

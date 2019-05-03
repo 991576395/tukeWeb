@@ -20,6 +20,13 @@ public interface CvcOfferMoneyServiceI extends CommonService{
  	 * @throws Exception
  	 */
  	public CvcOfferMoneyEntity calculate(CvcOfferMoneyEntity entity) throws Exception;
+ 	
+ 	/**
+ 	 * 通过公式计算其他公司上传后结果
+ 	 * @param entity
+ 	 * @throws Exception
+ 	 */
+ 	public CvcOfferMoneyEntity calculateOther(CvcOfferMoneyEntity entity) throws Exception;
 
  	/**
  	 * 上下调净利润
@@ -29,5 +36,5 @@ public interface CvcOfferMoneyServiceI extends CommonService{
  	 */
  	public void upOrDownCalculate(CvcOfferMoneyEntity entity,double number) throws Exception;
 
-    void batchInsert(List<CvcOfferMoneyEntity> cvcOfferMoneyEntityList);
+    void batchInsert(List<CvcOfferMoneyEntity> cvcOfferMoneyEntityList, String ifMyCompany, String fileName);
 }

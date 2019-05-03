@@ -419,16 +419,71 @@ public class CvcOfferMoneyServiceImpl extends CommonServiceImpl implements CvcOf
 		commonDao.updateEntitie(entity);
 	}
 
-	@Override
-	public void batchInsert(List<CvcOfferMoneyEntity> cvcOfferMoneyEntityList) {
-		for (CvcOfferMoneyEntity cvcOfferMoneyEntity : cvcOfferMoneyEntityList) {
-			try {
-				calculate(cvcOfferMoneyEntity);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
+    /**
+     * 批量保存报价商品信息
+     * @param cvcOfferMoneyEntityList
+     * @param ifMyCompany
+     * @param fileName
+     */
+    @Override
+    public void batchInsert(List<CvcOfferMoneyEntity> cvcOfferMoneyEntityList, String ifMyCompany, String fileName) {
+        List<CvcOfferMoneyEntity> moneyEntityList = commonDao.findHql("from CvcOfferMoneyEntity u where u.ifMyCompany=?", ifMyCompany);
+        Map<String, CvcOfferMoneyEntity> map = Maps.newHashMap();
+        for (CvcOfferMoneyEntity cvcOfferMoneyEntity : moneyEntityList) {
+            if ("0".equals(ifMyCompany)) {
+                map.put(cvcOfferMoneyEntity.getGoodName() + ":" + cvcOfferMoneyEntity.getCompanyName(), cvcOfferMoneyEntity);
+            } else {
+                map.put(cvcOfferMoneyEntity.getGoodName(), cvcOfferMoneyEntity);
+            }
+        }
+        Map<String, CvcOfferMoneyEntity> saveCvcOfferMoneyEntityMap = Maps.newHashMap();
+        // 去除重复的商品，取最后一条
+        for (CvcOfferMoneyEntity cvcOfferMoneyEntity : cvcOfferMoneyEntityList) {
+            saveCvcOfferMoneyEntityMap.put(cvcOfferMoneyEntity.getGoodName(), cvcOfferMoneyEntity);
+        }
+        List<CvcOfferMoneyEntity> deleteCvcOfferMoneyEntityList = Lists.newArrayList();
+        for (CvcOfferMoneyEntity cvcOfferMoneyEntity : saveCvcOfferMoneyEntityMap.values()) {
+            String key = "0".equals(ifMyCompany) ? cvcOfferMoneyEntity.getGoodName() + ":" + cvcOfferMoneyEntity.getCompanyName() : cvcOfferMoneyEntity.getGoodName();
+            CvcOfferMoneyEntity oldCvcOfferMoneyEntity = map.get(key);
+            // 如果系统中存在一样的商品，则先删除再新增
+            if (oldCvcOfferMoneyEntity != null) {
+                deleteCvcOfferMoneyEntityList.add(oldCvcOfferMoneyEntity);
+            }
+            cvcOfferMoneyEntity.setIfMyCompany(ifMyCompany);
+            cvcOfferMoneyEntity.setCompanyName(fileName);
+            try {
+                calculate(cvcOfferMoneyEntity);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 //		cvcOfferMoneyDao.batchInsert(cvcOfferMoneyEntityList);
-		commonDao.batchSave(cvcOfferMoneyEntityList);
+        commonDao.deleteAllEntitie(deleteCvcOfferMoneyEntityList);
+        commonDao.batchSave(cvcOfferMoneyEntityList);
+	}
+    
+    /**
+     * 批量保存报价商品信息
+     * @param cvcOfferMoneyEntityList
+     * @param ifMyCompany
+     * @param fileName
+     */
+	@Override
+	public CvcOfferMoneyEntity calculateOther(CvcOfferMoneyEntity entity) throws Exception {
+		entity = calculate(entity);
+		if("1".equals(entity.getIfMyCompany())) {
+			CvcOfferMoneyEntity ourEntity = null;
+			List<CvcOfferMoneyEntity> cvcOfferMoneyEntities = commonDao.findHql("from CvcOfferMoneyEntity where ifMyCompany = '0' and goodName=?",entity.getGoodName().trim());
+			if(CollectionUtils.isNotEmpty(cvcOfferMoneyEntities)) {
+				ourEntity = cvcOfferMoneyEntities.get(0);
+			}
+			if(ourEntity == null) {
+				//本公司该商品为空
+				return null;
+			}
+			
+			//其他公司
+		}
+		return null;
 	}
 }

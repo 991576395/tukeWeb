@@ -41,6 +41,7 @@
    <t:dgCol title="本单毛利率"  field="bendanmaolilv"  queryMode="single"  width="120"></t:dgCol>
    <t:dgCol title="本单单位产品不含税售价"  field="bendandanweichanpinbuhssj"  queryMode="single"  width="120"></t:dgCol>
    <t:dgCol title="本单单位产品含税售价"  field="bendandanweichanpinhssj"  queryMode="single"  width="120"></t:dgCol>
+   <t:dgCol title="期货"  field="qihuo"  queryMode="single"  width="120"></t:dgCol>
    <t:dgCol title="操作" field="opt" width="100"></t:dgCol>
    <t:dgDelOpt title="删除" url="cvcOfferMoneyController.do?doDel&id={id}" urlclass="ace_button"  urlfont="fa-trash-o"/>
 <%--    <t:dgToolBar title="录入" icon="icon-add" url="cvcOfferMoneyController.do?goAdd" funname="add"></t:dgToolBar> --%>
