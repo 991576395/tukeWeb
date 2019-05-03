@@ -1,29 +1,29 @@
 package com.xuzy.hotel.offermoney.service.impl;
-import com.xuzy.hotel.offermoney.dao.CvcOfferMoneyDao;
-import com.xuzy.hotel.offermoney.service.CvcOfferMoneyServiceI;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.xuzy.hotel.addedtax.entity.CvcAddedvalueTaxEntity;
+import com.xuzy.hotel.addedtax.service.CvcAddedvalueTaxServiceI;
+import com.xuzy.hotel.offermoney.dao.CvcOfferMoneyDao;
+import com.xuzy.hotel.offermoney.entity.CvcOfferMoneyEntity;
+import com.xuzy.hotel.offermoney.service.CvcOfferMoneyServiceI;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jeecgframework.core.common.service.impl.CommonServiceImpl;
-
-import com.xuzy.hotel.addedtax.entity.CvcAddedvalueTaxEntity;
-import com.xuzy.hotel.addedtax.service.CvcAddedvalueTaxServiceI;
-import com.xuzy.hotel.offermoney.entity.CvcOfferMoneyEntity;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.io.Serializable;
-import java.math.BigDecimal;
-
 import org.jeecgframework.core.util.ApplicationContextUtil;
 import org.jeecgframework.core.util.MyClassLoader;
 import org.jeecgframework.core.util.StringUtil;
 import org.jeecgframework.web.cgform.enhance.CgformEnhanceJavaInter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @Service("cvcOfferMoneyService")
 @Transactional
@@ -376,7 +376,7 @@ public class CvcOfferMoneyServiceImpl extends CommonServiceImpl implements CvcOf
 
 		entity.setBendandanweichanpinbuhssj(entity.getXiaoshoubuhanshuijia());
 		entity.setBendandanweichanpinhssj(entity.getXiaoshouhanshuijia());
-		
+
 		return entity;
 	}
 
@@ -393,7 +393,7 @@ public class CvcOfferMoneyServiceImpl extends CommonServiceImpl implements CvcOf
 								.setScale(4,BigDecimal.ROUND_HALF_UP));
 		}
 
-		
+
 		boolean isAdd = number > 0;
 		//新比例
 		double newMath =  Math.abs(number);
@@ -411,24 +411,54 @@ public class CvcOfferMoneyServiceImpl extends CommonServiceImpl implements CvcOf
 			valueJinlirun = valueJinlirun.divide(new BigDecimal(0.75),2, BigDecimal.ROUND_HALF_UP);
 			valueJinlirun = valueJinlirun.add(new BigDecimal(entity.getBendanchengben()));
 			valueJinlirun.divide(new BigDecimal(1).add(zengzhishuishuilv),2, BigDecimal.ROUND_HALF_UP);
-			
+
 		}
 		entity.setXiaoshoubuhanshuijia(valueJinlirun.toString());
 		entity = calculate(entity);
-		
+
 		commonDao.updateEntitie(entity);
 	}
 
-	@Override
-	public void batchInsert(List<CvcOfferMoneyEntity> cvcOfferMoneyEntityList) {
-		for (CvcOfferMoneyEntity cvcOfferMoneyEntity : cvcOfferMoneyEntityList) {
-			try {
-				calculate(cvcOfferMoneyEntity);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
+    /**
+     * 批量保存报价商品信息
+     * @param cvcOfferMoneyEntityList
+     * @param ifMyCompany
+     * @param fileName
+     */
+    @Override
+    public void batchInsert(List<CvcOfferMoneyEntity> cvcOfferMoneyEntityList, String ifMyCompany, String fileName) {
+        List<CvcOfferMoneyEntity> moneyEntityList = commonDao.findHql("from CvcOfferMoneyEntity u where u.ifMyCompany=?", ifMyCompany);
+        Map<String, CvcOfferMoneyEntity> map = Maps.newHashMap();
+        for (CvcOfferMoneyEntity cvcOfferMoneyEntity : moneyEntityList) {
+            if ("0".equals(ifMyCompany)) {
+                map.put(cvcOfferMoneyEntity.getGoodName() + ":" + cvcOfferMoneyEntity.getCompanyName(), cvcOfferMoneyEntity);
+            } else {
+                map.put(cvcOfferMoneyEntity.getGoodName(), cvcOfferMoneyEntity);
+            }
+        }
+        Map<String, CvcOfferMoneyEntity> saveCvcOfferMoneyEntityMap = Maps.newHashMap();
+        // 去除重复的商品，取最后一条
+        for (CvcOfferMoneyEntity cvcOfferMoneyEntity : cvcOfferMoneyEntityList) {
+            saveCvcOfferMoneyEntityMap.put(cvcOfferMoneyEntity.getGoodName(), cvcOfferMoneyEntity);
+        }
+        List<CvcOfferMoneyEntity> deleteCvcOfferMoneyEntityList = Lists.newArrayList();
+        for (CvcOfferMoneyEntity cvcOfferMoneyEntity : saveCvcOfferMoneyEntityMap.values()) {
+            String key = "0".equals(ifMyCompany) ? cvcOfferMoneyEntity.getGoodName() + ":" + cvcOfferMoneyEntity.getCompanyName() : cvcOfferMoneyEntity.getGoodName();
+            CvcOfferMoneyEntity oldCvcOfferMoneyEntity = map.get(key);
+            // 如果系统中存在一样的商品，则先删除再新增
+            if (oldCvcOfferMoneyEntity != null) {
+                deleteCvcOfferMoneyEntityList.add(oldCvcOfferMoneyEntity);
+            }
+            cvcOfferMoneyEntity.setIfMyCompany(ifMyCompany);
+            cvcOfferMoneyEntity.setCompanyName(fileName);
+            try {
+                calculate(cvcOfferMoneyEntity);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 //		cvcOfferMoneyDao.batchInsert(cvcOfferMoneyEntityList);
-		commonDao.batchSave(cvcOfferMoneyEntityList);
-	}
+        commonDao.deleteAllEntitie(deleteCvcOfferMoneyEntityList);
+        commonDao.batchSave(cvcOfferMoneyEntityList);
+    }
 }

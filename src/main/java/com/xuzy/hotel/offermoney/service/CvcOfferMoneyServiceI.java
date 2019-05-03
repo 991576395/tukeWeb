@@ -29,5 +29,5 @@ public interface CvcOfferMoneyServiceI extends CommonService{
  	 */
  	public void upOrDownCalculate(CvcOfferMoneyEntity entity,double number) throws Exception;
 
-    void batchInsert(List<CvcOfferMoneyEntity> cvcOfferMoneyEntityList);
+    void batchInsert(List<CvcOfferMoneyEntity> cvcOfferMoneyEntityList, String ifMyCompany, String fileName);
 }
