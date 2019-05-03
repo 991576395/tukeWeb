@@ -387,7 +387,7 @@ public class CvcOfferMoneyController extends BaseController {
 			params.setNeedSave(true);
 			try {
 				String fileName = file.getOriginalFilename();
-				if(org.apache.commons.lang.StringUtils.isNotBlank(fileName)){
+				if(fileName.lastIndexOf(".") != -1 && org.apache.commons.lang.StringUtils.isNotBlank(fileName)){
 					fileName = fileName.substring(0, fileName.lastIndexOf("."));
 				}
 				List<CvcOfferMoneyEntity> cvcOfferMoneyEntityList = ExcelImportUtil.importExcel(file.getInputStream(),
