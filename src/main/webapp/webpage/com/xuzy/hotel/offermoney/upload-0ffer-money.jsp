@@ -16,7 +16,7 @@
     <fieldset class="step">
         <div class="form">
             <t:upload name="fiels" buttonText="选择要导入的文件"
-                      uploader="cvcOfferMoneyController.do?importOfferMoneyExcel" extend="*.xls;*.xlsx"
+                      uploader="cvcOfferMoneyController.do?importOfferMoneyExcel&ifMyCompany=${ifMyCompany}" extend="*.xls;*.xlsx"
                       id="file_upload" formData="documentTitle,orderBatchNo"></t:upload>
         </div>
         <div class="form" id="filediv" style="height: 50px"></div>

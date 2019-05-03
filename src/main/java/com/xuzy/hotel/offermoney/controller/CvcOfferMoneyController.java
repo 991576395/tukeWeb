@@ -1,5 +1,6 @@
 package com.xuzy.hotel.offermoney.controller;
 import com.appinterface.app.base.exception.XuException;
+import com.google.common.collect.Maps;
 import com.xuzy.hotel.offermoney.entity.CvcOfferMoneyEntity;
 import com.xuzy.hotel.offermoney.service.CvcOfferMoneyServiceI;
 import java.util.ArrayList;
@@ -359,8 +360,8 @@ public class CvcOfferMoneyController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(params = "toUpload", method = { RequestMethod.GET, RequestMethod.POST })
-	public ModelAndView toUpload(HttpServletRequest request) throws Exception {
-		return new ModelAndView("com/xuzy/hotel/offermoney/upload-0ffer-money");
+	public ModelAndView toUpload(HttpServletRequest request, @RequestParam(value="ifMyCompany") String ifMyCompany) throws Exception {
+		return new ModelAndView("com/xuzy/hotel/offermoney/upload-0ffer-money", "ifMyCompany", ifMyCompany);
 	}
 
 	@SuppressWarnings("unchecked")
