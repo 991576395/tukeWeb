@@ -278,7 +278,7 @@ public class CvcCompareResultEntity implements java.io.Serializable {
 	 *@return: java.lang.String  剔税价对比结果
 	 */
 
-	@Column(name ="TISHUIJIADBJG",nullable=true,length=32)
+	@Column(name ="TISHUIJIADBJG",nullable=true,length=100)
 	public java.lang.String getTishuijiadbjg(){
 		return this.tishuijiadbjg;
 	}
@@ -295,7 +295,7 @@ public class CvcCompareResultEntity implements java.io.Serializable {
 	 *@return: java.lang.String  含税价对比结果
 	 */
 
-	@Column(name ="HANSHUIJIADBJG",nullable=true,length=32)
+	@Column(name ="HANSHUIJIADBJG",nullable=true,length=100)
 	public java.lang.String getHanshuijiadbjg(){
 		return this.hanshuijiadbjg;
 	}
@@ -312,7 +312,7 @@ public class CvcCompareResultEntity implements java.io.Serializable {
 	 *@return: java.lang.String  货期对比结果
 	 */
 
-	@Column(name ="HUOQIDBJG",nullable=true,length=32)
+	@Column(name ="HUOQIDBJG",nullable=true,length=100)
 	public java.lang.String getHuoqidbjg(){
 		return this.huoqidbjg;
 	}

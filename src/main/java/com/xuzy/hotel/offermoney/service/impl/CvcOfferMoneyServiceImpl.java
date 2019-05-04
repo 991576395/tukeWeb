@@ -212,19 +212,15 @@ public class CvcOfferMoneyServiceImpl extends CommonServiceImpl implements CvcOf
 	@Override
 	public CvcOfferMoneyEntity calculate(CvcOfferMoneyEntity entity) throws Exception {
 //		commonDao.get(entityName, id);
-		List<CvcAddedvalueTaxEntity> addedvalueTaxEntities = cvcAddedvalueTaxService.getList(CvcAddedvalueTaxEntity.class);
-		//值税税率
-		BigDecimal zengzhishuishuilv = new BigDecimal(0);
-		if(CollectionUtils.isNotEmpty(addedvalueTaxEntities)) {
-			zengzhishuishuilv = new BigDecimal(addedvalueTaxEntities.get(0).getAddedvalueTax());
-			zengzhishuishuilv = zengzhishuishuilv
-								.divide(new BigDecimal(100)
-								.setScale(4,BigDecimal.ROUND_HALF_UP));
-		}
-
+//		List<CvcAddedvalueTaxEntity> addedvalueTaxEntities = cvcAddedvalueTaxService.getList(CvcAddedvalueTaxEntity.class);
+		//各种税率
+		BigDecimal zengzhishuishuilv = null;
+		//销售增值税
+		CvcAddedvalueTaxEntity xiaoshouzhengzhishuilv = cvcAddedvalueTaxService.getEntityByName("产品增值税");
 		//计算 销售的增值税
 		String xiaoshoubuhanshuijia = entity.getXiaoshoubuhanshuijia();
-		if(StringUtils.isNotEmpty(xiaoshoubuhanshuijia)) {
+		if(StringUtils.isNotEmpty(xiaoshoubuhanshuijia) && xiaoshouzhengzhishuilv != null) {
+			zengzhishuishuilv = getShuilv(xiaoshouzhengzhishuilv);
 			//销售的增值税
 			entity.setXiaoshoudezhengzhishui(new BigDecimal(xiaoshoubuhanshuijia)
 					.multiply(zengzhishuishuilv)
@@ -234,9 +230,11 @@ public class CvcOfferMoneyServiceImpl extends CommonServiceImpl implements CvcOf
 					.add(new BigDecimal(entity.getXiaoshoudezhengzhishui())).toString());
 		}
 
+		CvcAddedvalueTaxEntity caigouzengzhishuilv = cvcAddedvalueTaxService.getEntityByName("采购增值税");
 		//采购不含税价
 		String caigoubuhanshuijia = entity.getCaigoubuhanshuijia();
-		if(StringUtils.isNotEmpty(caigoubuhanshuijia)) {
+		if(StringUtils.isNotEmpty(caigoubuhanshuijia) && caigouzengzhishuilv!= null) {
+			zengzhishuishuilv = getShuilv(caigouzengzhishuilv);
 			//采购的增值税
 			entity.setCaigoudezengzhishui(new BigDecimal(caigoubuhanshuijia)
 					.multiply(zengzhishuishuilv)
@@ -246,9 +244,11 @@ public class CvcOfferMoneyServiceImpl extends CommonServiceImpl implements CvcOf
 					.add(new BigDecimal(entity.getCaigoudezengzhishui())).toString());
 		}
 
+		CvcAddedvalueTaxEntity yunfeizengzhishuilv = cvcAddedvalueTaxService.getEntityByName("运费增值税");
 		// 运费不含税价
 		String yunfeibuhanshuijia = entity.getYunfeibuhanshuijia();
-		if (StringUtils.isNotEmpty(yunfeibuhanshuijia)) {
+		if (StringUtils.isNotEmpty(yunfeibuhanshuijia) && yunfeizengzhishuilv != null) {
+			zengzhishuishuilv = getShuilv(yunfeizengzhishuilv);
 			// 运费增值税
 			entity.setYunfeizengzhishui(new BigDecimal(yunfeibuhanshuijia)
 					.multiply(zengzhishuishuilv).setScale(2, BigDecimal.ROUND_HALF_UP).toString());
@@ -256,10 +256,12 @@ public class CvcOfferMoneyServiceImpl extends CommonServiceImpl implements CvcOf
 			entity.setYunfeihanshuijia(
 					new BigDecimal(yunfeibuhanshuijia).add(new BigDecimal(entity.getYunfeizengzhishui())).toString());
 		}
-
+		
+		CvcAddedvalueTaxEntity baozhuangfeizengzhishuilv = cvcAddedvalueTaxService.getEntityByName("包装费增值税");
 		// 包装费不含税价
 		String baozhuanbuhanshuijia = entity.getBaozhuangfeibuhanshuijia();
-		if (StringUtils.isNotEmpty(baozhuanbuhanshuijia)) {
+		if (StringUtils.isNotEmpty(baozhuanbuhanshuijia) && baozhuangfeizengzhishuilv != null) {
+			zengzhishuishuilv = getShuilv(baozhuangfeizengzhishuilv);
 			// 包装费增值税
 			entity.setBaozhuangfeizengzhishui(new BigDecimal(baozhuanbuhanshuijia)
 					.multiply(zengzhishuishuilv).setScale(2, BigDecimal.ROUND_HALF_UP).toString());
@@ -267,10 +269,12 @@ public class CvcOfferMoneyServiceImpl extends CommonServiceImpl implements CvcOf
 			entity.setBaozhuangfeihanshuijia(
 					new BigDecimal(baozhuanbuhanshuijia).add(new BigDecimal(entity.getBaozhuangfeizengzhishui())).toString());
 		}
-
+		
+		CvcAddedvalueTaxEntity zhuangxiefeizengzhishuilv = cvcAddedvalueTaxService.getEntityByName("装卸费增值税");
 		// 装卸费不含税价
 		String zhuangxiefeibuhanshuijia = entity.getZhuangxiefeibuhanshuijia();
-		if (StringUtils.isNotEmpty(zhuangxiefeibuhanshuijia)) {
+		if (StringUtils.isNotEmpty(zhuangxiefeibuhanshuijia) && zhuangxiefeizengzhishuilv != null) {
+			zengzhishuishuilv = getShuilv(zhuangxiefeizengzhishuilv);
 			//装卸费增值税
 			entity.setZhuangxiefeizengzhishui(new BigDecimal(zhuangxiefeibuhanshuijia)
 					.multiply(zengzhishuishuilv).setScale(2, BigDecimal.ROUND_HALF_UP).toString());
@@ -278,10 +282,12 @@ public class CvcOfferMoneyServiceImpl extends CommonServiceImpl implements CvcOf
 			entity.setZhuangxiefeihanshuijia(new BigDecimal(zhuangxiefeibuhanshuijia)
 					.add(new BigDecimal(entity.getZhuangxiefeizengzhishui())).toString());
 		}
-
+		
+		CvcAddedvalueTaxEntity cangchufeizengzhishuilv = cvcAddedvalueTaxService.getEntityByName("仓储费增值税");
 		// 仓储费不含税价
 		String cangzhushuibuhanshuijia = entity.getCangchufeibuhanshuijia();
-		if (StringUtils.isNotEmpty(cangzhushuibuhanshuijia)) {
+		if (StringUtils.isNotEmpty(cangzhushuibuhanshuijia) && cangchufeizengzhishuilv != null) {
+			zengzhishuishuilv = getShuilv(cangchufeizengzhishuilv);
 			// 仓储费增值税
 			entity.setCangchufeizengzhishui(new BigDecimal(cangzhushuibuhanshuijia)
 					.multiply(zengzhishuishuilv).setScale(2, BigDecimal.ROUND_HALF_UP).toString());
@@ -382,36 +388,58 @@ public class CvcOfferMoneyServiceImpl extends CommonServiceImpl implements CvcOf
 		entity.setBendandanweichanpinbuhssj(entity.getXiaoshoubuhanshuijia());
 		entity.setBendandanweichanpinhssj(entity.getXiaoshouhanshuijia());
 		
+		
+		//折扣率
+		String guanwangtishuijia = entity.getGuangwangtishuijia();
+		if (StringUtils.isNotEmpty(guanwangtishuijia)) {
+			BigDecimal value = new BigDecimal(guanwangtishuijia).subtract(new BigDecimal(entity.getXiaoshoubuhanshuijia()));
+			value = value.divide(new BigDecimal(guanwangtishuijia),4, BigDecimal.ROUND_HALF_UP);
+			entity.setZhekoulv(value.multiply(new BigDecimal(100)).setScale(2, BigDecimal.ROUND_HALF_UP).toString());
+		}
 		return entity;
 	}
 
 
-	@Override
-	public void upOrDownCalculate(CvcOfferMoneyEntity entity, double number) throws Exception {
-		List<CvcAddedvalueTaxEntity> addedvalueTaxEntities = cvcAddedvalueTaxService.getList(CvcAddedvalueTaxEntity.class);
-		//值税税率
+	private BigDecimal getShuilv(CvcAddedvalueTaxEntity xiaoshouzhengzhishuilv) {
+		// 值税税率
 		BigDecimal zengzhishuishuilv = new BigDecimal(0);
-		if(CollectionUtils.isNotEmpty(addedvalueTaxEntities)) {
-			zengzhishuishuilv = new BigDecimal(addedvalueTaxEntities.get(0).getAddedvalueTax());
-			zengzhishuishuilv = zengzhishuishuilv
-								.divide(new BigDecimal(100)
-								.setScale(4,BigDecimal.ROUND_HALF_UP));
+		if (xiaoshouzhengzhishuilv != null) {
+			zengzhishuishuilv = new BigDecimal(xiaoshouzhengzhishuilv.getAddedvalueTax());
+			zengzhishuishuilv = zengzhishuishuilv.divide(new BigDecimal(100).setScale(4, BigDecimal.ROUND_HALF_UP));
 		}
+		return zengzhishuishuilv;
+	}
 
+	@Override
+	public void upOrDownCalculate(CvcOfferMoneyEntity entity,String goodName, double number) throws Exception {
+		if(entity == null) {
+			List<CvcOfferMoneyEntity> cvcOfferMoneyEntities = commonDao.findHql("from CvcOfferMoneyEntity where ifMyCompany = '1' and goodName=?",goodName);
+			if(CollectionUtils.isNotEmpty(cvcOfferMoneyEntities)) {
+				entity = cvcOfferMoneyEntities.get(0);
+			}
+			if(entity == null) {
+				//本公司该商品为空
+				return;
+			}
+		}
+		
+		CvcAddedvalueTaxEntity xiaoshouzhengzhishuilv = cvcAddedvalueTaxService.getEntityByName("产品增值税");
+		//值税税率
+		BigDecimal zengzhishuishuilv = getShuilv(xiaoshouzhengzhishuilv);
 		
 		boolean isAdd = number > 0;
 		//新比例
-		double newMath =  Math.abs(number);
+		BigDecimal newMath =  new BigDecimal(Math.abs(number)).divide(new BigDecimal(100),4,BigDecimal.ROUND_HALF_UP);
 		BigDecimal valueJinlirun = new BigDecimal(0);
 		if(StringUtils.isNotEmpty(entity.getBendanjinlirun())) {
 			//计算提升火减少净利润值
 			valueJinlirun = new BigDecimal(entity.getBendanjinlirun())
-					.multiply(new BigDecimal(newMath))
+					.multiply(newMath)
 					.setScale(2, BigDecimal.ROUND_HALF_UP);
 			if(isAdd) {
 				valueJinlirun = valueJinlirun.add(new BigDecimal(entity.getBendanjinlirun()));
 			}else {
-				valueJinlirun = valueJinlirun.subtract(new BigDecimal(entity.getBendanjinlirun()));
+				valueJinlirun = new BigDecimal(entity.getBendanjinlirun()).subtract(valueJinlirun);
 			}
 			valueJinlirun = valueJinlirun.divide(new BigDecimal(0.75),2, BigDecimal.ROUND_HALF_UP);
 			valueJinlirun = valueJinlirun.add(new BigDecimal(entity.getBendanchengben()));
@@ -452,30 +480,45 @@ public class CvcOfferMoneyServiceImpl extends CommonServiceImpl implements CvcOf
 			cvcCompareResultEntity.setCompanyName(cvcOfferMoneyEntity.getCompanyName());
 			cvcCompareResultEntity.setGoodName(cvcOfferMoneyEntity.getGoodName());
 			
-			if(cvcOfferMoneyEntity.getXiaoshoubuhanshuijia() != null && ourEntity.getXiaoshoubuhanshuijia() != null) {
+			if(StringUtils.isNotEmpty(cvcOfferMoneyEntity.getXiaoshoubuhanshuijia()) && StringUtils.isNotEmpty(ourEntity.getXiaoshoubuhanshuijia())) {
 				BigDecimal tishuiResult = new BigDecimal(cvcOfferMoneyEntity.getXiaoshoubuhanshuijia())
 						.divide(new BigDecimal(ourEntity.getXiaoshoubuhanshuijia()),2, BigDecimal.ROUND_HALF_UP);
-						tishuiResult = new BigDecimal(1).subtract(tishuiResult);
+						tishuiResult = tishuiResult.subtract(new BigDecimal(1));
 						tishuiResult = tishuiResult.multiply(new BigDecimal(100)
 								.setScale(2,BigDecimal.ROUND_HALF_UP));
-						cvcCompareResultEntity.setTishuijiadbjg(tishuiResult.toString());
+				if(tishuiResult.doubleValue() > 0) {
+					cvcCompareResultEntity.setTishuijiadbjg("<font color=\"green\">"+tishuiResult.toString()+"%</font>");
+				}	else {
+					cvcCompareResultEntity.setTishuijiadbjg("<font color=\"red\">"+tishuiResult.toString()+"%</font>");
+				}
+//				cvcCompareResultEntity.setTishuijiadbjg(tishuiResult.toString());
 			}
 			
-			if(cvcOfferMoneyEntity.getXiaoshouhanshuijia() != null && ourEntity.getXiaoshouhanshuijia() != null) {
+			
+			if(StringUtils.isNotEmpty(cvcOfferMoneyEntity.getXiaoshouhanshuijia()) && StringUtils.isNotEmpty(ourEntity.getXiaoshouhanshuijia())) {
 				BigDecimal hanshuiResult = new BigDecimal(cvcOfferMoneyEntity.getXiaoshouhanshuijia())
 						.divide(new BigDecimal(ourEntity.getXiaoshouhanshuijia()), 2, BigDecimal.ROUND_HALF_UP);
-				hanshuiResult = new BigDecimal(1).subtract(hanshuiResult);
+				hanshuiResult = hanshuiResult.subtract(new BigDecimal(1));
 				hanshuiResult = hanshuiResult.multiply(new BigDecimal(100).setScale(2, BigDecimal.ROUND_HALF_UP));
-				cvcCompareResultEntity.setHanshuijiadbjg(hanshuiResult.toString());
+				if(hanshuiResult.doubleValue() > 0) {
+					cvcCompareResultEntity.setHanshuijiadbjg("<font color=\"green\">"+hanshuiResult.toString()+"%</font>");
+				}else {
+					cvcCompareResultEntity.setHanshuijiadbjg("<font color=\"red\">"+hanshuiResult.toString()+"%</font>");
+				}
 			}
 			
 			
-			if(cvcOfferMoneyEntity.getQihuo() != null && ourEntity.getQihuo() != null){
+			if(StringUtils.isNotEmpty(cvcOfferMoneyEntity.getQihuo())  && StringUtils.isNotEmpty(ourEntity.getQihuo())){
 				BigDecimal qihuoResult = new BigDecimal(cvcOfferMoneyEntity.getQihuo())
 						.divide(new BigDecimal(ourEntity.getQihuo()), 2, BigDecimal.ROUND_HALF_UP);
-				qihuoResult = new BigDecimal(1).subtract(qihuoResult);
+				qihuoResult = qihuoResult.subtract(new BigDecimal(1));
 				qihuoResult = qihuoResult.multiply(new BigDecimal(100).setScale(2, BigDecimal.ROUND_HALF_UP));
 				cvcCompareResultEntity.setHuoqidbjg(qihuoResult.toString());
+				if(qihuoResult.doubleValue() > 0) {
+					cvcCompareResultEntity.setHuoqidbjg("<font color=\"green\">"+qihuoResult.toString()+"%</font>");
+				}else {
+					cvcCompareResultEntity.setHuoqidbjg("<font color=\"red\">"+qihuoResult.toString()+"%</font>");
+				}
 			}
 			
 			cvcCompareResultService.save(cvcCompareResultEntity);
@@ -522,4 +565,50 @@ public class CvcOfferMoneyServiceImpl extends CommonServiceImpl implements CvcOf
         commonDao.deleteAllEntitie(deleteCvcOfferMoneyEntityList);
         commonDao.batchSave(cvcOfferMoneyEntityList);
     }
+
+	@Override
+	public CvcOfferMoneyEntity getGoodNameEntity(String goodName) {
+		CvcOfferMoneyEntity ourEntity = null;
+		List<CvcOfferMoneyEntity> cvcOfferMoneyEntities = commonDao.findHql("from CvcOfferMoneyEntity where ifMyCompany = '1' and goodName=?",goodName.trim());
+		if(CollectionUtils.isNotEmpty(cvcOfferMoneyEntities)) {
+			ourEntity = cvcOfferMoneyEntities.get(0);
+		}
+		return ourEntity;
+	}
+
+	@Override
+	public void upOrDownTishuijiaCalculate(CvcOfferMoneyEntity entity, String goodName, double number)
+			throws Exception {
+		if(entity == null) {
+			List<CvcOfferMoneyEntity> cvcOfferMoneyEntities = commonDao.findHql("from CvcOfferMoneyEntity where ifMyCompany = '1' and goodName=?",goodName);
+			if(CollectionUtils.isNotEmpty(cvcOfferMoneyEntities)) {
+				entity = cvcOfferMoneyEntities.get(0);
+			}
+			if(entity == null) {
+				//本公司该商品为空
+				return;
+			}
+		}
+		
+		//值税税率
+		boolean isAdd = number > 0;
+		//新比例
+		BigDecimal newMath =  new BigDecimal(Math.abs(number)).divide(new BigDecimal(100),4,BigDecimal.ROUND_HALF_UP);
+		BigDecimal valueJinlirun = new BigDecimal(0);
+		if(StringUtils.isNotEmpty(entity.getXiaoshoubuhanshuijia())) {
+			//计算提升火减少净利润值
+			valueJinlirun = new BigDecimal(entity.getXiaoshoubuhanshuijia())
+					.multiply(newMath)
+					.setScale(2, BigDecimal.ROUND_HALF_UP);
+			if(isAdd) {
+				valueJinlirun = valueJinlirun.add(new BigDecimal(entity.getXiaoshoubuhanshuijia()));
+			}else {
+				valueJinlirun = new BigDecimal(entity.getXiaoshoubuhanshuijia()).subtract(valueJinlirun);
+			}
+		}
+		entity.setXiaoshoubuhanshuijia(valueJinlirun.toString());
+		entity = calculate(entity);
+		
+		commonDao.updateEntitie(entity);
+	}
 }

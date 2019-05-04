@@ -284,13 +284,21 @@ public class CvcOfferMoneyController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(params = "goUpdateValue")
-	public ModelAndView goUpdateValue(@RequestParam(required = true, value = "id") String id, HttpServletRequest req
-			,@RequestParam(required = true, value = "name")String name) {
+	public ModelAndView goUpdateValue(@RequestParam(required = false, value = "id") String id, HttpServletRequest req
+			,@RequestParam(required = true, value = "name")String name
+			,@RequestParam(required = true, value = "type")String type
+			,@RequestParam(required = false, value = "goodName")String goodName) {
 		if (StringUtil.isNotEmpty(id)) {
 			CvcOfferMoneyEntity cvcOfferMoney = cvcOfferMoneyService.getEntity(CvcOfferMoneyEntity.class, id);
 			req.setAttribute("cvcOfferMoneyPage", cvcOfferMoney);
 			req.setAttribute("name", name);
+		}else {
+			CvcOfferMoneyEntity cvcOfferMoney = cvcOfferMoneyService.getGoodNameEntity(goodName);
+			req.setAttribute("cvcOfferMoneyPage", cvcOfferMoney);
+			req.setAttribute("name", name);
 		}
+		req.setAttribute("goodName", goodName);
+		req.setAttribute("type", type);
 		return new ModelAndView("com/xuzy/hotel/offermoney/cvcOfferMoney-add");
 	}
 	
@@ -302,20 +310,35 @@ public class CvcOfferMoneyController extends BaseController {
 	 */
 	@RequestMapping(params = "upOrDownCalculate")
 	@ResponseBody
-	public AjaxJson upOrDownCalculate(@RequestParam(required = true, value = "id") String id
-			,@RequestParam(required = true, value = "name")String name,
-			@RequestParam(required = false, value = "number")String number,HttpServletRequest request) {
+	public AjaxJson upOrDownCalculate(@RequestParam(required = false, value = "id") String id
+			,@RequestParam(required = true, value = "name")String name
+			,@RequestParam(required = true, value = "type")String type,
+			@RequestParam(required = false, value = "number")String number,
+			@RequestParam(required = false, value = "goodName")String goodName,HttpServletRequest request) {
 		String message = null;
 		AjaxJson j = new AjaxJson();
 		message = "上下调成功";
 		try{
+			double numberValue = Double.parseDouble(number);
+			if("下调".equals(name)) {
+				numberValue = 0 - numberValue;
+			}
 			if (StringUtil.isNotEmpty(id)) {
 				CvcOfferMoneyEntity cvcOfferMoney = cvcOfferMoneyService.getEntity(CvcOfferMoneyEntity.class, id);
-				double numberValue = Double.parseDouble(number);
-				if("下调".equals(name)) {
-					numberValue = 0 - numberValue;
+				if("1".equals(type)) {
+					//利润上下调
+					cvcOfferMoneyService.upOrDownCalculate(cvcOfferMoney,cvcOfferMoney.getGoodName(), numberValue);
+				}else {
+					cvcOfferMoneyService.upOrDownTishuijiaCalculate(cvcOfferMoney,cvcOfferMoney.getGoodName(), numberValue);
 				}
-				cvcOfferMoneyService.upOrDownCalculate(cvcOfferMoney, numberValue);
+				
+			}else {
+				if("1".equals(type)) {
+					//利润上下调
+					cvcOfferMoneyService.upOrDownCalculate(null,goodName, numberValue);
+				}else {
+					cvcOfferMoneyService.upOrDownTishuijiaCalculate(null,goodName, numberValue);
+				}
 			}
 			systemService.addLog(message, Globals.Log_Type_UPDATE, Globals.Log_Leavel_INFO);
 		}catch(Exception e){

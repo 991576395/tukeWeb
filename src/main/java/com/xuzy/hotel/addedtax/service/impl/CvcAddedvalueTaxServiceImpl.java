@@ -135,4 +135,9 @@ public class CvcAddedvalueTaxServiceImpl extends CommonServiceImpl implements Cv
 			} 
 		}
  	}
+
+	@Override
+	public CvcAddedvalueTaxEntity getEntityByName(String name) {
+		return commonDao.findUniqueByProperty(CvcAddedvalueTaxEntity.class, "taxName", name);
+	}
 }

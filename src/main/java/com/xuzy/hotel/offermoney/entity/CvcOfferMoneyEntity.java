@@ -162,7 +162,20 @@ public class CvcOfferMoneyEntity implements java.io.Serializable {
 	/**
 	 * 公司名称
 	 */
+	@Excel(name="公司名称")
 	private String companyName;
+	
+	/**
+	 * 官网剔税价
+	 */
+	@Excel(name="官网剔税价")
+	private String guangwangtishuijia;
+	
+	/**
+	 * 折扣率
+	 */
+	@Excel(name="折扣率")
+	private String zhekoulv;
 	/**
 	 *方法: 取得java.lang.String
 	 *@return: java.lang.String  主键
@@ -840,4 +853,24 @@ public class CvcOfferMoneyEntity implements java.io.Serializable {
 	public void setCompanyName(String companyName) {
 		this.companyName = companyName;
 	}
+
+	@Column(name ="guangwangtishuijia",nullable=false,length=32)
+	public String getGuangwangtishuijia() {
+		return guangwangtishuijia;
+	}
+
+	public void setGuangwangtishuijia(String guangwangtishuijia) {
+		this.guangwangtishuijia = guangwangtishuijia;
+	}
+	
+	@Column(name ="zhekoulv",nullable=false,length=32)
+	public String getZhekoulv() {
+		return zhekoulv;
+	}
+
+	public void setZhekoulv(String zhekoulv) {
+		this.zhekoulv = zhekoulv;
+	}
+	
+	
 }

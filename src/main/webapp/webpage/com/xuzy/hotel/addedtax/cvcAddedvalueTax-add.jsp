@@ -13,54 +13,18 @@
   <t:formvalid formid="formobj" dialog="true" usePlugin="password" layout="table" action="cvcAddedvalueTaxController.do?doAdd" >
 					<input id="id" name="id" type="hidden" value="${cvcAddedvalueTaxPage.id }"/>
 		<table style="width: 600px;" cellpadding="0" cellspacing="1" class="formtable">
+				
 				<tr>
 					<td align="right">
 						<label class="Validform_label">
-							创建人名称:
+							税种名称:
 						</label>
 					</td>
 					<td class="value">
-					     	 <input id="createName" name="createName" type="text" style="width: 150px" class="inputxt"  ignore="ignore" />
-							<span class="Validform_checktip"></span>
-							<label class="Validform_label" style="display: none;">创建人名称</label>
+					     	 <input id="taxName" name="taxName" type="text" style="width: 150px" class="inputxt"    ignore="ignore" />
 						</td>
 				</tr>
-				<tr>
-					<td align="right">
-						<label class="Validform_label">
-							创建人登录名称:
-						</label>
-					</td>
-					<td class="value">
-					     	 <input id="createBy" name="createBy" type="text" style="width: 150px" class="inputxt"  ignore="ignore" />
-							<span class="Validform_checktip"></span>
-							<label class="Validform_label" style="display: none;">创建人登录名称</label>
-						</td>
-				</tr>
-				<tr>
-					<td align="right">
-						<label class="Validform_label">
-							创建日期:
-						</label>
-					</td>
-					<td class="value">
-							   <input id="createDate" name="createDate" type="text" style="width: 150px" class="Wdate" onClick="WdatePicker()"  ignore="ignore" />    
-							<span class="Validform_checktip"></span>
-							<label class="Validform_label" style="display: none;">创建日期</label>
-						</td>
-				</tr>
-				<tr>
-					<td align="right">
-						<label class="Validform_label">
-							更新日期:
-						</label>
-					</td>
-					<td class="value">
-							   <input id="updateDate" name="updateDate" type="text" style="width: 150px" class="Wdate" onClick="WdatePicker()"  ignore="ignore" />    
-							<span class="Validform_checktip"></span>
-							<label class="Validform_label" style="display: none;">更新日期</label>
-						</td>
-				</tr>
+				
 				<tr>
 					<td align="right">
 						<label class="Validform_label">

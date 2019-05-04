@@ -16,6 +16,8 @@
   <t:formvalid formid="formobj" dialog="true" usePlugin="password" layout="table" action="cvcOfferMoneyController.do?upOrDownCalculate" >
 					<input id="id" name="id" type="hidden" value="${cvcOfferMoneyPage.id}"/>
 					<input id="name" name="name" type="hidden" value="${name}"/>
+					<input id="goodName" name="goodName" type="hidden" value="${goodName}"/>
+					<input id="type" name="type" type="hidden" value="${type}"/>
 		<table style="width: 600px;" cellpadding="0" cellspacing="1" class="formtable">
 				<tr>
 					<td align="right">

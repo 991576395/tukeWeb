@@ -3,7 +3,7 @@
 <t:base type="jquery,easyui,tools,DatePicker"></t:base>
 <div class="easyui-layout" fit="true">
   <div region="center" style="padding:0px;border:0px">
-  <t:datagrid name="cvcCompareResultList" checkbox="false" pagination="true" fitColumns="true" title="对比结果表" actionUrl="cvcCompareResultController.do?datagrid" idField="id" fit="true" queryMode="group">
+  <t:datagrid name="cvcCompareResultList" checkbox="false" pagination="false" fitColumns="true" title="对比结果表" actionUrl="cvcCompareResultController.do?datagrid" idField="id" fit="true" queryMode="group">
    <t:dgCol title="主键"  field="id"  hidden="true"  queryMode="single"  width="120"></t:dgCol>
    <t:dgCol title="创建人名称"  field="createName"  hidden="true"  queryMode="single"  width="120"></t:dgCol>
    <t:dgCol title="创建人登录名称"  field="createBy"  hidden="true"  queryMode="single"  width="120"></t:dgCol>
@@ -13,21 +13,28 @@
    <t:dgCol title="更新日期"  field="updateDate"  formatter="yyyy-MM-dd"  hidden="true"  queryMode="single"  width="120"></t:dgCol>
    <t:dgCol title="所属部门"  field="sysOrgCode"  hidden="true"  queryMode="single"  width="120"></t:dgCol>
    <t:dgCol title="所属公司"  field="sysCompanyCode"  hidden="true"  queryMode="single"  width="120"></t:dgCol>
-   <t:dgCol title="流程状态"  field="bpmStatus"  queryMode="single"  dictionary="bpm_status"  width="120"></t:dgCol>
+   <t:dgCol title="流程状态"  field="bpmStatus"  queryMode="single"  hidden="true"  dictionary="bpm_status"  width="120"></t:dgCol>
    <t:dgCol title="公司名称"  field="companyName"  queryMode="single"  width="120"></t:dgCol>
    <t:dgCol title="商品名称"  field="goodName"  queryMode="single"  width="120"></t:dgCol>
-   <t:dgCol title="剔税价对比结果"  field="tishuijiadbjg"  queryMode="single"  width="120"></t:dgCol>
+   <t:dgCol title="剔税价对比结果"  field="tishuijiadbjg"   queryMode="single"  width="120"></t:dgCol>
    <t:dgCol title="含税价对比结果"  field="hanshuijiadbjg"  queryMode="single"  width="120"></t:dgCol>
    <t:dgCol title="货期对比结果"  field="huoqidbjg"  queryMode="single"  width="120"></t:dgCol>
-   <t:dgCol title="操作" field="opt" width="100"></t:dgCol>
-   <t:dgDelOpt title="删除" url="cvcCompareResultController.do?doDel&id={id}" urlclass="ace_button"  urlfont="fa-trash-o"/>
-   <t:dgToolBar title="录入" icon="icon-add" url="cvcCompareResultController.do?goAdd" funname="add"></t:dgToolBar>
-   <t:dgToolBar title="编辑" icon="icon-edit" url="cvcCompareResultController.do?goUpdate" funname="update"></t:dgToolBar>
-   <t:dgToolBar title="批量删除"  icon="icon-remove" url="cvcCompareResultController.do?doBatchDel" funname="deleteALLSelect"></t:dgToolBar>
-   <t:dgToolBar title="查看" icon="icon-search" url="cvcCompareResultController.do?goUpdate" funname="detail"></t:dgToolBar>
-   <t:dgToolBar title="导入" icon="icon-put" funname="ImportXls"></t:dgToolBar>
-   <t:dgToolBar title="导出" icon="icon-putout" funname="ExportXls"></t:dgToolBar>
-   <t:dgToolBar title="模板下载" icon="icon-putout" funname="ExportXlsByT"></t:dgToolBar>
+<%--    <t:dgCol title="操作" field="opt" width="100"></t:dgCol> --%>
+<%--    <t:dgOpenOpt title="利润上调" width="700" height="600" url="cvcOfferMoneyController.do?goUpdateValue&name=上调&goodName={goodName}" urlclass="ace_button"  urlfont="fa-add-o"/> --%>
+<%--    <t:dgOpenOpt title="利润下调" width="700" height="600" url="cvcOfferMoneyController.do?goUpdateValue&name=下调&goodName={goodName}" urlclass="ace_button"  urlfont="fa-add-o"/> --%>
+<%--    <t:dgToolBar title="录入" icon="icon-add" url="cvcCompareResultController.do?goAdd" funname="add"></t:dgToolBar> --%>
+<%--    <t:dgToolBar title="编辑" icon="icon-edit" url="cvcCompareResultController.do?goUpdate" funname="update"></t:dgToolBar> --%>
+<%--    <t:dgToolBar title="批量删除"  icon="icon-remove" url="cvcCompareResultController.do?doBatchDel" funname="deleteALLSelect"></t:dgToolBar> --%>
+<%--    <t:dgToolBar title="查看" icon="icon-search" url="cvcCompareResultController.do?goUpdate" funname="detail"></t:dgToolBar> --%>
+<%--    <t:dgToolBar title="导入" icon="icon-put" funname="ImportXls"></t:dgToolBar> --%>
+<%--    <t:dgToolBar title="导出" icon="icon-putout" funname="ExportXls"></t:dgToolBar> --%>
+<%--    <t:dgToolBar title="模板下载" icon="icon-putout" funname="ExportXlsByT"></t:dgToolBar> --%>
+
+ <t:dgToolBar title="利润上调" icon="icon-add" url="cvcOfferMoneyController.do?goUpdateValue&name=上调&type=1" funname="toUpdate"></t:dgToolBar>
+   <t:dgToolBar title="利润下调" icon="icon-add" url="cvcOfferMoneyController.do?goUpdateValue&name=下调&type=1" funname="toUpdate"></t:dgToolBar>
+   
+   <t:dgToolBar title="剔税价上调" icon="icon-add" url="cvcOfferMoneyController.do?goUpdateValue&name=上调&type=2" funname="toUpdate"></t:dgToolBar>
+   <t:dgToolBar title="剔税价下调" icon="icon-add" url="cvcOfferMoneyController.do?goUpdateValue&name=下调&type=2" funname="toUpdate"></t:dgToolBar>
   </t:datagrid>
   </div>
  </div>
@@ -36,7 +43,45 @@
  $(document).ready(function(){
  });
  
-   
+ function toUpdate(title, url, id, width, height, isRestful) {
+		var rowsData = $('#' + id).datagrid('getSelections');
+		if (!rowsData || rowsData.length == 0) {
+			tip('请选择操作商品');
+			return;
+		}
+		if (rowsData.length > 1) {
+			tip('请选择一条商品再操作');
+			return;
+		}
+		if (isRestful != 'undefined' && isRestful) {
+			url += '/' + rowsData[0].goodName;
+		} else {
+			url += '&goodName=' + rowsData[0].goodName;
+		}
+		createwindow(title,url,width, height);
+	}
+
+	function createMywindow(title, addurl, width, height) {
+		width = width ? width : 700;
+		height = height ? height : 400;
+		if (width == "100%" || height == "100%") {
+			width = window.top.document.body.offsetWidth;
+			height = window.top.document.body.offsetHeight - 100;
+		}
+		$.dialog({
+			content : 'url:' + addurl,
+			lock : true,
+			zIndex : getzIndex(),
+			width : width,
+			height : height,
+			title : title,
+			opacity : 0.3,
+			cache : false,
+			cancelVal : '关闭',
+			cancel : true
+		/*为true等价于function(){}*/
+		});
+	}
  
 //导入
 function ImportXls() {

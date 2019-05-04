@@ -34,7 +34,18 @@ public interface CvcOfferMoneyServiceI extends CommonService{
  	 * @param number
  	 * @throws Exception
  	 */
- 	public void upOrDownCalculate(CvcOfferMoneyEntity entity,double number) throws Exception;
+ 	public void upOrDownCalculate(CvcOfferMoneyEntity entity,String goodName,double number) throws Exception;
+ 	
+ 	/**
+ 	 * 上下调剔税价，销售不含税价
+ 	 * @param entity
+ 	 * @param number
+ 	 * @throws Exception
+ 	 */
+ 	public void upOrDownTishuijiaCalculate(CvcOfferMoneyEntity entity,String goodName,double number) throws Exception;
 
     void batchInsert(List<CvcOfferMoneyEntity> cvcOfferMoneyEntityList, String ifMyCompany, String fileName);
+    
+    
+    public CvcOfferMoneyEntity getGoodNameEntity(String goodName) ;
 }

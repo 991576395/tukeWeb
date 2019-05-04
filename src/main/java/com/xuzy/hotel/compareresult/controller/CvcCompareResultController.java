@@ -66,6 +66,7 @@ import javax.validation.Validator;
 import java.net.URI;
 import org.springframework.http.MediaType;
 import org.springframework.web.util.UriComponentsBuilder;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jeecgframework.jwt.util.GsonUtil;
 import org.jeecgframework.jwt.util.ResponseMessage;
@@ -110,11 +111,7 @@ public class CvcCompareResultController extends BaseController {
 	 */
 	@RequestMapping(params = "list")
 	public ModelAndView list(HttpServletRequest request) {
-		try {
-			cvcOfferMoneyService.calculateOther();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		
 		return new ModelAndView("com/xuzy/hotel/compareresult/cvcCompareResultList");
 	}
 
@@ -129,6 +126,12 @@ public class CvcCompareResultController extends BaseController {
 
 	@RequestMapping(params = "datagrid")
 	public void datagrid(CvcCompareResultEntity cvcCompareResult,HttpServletRequest request, HttpServletResponse response, DataGrid dataGrid) {
+		try {
+			cvcOfferMoneyService.calculateOther();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		CriteriaQuery cq = new CriteriaQuery(CvcCompareResultEntity.class, dataGrid);
 		//查询条件组装器
 		org.jeecgframework.core.extend.hqlsearch.HqlGenerateUtil.installHql(cq, cvcCompareResult, request.getParameterMap());
@@ -139,9 +142,12 @@ public class CvcCompareResultController extends BaseController {
 		}
 		cq.add();
 		this.cvcCompareResultService.getDataGridReturn(cq, true);
+		
+		
 		TagUtil.datagrid(response, dataGrid);
 	}
 	
+
 	/**
 	 * 删除对比结果表
 	 * 
