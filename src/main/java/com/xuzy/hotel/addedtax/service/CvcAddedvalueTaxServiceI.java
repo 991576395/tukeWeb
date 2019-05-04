@@ -12,4 +12,6 @@ public interface CvcAddedvalueTaxServiceI extends CommonService{
  	
  	public void saveOrUpdate(CvcAddedvalueTaxEntity entity) throws Exception;
  	
+ 	public CvcAddedvalueTaxEntity getEntityByName(String name) ;
+ 	
 }

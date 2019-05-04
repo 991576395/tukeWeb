@@ -41,6 +41,9 @@
    <t:dgCol title="本单毛利率"  field="bendanmaolilv"  queryMode="single"  width="120"></t:dgCol>
    <t:dgCol title="本单单位产品不含税售价"  field="bendandanweichanpinbuhssj"  queryMode="single"  width="120"></t:dgCol>
    <t:dgCol title="本单单位产品含税售价"  field="bendandanweichanpinhssj"  queryMode="single"  width="120"></t:dgCol>
+   <t:dgCol title="期货"  field="qihuo"  queryMode="single"  width="120"></t:dgCol>
+   <t:dgCol title="官网剔税价"  field="guangwangtishuijia"  queryMode="single"  width="120"></t:dgCol>
+   <t:dgCol title="折扣率（%）"  field="zhekoulv"  queryMode="single"  width="120"></t:dgCol>
    <t:dgCol title="操作" field="opt" width="100"></t:dgCol>
    <t:dgDelOpt title="删除" url="cvcOfferMoneyController.do?doDel&id={id}" urlclass="ace_button"  urlfont="fa-trash-o"/>
    <t:dgToolBar title="编辑" icon="icon-edit" url="cvcOfferMoneyController.do?goUpdate" funname="update"></t:dgToolBar>
@@ -50,9 +53,9 @@
    <%--<t:dgToolBar title="导入" icon="icon-put" funname="ImportXls"></t:dgToolBar>--%>
    <t:dgToolBar title="导出" icon="icon-putout" funname="ExportXls"></t:dgToolBar>
    
-   <t:dgToolBar title="对比本公司报价" icon="icon-search" url="cvcCompareResultController.do?list" funname="toUpdate"></t:dgToolBar>
+   <t:dgToolBar title="对比本公司报价" icon="icon-search" url="cvcCompareResultController.do?list" funname="toLoadNewTab"></t:dgToolBar>
    
-   <t:dgToolBar title="模板下载" icon="icon-putout" funname="ExportXlsByT"></t:dgToolBar>
+<%--    <t:dgToolBar title="模板下载" icon="icon-putout" funname="ExportXlsByT"></t:dgToolBar> --%>
   </t:datagrid>
   </div>
  </div>
@@ -60,7 +63,12 @@
  <script type="text/javascript">
  $(document).ready(function(){
  });
- 
+ function toLoadNewTab(title,url) {
+		var label = title;
+		var h = url,
+		m = 0;
+		parent.addIframeMy(h,m,label);
+	}
 
 	function toUpdate(title, url, id, width, height, isRestful) {
 		/* var rowsData = $('#' + id).datagrid('getSelections');
@@ -81,8 +89,8 @@
 	}
 
 	function createMywindow(title, addurl, width, height) {
-		width = width ? width : 700;
-		height = height ? height : 400;
+		width = width ? width : 800;
+		height = height ? height : 600;
 		if (width == "100%" || height == "100%") {
 			width = window.top.document.body.offsetWidth;
 			height = window.top.document.body.offsetHeight - 100;

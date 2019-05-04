@@ -42,6 +42,8 @@
    <t:dgCol title="本单单位产品不含税售价"  field="bendandanweichanpinbuhssj"  queryMode="single"  width="120"></t:dgCol>
    <t:dgCol title="本单单位产品含税售价"  field="bendandanweichanpinhssj"  queryMode="single"  width="120"></t:dgCol>
    <t:dgCol title="期货"  field="qihuo"  queryMode="single"  width="120"></t:dgCol>
+   <t:dgCol title="官网剔税价"  field="guangwangtishuijia"  queryMode="single"  width="120"></t:dgCol>
+   <t:dgCol title="折扣率（%）"  field="zhekoulv"  queryMode="single"  width="120"></t:dgCol>
    <t:dgCol title="操作" field="opt" width="100"></t:dgCol>
    <t:dgDelOpt title="删除" url="cvcOfferMoneyController.do?doDel&id={id}" urlclass="ace_button"  urlfont="fa-trash-o"/>
 <%--    <t:dgToolBar title="录入" icon="icon-add" url="cvcOfferMoneyController.do?goAdd" funname="add"></t:dgToolBar> --%>
@@ -52,8 +54,11 @@
 <%--    <t:dgToolBar title="导入" icon="icon-put" funname="ImportXls"></t:dgToolBar> --%>
    <t:dgToolBar title="导出" icon="icon-putout" funname="ExportXls"></t:dgToolBar>
    
-   <t:dgToolBar title="利润上调" icon="icon-add" url="cvcOfferMoneyController.do?goUpdateValue&name=上调" funname="toUpdate"></t:dgToolBar>
-   <t:dgToolBar title="利润下调" icon="icon-add" url="cvcOfferMoneyController.do?goUpdateValue&name=下调" funname="toUpdate"></t:dgToolBar>
+   <t:dgToolBar title="利润上调" icon="icon-add" url="cvcOfferMoneyController.do?goUpdateValue&name=上调&type=1" funname="toUpdate"></t:dgToolBar>
+   <t:dgToolBar title="利润下调" icon="icon-add" url="cvcOfferMoneyController.do?goUpdateValue&name=下调&type=1" funname="toUpdate"></t:dgToolBar>
+   
+   <t:dgToolBar title="销售不含税价上调" icon="icon-add" url="cvcOfferMoneyController.do?goUpdateValue&name=上调&type=2" funname="toUpdate"></t:dgToolBar>
+   <t:dgToolBar title="利销售不含税价下调" icon="icon-add" url="cvcOfferMoneyController.do?goUpdateValue&name=下调&type=2" funname="toUpdate"></t:dgToolBar>
 <%--    <t:dgToolBar title="模板下载" icon="icon-putout" funname="ExportXlsByT"></t:dgToolBar> --%>
   </t:datagrid>
   </div>

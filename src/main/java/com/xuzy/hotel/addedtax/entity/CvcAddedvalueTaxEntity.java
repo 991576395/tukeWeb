@@ -59,6 +59,10 @@ public class CvcAddedvalueTaxEntity implements java.io.Serializable {
 	private java.lang.Double addedvalueTax;
 	
 	/**
+	 * 税种名称
+	 */
+	private String taxName;
+	/**
 	 *方法: 取得java.lang.String
 	 *@return: java.lang.String  主键
 	 */
@@ -248,4 +252,14 @@ public class CvcAddedvalueTaxEntity implements java.io.Serializable {
 	public void setAddedvalueTax(java.lang.Double addedvalueTax){
 		this.addedvalueTax = addedvalueTax;
 	}
+
+	@Column(name ="TAXNAME",nullable=true,length=32)
+	public String getTaxName() {
+		return taxName;
+	}
+
+	public void setTaxName(String taxName) {
+		this.taxName = taxName;
+	}
+	
 }
