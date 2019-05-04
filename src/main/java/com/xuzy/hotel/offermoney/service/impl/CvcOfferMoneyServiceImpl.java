@@ -1,6 +1,7 @@
 package com.xuzy.hotel.offermoney.service.impl;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -381,8 +382,8 @@ public class CvcOfferMoneyServiceImpl extends CommonServiceImpl implements CvcOf
 		//本单毛利率
 		entity.setBendanmaolilv(
 				new BigDecimal(entity.getBendanlirun())
-				.multiply(new BigDecimal(entity.getXiaoshoubuhanshuijia()))
-				.setScale(2, BigDecimal.ROUND_HALF_UP)
+				.divide(new BigDecimal(entity.getXiaoshoubuhanshuijia()),2, BigDecimal.ROUND_HALF_UP)
+				.multiply(new BigDecimal(100))
 				.toString());
 
 		entity.setBendandanweichanpinbuhssj(entity.getXiaoshoubuhanshuijia());
