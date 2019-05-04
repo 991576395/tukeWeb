@@ -16,9 +16,15 @@
    <t:dgCol title="流程状态"  field="bpmStatus"  queryMode="single"  hidden="true"  dictionary="bpm_status"  width="120"></t:dgCol>
    <t:dgCol title="公司名称"  field="companyName"  queryMode="single"  width="120"></t:dgCol>
    <t:dgCol title="商品名称"  field="goodName"  queryMode="single"  width="120"></t:dgCol>
+<<<<<<< HEAD
    <t:dgCol title="剔税价对比结果"  field="tishuijiadbjg" formatterjs="formatAgeFun"   queryMode="single"  width="120"></t:dgCol>
    <t:dgCol title="含税价对比结果"  field="hanshuijiadbjg" formatterjs="formatAgeFun"  queryMode="single"  width="120"></t:dgCol>
    <t:dgCol title="货期对比结果"  field="huoqidbjg" formatterjs="formatAgeFun"  queryMode="single"  width="120"></t:dgCol>
+=======
+   <t:dgCol title="剔税价对比结果"  field="tishuijiadbjg"   queryMode="single"  width="120"></t:dgCol>
+   <t:dgCol title="含税价对比结果"  field="hanshuijiadbjg"  queryMode="single"  width="120"></t:dgCol>
+   <t:dgCol title="货期对比结果"  field="huoqidbjg"  queryMode="single"  width="120"></t:dgCol>
+>>>>>>> refs/remotes/origin/master
 <%--    <t:dgCol title="操作" field="opt" width="100"></t:dgCol> --%>
 <%--    <t:dgOpenOpt title="利润上调" width="700" height="600" url="cvcOfferMoneyController.do?goUpdateValue&name=上调&goodName={goodName}" urlclass="ace_button"  urlfont="fa-add-o"/> --%>
 <%--    <t:dgOpenOpt title="利润下调" width="700" height="600" url="cvcOfferMoneyController.do?goUpdateValue&name=下调&goodName={goodName}" urlclass="ace_button"  urlfont="fa-add-o"/> --%>
