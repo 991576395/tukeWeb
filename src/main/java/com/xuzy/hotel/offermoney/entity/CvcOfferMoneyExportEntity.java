@@ -27,9 +27,8 @@ import org.jeecgframework.poi.excel.annotation.Excel;
  *
  */
 @Entity
-@Table(name = "cvc_offer_money", schema = "")
 @SuppressWarnings("serial")
-public class CvcOfferMoneyEntity implements java.io.Serializable {
+public class CvcOfferMoneyExportEntity implements java.io.Serializable {
 	/**主键*/
 	private java.lang.String id;
 	/**是否本公司*/
@@ -128,7 +127,7 @@ public class CvcOfferMoneyEntity implements java.io.Serializable {
 	@Excel(name="本单税金流出",width=15)
 	private java.lang.String bendanshuijinliuchu;
 	/**本单毛利率*/
-	@Excel(name="本单毛利率",width=15)
+	@Excel(name="本单毛利率(单位:%)",width=15)
 	private java.lang.String bendanmaolilv;
 	/**本单单位产品不含税售价*/
 	@Excel(name="本单单位产品不含税售价",width=15)

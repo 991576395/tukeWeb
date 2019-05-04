@@ -3,7 +3,7 @@
 <t:base type="jquery,easyui,tools,DatePicker"></t:base>
 <div class="easyui-layout" fit="true">
   <div region="center" style="padding:0px;border:0px">
-  <t:datagrid name="cvcOfferMoneyList" checkbox="false" pagination="true" fitColumns="false" collapsible="false" title="报价表" actionUrl="cvcOfferMoneyController.do?datagrid" idField="id" fit="true" queryMode="group">
+  <t:datagrid name="cvcOfferMoneyList" checkbox="true" pagination="false" fitColumns="false" collapsible="false" title="报价表" actionUrl="cvcOfferMoneyController.do?datagrid" idField="id" fit="true" queryMode="group">
    <t:dgCol title="主键"  field="id"  hidden="true"  queryMode="single"  width="120"></t:dgCol>
    <t:dgCol title="商品名称"  field="goodName"  queryMode="single"  width="120"></t:dgCol>
    <t:dgCol title="是否本公司"  field="ifMyCompany"  queryMode="single" hidden="true"  dictionary="bpm_status"  width="120"></t:dgCol>
@@ -38,7 +38,7 @@
    <t:dgCol title="本单成本现金流出"  field="bendanchenbenxianjinliuchu"  queryMode="single"  width="120"></t:dgCol>
    <t:dgCol title="本单净现金流"  field="bendanjinxianjinliu"  queryMode="single"  width="120"></t:dgCol>
    <t:dgCol title="本单税金流出"  field="bendanshuijinliuchu"  queryMode="single"  width="120"></t:dgCol>
-   <t:dgCol title="本单毛利率"  field="bendanmaolilv"  queryMode="single"  width="120"></t:dgCol>
+   <t:dgCol title="本单毛利率（单位:%）"  field="bendanmaolilv"  queryMode="single"  width="120"></t:dgCol>
    <t:dgCol title="本单单位产品不含税售价"  field="bendandanweichanpinbuhssj"  queryMode="single"  width="120"></t:dgCol>
    <t:dgCol title="本单单位产品含税售价"  field="bendandanweichanpinhssj"  queryMode="single"  width="120"></t:dgCol>
    <t:dgCol title="期货"  field="qihuo"  queryMode="single"  width="120"></t:dgCol>
@@ -69,21 +69,34 @@
  });
  
 		function toUpdate(title, url, id, width, height, isRestful) {
+			var ids = "";
 			var rowsData = $('#' + id).datagrid('getSelections');
 			if (!rowsData || rowsData.length == 0) {
 				tip('请选择操作订单');
 				return;
+			}			
+			
+			if (rowsData.length > 0) {
+				for ( var i = 0; i < rowsData.length; i++) {
+					if(i == 0){
+						ids = rowsData[i].id;
+					}else{
+						ids += "," + rowsData[i].id;
+					}
+				}
 			}
-			if (rowsData.length > 1) {
-				tip('请选择一条订单再操作');
-				return;
-			}
-			if (isRestful != 'undefined' && isRestful) {
-				url += '/' + rowsData[0].id;
-			} else {
-				url += '&id=' + rowsData[0].id;
-			}
-			createwindow(title,url,width, height);
+			
+// 			if (rowsData.length > 1) {
+// 				tip('请选择一条订单再操作');
+// 				return;
+// 			}
+// 			if (isRestful != 'undefined' && isRestful) {
+// 				url += '/' + rowsData[0].id;
+// 			} else {
+// 				url += '&id=' + rowsData[0].id;
+// 			}
+			url	+= '&ids='+ids;
+			createMywindow(title,url,width, height);
 		}
 
 		function createMywindow(title, addurl, width, height) {
@@ -102,10 +115,17 @@
 				title : title,
 				opacity : 0.3,
 				cache : false,
+				ok: function(){
+			    	iframe = this.iframe.contentWindow;
+					saveObj();
+					cvcOfferMoneyListsearch();
+					return false;
+			    },
 				cancelVal : '关闭',
-				cancel : true
+			    cancel: true
 			/*为true等价于function(){}*/
-			});
+			}
+			);
 		}
 
 		//导入
