@@ -117,7 +117,7 @@ function ImportXls() {
 
 //导出
 function ExportXls() {
-	JeecgExcelExport("cvcOfferMoneyController.do?exportXls","cvcOfferMoneyList");
+	JeecgExcelExport("cvcOfferMoneyController.do?exportOtherXls","cvcOfferMoneyList");
 }
 
 //模板下载

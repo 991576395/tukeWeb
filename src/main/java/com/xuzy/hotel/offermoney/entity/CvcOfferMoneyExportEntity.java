@@ -27,155 +27,154 @@ import org.jeecgframework.poi.excel.annotation.Excel;
  *
  */
 @Entity
-@Table(name = "cvc_offer_money", schema = "")
 @SuppressWarnings("serial")
-public class CvcOfferMoneyEntity implements java.io.Serializable {
+public class CvcOfferMoneyExportEntity implements java.io.Serializable {
 	/**主键*/
 	private java.lang.String id;
 	/**是否本公司*/
 	private java.lang.String ifMyCompany;
 	/**销售不含税价*/
-	@Excel(name="销售不含税价",width=15)
-	private java.lang.String xiaoshoubuhanshuijia;
+	@Excel(name="销售不含税价",width=15,orderNum="2")
+	private java.lang.String xiaoshoubuhanshuijia="0.0";
 	/**销售的增值税*/
-	@Excel(name="销售的增值税",width=15)
-	private java.lang.String xiaoshoudezhengzhishui;
+	@Excel(name="销售的增值税",width=15,orderNum="3")
+	private java.lang.String xiaoshoudezhengzhishui="0.0";
 	/**销售含税价*/
-	@Excel(name="销售含税价",width=15)
-	private java.lang.String xiaoshouhanshuijia;
+	@Excel(name="销售含税价",width=15,orderNum="4")
+	private java.lang.String xiaoshouhanshuijia="0.0";
 	/**采购不含税价*/
-	@Excel(name="采购不含税价",width=15)
-	private java.lang.String caigoubuhanshuijia;
+	@Excel(name="采购不含税价",width=15,orderNum="5")
+	private java.lang.String caigoubuhanshuijia="0.0";
 	/**采购的增值税*/
-	@Excel(name="采购的增值税",width=15)
-	private java.lang.String caigoudezengzhishui;
+	@Excel(name="采购的增值税",width=15,orderNum="6")
+	private java.lang.String caigoudezengzhishui="0.0";
 	/**采购的含税价*/
-	@Excel(name="采购的含税价",width=15)
-	private java.lang.String caigoudehanshuijia;
+	@Excel(name="采购的含税价",width=15,orderNum="7")
+	private java.lang.String caigoudehanshuijia="0.0";
 	/**运费不含税价*/
-	@Excel(name="运费不含税价",width=15)
-	private java.lang.String yunfeibuhanshuijia;
+	@Excel(name="运费不含税价",width=15,orderNum="8")
+	private java.lang.String yunfeibuhanshuijia="0.0";
 	/**运费增值税*/
-	@Excel(name="运费增值税",width=15)
-	private java.lang.String yunfeizengzhishui;
+	@Excel(name="运费增值税",width=15,orderNum="9")
+	private java.lang.String yunfeizengzhishui="0.0";
 	/**运费含税价*/
-	@Excel(name="运费含税价",width=15)
-	private java.lang.String yunfeihanshuijia;
+	@Excel(name="运费含税价",width=15,orderNum="10")
+	private java.lang.String yunfeihanshuijia="0.0";
 	/**包装费不含税价*/
-	@Excel(name="包装费不含税价",width=15)
-	private java.lang.String baozhuangfeibuhanshuijia;
+	@Excel(name="包装费不含税价",width=15,orderNum="11")
+	private java.lang.String baozhuangfeibuhanshuijia="0.0";
 	/**包装费增值税*/
-	@Excel(name="包装费增值税",width=15)
-	private java.lang.String baozhuangfeizengzhishui;
+	@Excel(name="包装费增值税",width=15,orderNum="12")
+	private java.lang.String baozhuangfeizengzhishui="0.0";
 	/**包装费含税价*/
-	@Excel(name="包装费含税价",width=15)
-	private java.lang.String baozhuangfeihanshuijia;
+	@Excel(name="包装费含税价",width=15,orderNum="13")
+	private java.lang.String baozhuangfeihanshuijia="0.0";
 	/**装卸费不含税价*/
-	@Excel(name="装卸费不含税价",width=15)
-	private java.lang.String zhuangxiefeibuhanshuijia;
+	@Excel(name="装卸费不含税价",width=15,orderNum="14")
+	private java.lang.String zhuangxiefeibuhanshuijia="0.0";
 	/**装卸费增值税*/
-	@Excel(name="装卸费增值税",width=15)
-	private java.lang.String zhuangxiefeizengzhishui;
+	@Excel(name="装卸费增值税",width=15,orderNum="15")
+	private java.lang.String zhuangxiefeizengzhishui="0.0";
 	/**装卸费含税价*/
-	@Excel(name="装卸费含税价",width=15)
-	private java.lang.String zhuangxiefeihanshuijia;
+	@Excel(name="装卸费含税价",width=15,orderNum="16")
+	private java.lang.String zhuangxiefeihanshuijia="0.0";
 	/**仓储费不含税价*/
-	@Excel(name="仓储费不含税价",width=15)
-	private java.lang.String cangchufeibuhanshuijia;
+	@Excel(name="仓储费不含税价",width=15,orderNum="17")
+	private java.lang.String cangchufeibuhanshuijia="0.0";
 	/**仓储费增值税*/
-	@Excel(name="仓储费增值税",width=15)
-	private java.lang.String cangchufeizengzhishui;
+	@Excel(name="仓储费增值税",width=15,orderNum="18")
+	private java.lang.String cangchufeizengzhishui="0.0";
 	/**仓储费含税价*/
-	@Excel(name="仓储费含税价",width=15)
-	private java.lang.String cangchufeihanshuijia;
+	@Excel(name="仓储费含税价",width=15,orderNum="19")
+	private java.lang.String cangchufeihanshuijia="0.0";
 	/**本次货物缴纳的增值税*/
-	@Excel(name="本次货物缴纳的增值税",width=15)
-	private java.lang.String bencihuowunashuidezengzhishui;
+	@Excel(name="本次货物缴纳的增值税",width=15,orderNum="20")
+	private java.lang.String bencihuowunashuidezengzhishui="0.0";
 	/**增值税附加税*/
-	@Excel(name="增值税附加税",width=15)
-	private java.lang.String zengzhishuifujiashui;
+	@Excel(name="增值税附加税",width=15,orderNum="21")
+	private java.lang.String zengzhishuifujiashui="0.0";
 	/**经营成本标准*/
-	@Excel(name="经营成本标准",width=15)
-	private java.lang.String jinyingchenbenbiaozhun;
+	@Excel(name="经营成本标准",width=15,orderNum="22")
+	private java.lang.String jinyingchenbenbiaozhun="0.0";
 	/**本单经营成本*/
-	@Excel(name="本单经营成本",width=15)
-	private java.lang.String bendanjinyinchengben;
+	@Excel(name="本单经营成本",width=15,orderNum="23")
+	private java.lang.String bendanjinyinchengben="0.0";
 	/**本单收入*/
-	@Excel(name="本单收入",width=15)
-	private java.lang.String bendanshouru;
+	@Excel(name="本单收入",width=15,orderNum="24")
+	private java.lang.String bendanshouru="0.0";
 	/**本单成本*/
-	@Excel(name="本单成本",width=15)
-	private java.lang.String bendanchengben;
+	@Excel(name="本单成本",width=15,orderNum="25")
+	private java.lang.String bendanchengben="0.0";
 	/**本单利润*/
-	@Excel(name="本单利润",width=15)
-	private java.lang.String bendanlirun;
+	@Excel(name="本单利润",width=15,orderNum="26")
+	private java.lang.String bendanlirun="0.0";
 	/**本单所得税*/
-	@Excel(name="本单所得税",width=15)
-	private java.lang.String bendansuodeshui;
+	@Excel(name="本单所得税",width=15,orderNum="27")
+	private java.lang.String bendansuodeshui="0.0";
 	/**本单净利润*/
-	@Excel(name="本单净利润",width=15)
-	private java.lang.String bendanjinlirun;
+	@Excel(name="本单净利润",width=15,orderNum="28")
+	private java.lang.String bendanjinlirun="0.0";
 	/**本单现金流入*/
-	@Excel(name="本单现金流入",width=15)
-	private java.lang.String bendanxianjinliuru;
+	@Excel(name="本单现金流入",width=15,orderNum="29")
+	private java.lang.String bendanxianjinliuru="0.0";
 	/**本单成本现金流出*/
-	@Excel(name="本单成本现金流出",width=15)
-	private java.lang.String bendanchenbenxianjinliuchu;
+	@Excel(name="本单成本现金流出",width=15,orderNum="30")
+	private java.lang.String bendanchenbenxianjinliuchu="0.0";
 	/**本单净现金流*/
-	@Excel(name="本单净现金流",width=15)
-	private java.lang.String bendanjinxianjinliu;
+	@Excel(name="本单净现金流",width=15,orderNum="31")
+	private java.lang.String bendanjinxianjinliu="0.0";
 	/**本单税金流出*/
-	@Excel(name="本单税金流出",width=15)
-	private java.lang.String bendanshuijinliuchu;
+	@Excel(name="本单税金流出",width=15,orderNum="32")
+	private java.lang.String bendanshuijinliuchu="0.0";
 	/**本单毛利率*/
-	@Excel(name="本单毛利率",width=15)
-	private java.lang.String bendanmaolilv;
+	@Excel(name="本单毛利率",width=15,orderNum="33")
+	private java.lang.String bendanmaolilv="0.0";
 	/**本单单位产品不含税售价*/
-	@Excel(name="本单单位产品不含税售价",width=15)
-	private java.lang.String bendandanweichanpinbuhssj;
+	@Excel(name="本单单位产品不含税售价",width=15,orderNum="34")
+	private java.lang.String bendandanweichanpinbuhssj="0.0";
 	/**本单单位产品含税售价*/
-	@Excel(name="本单单位产品含税售价",width=15)
-	private java.lang.String bendandanweichanpinhssj;
+	@Excel(name="本单单位产品含税售价",width=15,orderNum="35")
+	private java.lang.String bendandanweichanpinhssj="0.0";
 	/**商品名称*/
-	@Excel(name="商品名称",width=15)
+	@Excel(name="商品名称",width=15,orderNum="1")
 	private java.lang.String goodName;
 	/**
 	 * 资金成本
 	 */
-	@Excel(name="资金成本",width=15)
-	private String zijinchengben;
+	@Excel(name="资金成本",width=15,orderNum="36")
+	private String zijinchengben="0.0";
 	/**
 	 * 常规单价（剔税：元）
 	 */
-	@Excel(name="常规单价（剔税：元）",width=15)
-	private String changguidanjiatishui;
+	@Excel(name="常规单价（剔税：元）",width=15,orderNum="37")
+	private String changguidanjiatishui="0.0";
 	/**
 	 * 常规单价（含税：元）
 	 */
-	@Excel(name="常规单价（含税：元）",width=15)
-	private String changguidanjiahanshui;
+	@Excel(name="常规单价（含税：元）",width=15,orderNum="38")
+	private String changguidanjiahanshui="0.0";
 	/**
 	 * 货期
 	 */
-	@Excel(name="货期",width=15)
+	@Excel(name="货期",width=15,orderNum="39")
 	private String qihuo;
 	/**
 	 * 公司名称
 	 */
-	@Excel(name="公司名称",width=15)
+	@Excel(name="公司名称",width=15,orderNum="0")
 	private String companyName;
 	
 	/**
 	 * 官网剔税价
 	 */
-	@Excel(name="官网剔税价",width=15)
-	private String guangwangtishuijia;
+	@Excel(name="官网剔税价",width=15,orderNum="40")
+	private String guangwangtishuijia="0.0";
 	
 	/**
 	 * 折扣率
 	 */
-	@Excel(name="折扣率",width=15)
-	private String zhekoulv;
+	@Excel(name="折扣率",width=15,orderNum="41")
+	private String zhekoulv="0.0";
 	/**
 	 *方法: 取得java.lang.String
 	 *@return: java.lang.String  主键

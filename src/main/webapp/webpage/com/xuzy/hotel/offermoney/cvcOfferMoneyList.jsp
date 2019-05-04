@@ -38,7 +38,7 @@
    <t:dgCol title="本单成本现金流出"  field="bendanchenbenxianjinliuchu"  queryMode="single"  width="120"></t:dgCol>
    <t:dgCol title="本单净现金流"  field="bendanjinxianjinliu"  queryMode="single"  width="120"></t:dgCol>
    <t:dgCol title="本单税金流出"  field="bendanshuijinliuchu"  queryMode="single"  width="120"></t:dgCol>
-   <t:dgCol title="本单毛利率"  field="bendanmaolilv"  queryMode="single"  width="120"></t:dgCol>
+   <t:dgCol title="本单毛利率（单位:%）"  field="bendanmaolilv"  queryMode="single"  width="120"></t:dgCol>
    <t:dgCol title="本单单位产品不含税售价"  field="bendandanweichanpinbuhssj"  queryMode="single"  width="120"></t:dgCol>
    <t:dgCol title="本单单位产品含税售价"  field="bendandanweichanpinhssj"  queryMode="single"  width="120"></t:dgCol>
    <t:dgCol title="期货"  field="qihuo"  queryMode="single"  width="120"></t:dgCol>
