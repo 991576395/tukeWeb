@@ -36,16 +36,16 @@ public class CvcOfferMoneyEntity implements java.io.Serializable {
 	private java.lang.String ifMyCompany;
 	/**销售不含税价*/
 	@Excel(name="销售不含税价",width=15)
-	private java.lang.String xiaoshoubuhanshuijia="";
+	private java.lang.String xiaoshoubuhanshuijia;
 	/**销售的增值税*/
 	@Excel(name="销售的增值税",width=15)
 	private java.lang.String xiaoshoudezhengzhishui;
 	/**销售含税价*/
 	@Excel(name="销售含税价",width=15)
-	private java.lang.String xiaoshouhanshuijia="";
+	private java.lang.String xiaoshouhanshuijia;
 	/**采购不含税价*/
 	@Excel(name="采购不含税价",width=15)
-	private java.lang.String caigoubuhanshuijia="";
+	private java.lang.String caigoubuhanshuijia;
 	/**采购的增值税*/
 	@Excel(name="采购的增值税",width=15)
 	private java.lang.String caigoudezengzhishui;
@@ -142,39 +142,39 @@ public class CvcOfferMoneyEntity implements java.io.Serializable {
 	/**
 	 * 资金成本
 	 */
-	@Excel(name="资金成本")
+	@Excel(name="资金成本",width=15)
 	private String zijinchengben;
 	/**
 	 * 常规单价（剔税：元）
 	 */
-	@Excel(name="常规单价（剔税：元）")
+	@Excel(name="常规单价（剔税：元）",width=15)
 	private String changguidanjiatishui;
 	/**
 	 * 常规单价（含税：元）
 	 */
-	@Excel(name="常规单价（含税：元）")
+	@Excel(name="常规单价（含税：元）",width=15)
 	private String changguidanjiahanshui;
 	/**
 	 * 货期
 	 */
-	@Excel(name="货期")
-	private String qihuo = "";
+	@Excel(name="货期",width=15)
+	private String qihuo;
 	/**
 	 * 公司名称
 	 */
-	@Excel(name="公司名称")
+	@Excel(name="公司名称",width=15)
 	private String companyName;
 	
 	/**
 	 * 官网剔税价
 	 */
-	@Excel(name="官网剔税价")
+	@Excel(name="官网剔税价",width=15)
 	private String guangwangtishuijia;
 	
 	/**
 	 * 折扣率
 	 */
-	@Excel(name="折扣率")
+	@Excel(name="折扣率",width=15)
 	private String zhekoulv;
 	/**
 	 *方法: 取得java.lang.String
