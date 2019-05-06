@@ -33,6 +33,14 @@ public class CvcOfferMoneyExportEntity implements java.io.Serializable {
 	private java.lang.String id;
 	/**是否本公司*/
 	private java.lang.String ifMyCompany;
+	/**
+	 * 公司名称
+	 */
+	@Excel(name="公司名称",width=15)
+	private String companyName;
+	/**商品名称*/
+	@Excel(name="商品名称",width=15)
+	private java.lang.String goodName;
 	/**销售不含税价*/
 	@Excel(name="销售不含税价",width=15)
 	private java.lang.String xiaoshoubuhanshuijia;
@@ -135,9 +143,6 @@ public class CvcOfferMoneyExportEntity implements java.io.Serializable {
 	/**本单单位产品含税售价*/
 	@Excel(name="本单单位产品含税售价",width=15)
 	private java.lang.String bendandanweichanpinhssj;
-	/**商品名称*/
-	@Excel(name="商品名称",width=15)
-	private java.lang.String goodName;
 	/**
 	 * 资金成本
 	 */
@@ -158,11 +163,7 @@ public class CvcOfferMoneyExportEntity implements java.io.Serializable {
 	 */
 	@Excel(name="货期",width=15)
 	private String qihuo;
-	/**
-	 * 公司名称
-	 */
-	@Excel(name="公司名称",width=15)
-	private String companyName;
+	
 	
 	/**
 	 * 官网剔税价
