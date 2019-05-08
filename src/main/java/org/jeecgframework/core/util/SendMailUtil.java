@@ -290,7 +290,7 @@ public class SendMailUtil
 	  sendFtlMail(new ArrayList<String>() {
 		  {
 			  add("991576395@qq.com");
-			  add("1075482109@qq.com");
+//			  add("1075482109@qq.com");
 		  }
 	  }, "sendemail test!",templatePath, values);
 //	  org.jeecgframework.core.util.LogUtil.info(getFileName("mailtemplate/test.ftl"));

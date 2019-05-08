@@ -13,6 +13,26 @@ import javax.servlet.http.HttpServletRequest;
  * 
  */
 public class BrowserUtils {
+		
+	
+	/**
+	 * 是否手机浏览器
+	 * @param request
+	 * @return
+	 */
+	public static boolean JudgeIsMoblie(HttpServletRequest request) {
+		boolean isMoblie = false;
+		String[] mobileAgents = { "iphone", "android", "phone", "mobile", "wap" };
+		if (request.getHeader("User-Agent") != null) {
+			for (String mobileAgent : mobileAgents) {
+				if (request.getHeader("User-Agent").toLowerCase().indexOf(mobileAgent) >= 0) {
+					isMoblie = true;
+					break;
+				}
+			}
+		}
+		return isMoblie;
+	}
 	
 	// 判断是否是IE
 	public static boolean isIE(HttpServletRequest request) {

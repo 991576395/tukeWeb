@@ -34,6 +34,9 @@ public class SysThemesUtil {
 //		} catch (Exception e) {
 //		}
 //		return SysThemesEnum.toEnum(indexStyle);
+		if(BrowserUtils.JudgeIsMoblie(request)) {
+			return SysThemesEnum.ACE_LE_STYLE;
+		}
 		return SysThemesEnum.FINEUI_STYLE;
 	}
 

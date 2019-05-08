@@ -90,7 +90,7 @@ public class SimpleJdbcTemplate extends JdbcTemplate{
 			Assert.hasText(sql,"sql语句不正确!");
 
 			if(parameters!=null){
-				return namedJdbcTemplate.queryForObject(sql, parameters,Long.class);
+				return (long) namedJdbcTemplate.queryForObject(sql, parameters,Long.class);
 			}else{
 				return jdbcTemplate.queryForObject(sql,Long.class);
 			}
