@@ -339,12 +339,8 @@ public class CvcOfferMoneyServiceImpl extends CommonServiceImpl implements CvcOf
 				.subtract(getBigdecimal(entity.getBendanchengben()))
 				.toString()
 				);
-
 		CvcAddedvalueTaxEntity qiyesuodeshuilv = cvcAddedvalueTaxService.getEntityByName("企业所得税");
 		//本单所得税 = 本单利润*0.25
-//		entity.setBendansuodeshui(getBigdecimal(entity.getBendanlirun())
-				//.multiply(getBigdecimal(0.25).setScale(2, BigDecimal.ROUND_HALF_UP)).toString());
-//				.multiply(getBigdecimal(0.1).setScale(2, BigDecimal.ROUND_HALF_UP)).toString());
 		if(qiyesuodeshuilv != null) {
 			BigDecimal qiyesuode = getShuilv(cangchufeizengzhishuilv);
 			entity.setBendansuodeshui(getBigdecimal(entity.getBendanlirun())

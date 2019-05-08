@@ -267,19 +267,13 @@ public class CvcOfferMoneyController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(params = "goUpdateValue")
-	public ModelAndView goUpdateValue(@RequestParam(required = false, value = "id") String id, HttpServletRequest req
+	public ModelAndView goUpdateValue(@RequestParam(required = false, value = "ids") String ids, HttpServletRequest req
 			,@RequestParam(required = true, value = "name")String name
 			,@RequestParam(required = true, value = "type")String type
 			,@RequestParam(required = false, value = "goodName")String goodName) {
-		if (StringUtil.isNotEmpty(id)) {
-			CvcOfferMoneyEntity cvcOfferMoney = cvcOfferMoneyService.getEntity(CvcOfferMoneyEntity.class, id);
-			req.setAttribute("cvcOfferMoneyPage", cvcOfferMoney);
-			req.setAttribute("name", name);
-		}else {
-			CvcOfferMoneyEntity cvcOfferMoney = cvcOfferMoneyService.getGoodNameEntity(goodName);
-			req.setAttribute("cvcOfferMoneyPage", cvcOfferMoney);
-			req.setAttribute("name", name);
-		}
+//			CvcOfferMoneyEntity cvcOfferMoney = cvcOfferMoneyService.getEntity(CvcOfferMoneyEntity.class, id);
+		req.setAttribute("ids", ids);
+		req.setAttribute("name", name);
 		req.setAttribute("goodName", goodName);
 		req.setAttribute("type", type);
 		return new ModelAndView("com/xuzy/hotel/offermoney/cvcOfferMoney-add");
@@ -293,7 +287,7 @@ public class CvcOfferMoneyController extends BaseController {
 	 */
 	@RequestMapping(params = "upOrDownCalculate")
 	@ResponseBody
-	public AjaxJson upOrDownCalculate(@RequestParam(required = false, value = "id") String id
+	public AjaxJson upOrDownCalculate(@RequestParam(required = false, value = "ids") String ids
 			,@RequestParam(required = true, value = "name")String name
 			,@RequestParam(required = true, value = "type")String type,
 			@RequestParam(required = false, value = "number")String number,
@@ -306,15 +300,16 @@ public class CvcOfferMoneyController extends BaseController {
 			if("下调".equals(name)) {
 				numberValue = 0 - numberValue;
 			}
-			if (StringUtil.isNotEmpty(id)) {
-				CvcOfferMoneyEntity cvcOfferMoney = cvcOfferMoneyService.getEntity(CvcOfferMoneyEntity.class, id);
-				if("1".equals(type)) {
-					//利润上下调
-					cvcOfferMoneyService.upOrDownCalculate(cvcOfferMoney,cvcOfferMoney.getGoodName(), numberValue);
-				}else {
-					cvcOfferMoneyService.upOrDownTishuijiaCalculate(cvcOfferMoney,cvcOfferMoney.getGoodName(), numberValue);
+			if (StringUtil.isNotEmpty(ids)) {
+				for(String id:ids.split(",")){
+					CvcOfferMoneyEntity cvcOfferMoney = cvcOfferMoneyService.getEntity(CvcOfferMoneyEntity.class, id);
+					if("1".equals(type)) {
+						//利润上下调
+						cvcOfferMoneyService.upOrDownCalculate(cvcOfferMoney,cvcOfferMoney.getGoodName(), numberValue);
+					}else {
+						cvcOfferMoneyService.upOrDownTishuijiaCalculate(cvcOfferMoney,cvcOfferMoney.getGoodName(), numberValue);
+					}
 				}
-				
 			}else {
 				if("1".equals(type)) {
 					//利润上下调
