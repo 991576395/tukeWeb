@@ -175,6 +175,7 @@ public class CvcOfferMoneyExportEntity implements java.io.Serializable {
 	 */
 	@Excel(name="折扣率",width=15,orderNum="41")
 	private String zhekoulv="0.0";
+
 	/**
 	 *方法: 取得java.lang.String
 	 *@return: java.lang.String  主键

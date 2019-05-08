@@ -738,12 +738,23 @@ public class CvcOrderInfoController extends BaseController {
 				if(head.getReturn() >= 0) {
 					//申请返仓
 					cvcOrderInfoService.updateStatusByOrderId(id, 23);
-					j.setMsg("申请返仓成功");
+					//用户反仓完成
+					RequestRefuseExchangeOrderJson exchangeOrderJson2 = new RequestRefuseExchangeOrderJson();
+					exchangeOrderJson.setOrderID(id);
+					head = ConmentHttp.sendHttp(new TukeRequestBody.Builder()
+								.setParams(exchangeOrderJson2).setSequence(2)
+								.setServiceCode("CRMIF.BackedExchangeOrderJson").builder(), null);
+					if(head.getReturn() >= 0) {
+						cvcOrderInfoService.updateStatusByOrderId(id, 24);
+						j.setMsg("订单推送返仓完成操作成功");
+					}else {
+						j.setSuccess(false);
+						j.setMsg("订单推送返仓完成操作失败 原因:"+head.getReturnInfo());
+					}
 				}else {
 					j.setSuccess(false);
 					j.setMsg("申请返仓失败 原因:"+head.getReturnInfo());
 				}
-				
 			}else if("signFailure".equals(tkOrderStatus)) {
 				//签收失败
 				RequestRefuseExchangeOrderJson exchangeOrderJson = new RequestRefuseExchangeOrderJson();
