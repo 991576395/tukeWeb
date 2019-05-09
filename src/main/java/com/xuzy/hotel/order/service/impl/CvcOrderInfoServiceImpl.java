@@ -131,14 +131,14 @@ public class CvcOrderInfoServiceImpl implements CvcOrderInfoService {
 	}
 
 	@Override
-	public CvcDeliveryOrderEntity getDeliveryOrderByOrderId(int orderId) {
-		CvcDeliveryOrderEntity deliveryOrder = cvcDeliveryOrderDao.getDeliveryOrderByOrderId(orderId);
-		if(deliveryOrder != null) {
+	public List<CvcDeliveryOrderEntity> getDeliveryOrderByOrderId(int orderId) {
+		List<CvcDeliveryOrderEntity> deliveryOrders = cvcDeliveryOrderDao.getDeliveryOrderByOrderId(orderId);
+		for (CvcDeliveryOrderEntity deliveryOrder : deliveryOrders) {
 			deliveryOrder.setActionUser(cvcOrderInfoDao.getActionUserByOrderId(orderId));
 			
 			deliveryOrder.setAddTimeString(PhpDateUtils.parseDate(deliveryOrder.getAddTime(), "yyyy-MM-dd HH:mm:ss"));
 		}
-		return deliveryOrder;
+		return deliveryOrders;
 	}
 
 
@@ -392,5 +392,15 @@ public class CvcOrderInfoServiceImpl implements CvcOrderInfoService {
 		calendar.add(Calendar.HOUR_OF_DAY, 4);
 		String endTime = DateFormatUtils.format(calendar, "yyyyMMddHHmmssSSS");
 		return cvcOrderInfoDao.getTogezelWuliuList(startTime, endTime);
+	}
+
+	@Override
+	public List<CvcOrderInfoEntity> getShentongList() {
+		Calendar calendar = Calendar.getInstance();
+		long endTime = PhpDateUtils.getTime(calendar.getTime());
+		//40天前
+		calendar.add(Calendar.DAY_OF_YEAR, -40);
+		long startTime = PhpDateUtils.getTime(calendar.getTime());
+		return cvcOrderInfoDao.getShentongList(startTime, endTime);
 	}
 }

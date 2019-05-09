@@ -316,18 +316,27 @@
 	</div>
 
 	<c:if test="${is_show_shipping_info}">
+		
+	
+	
 		<div class="list-div"
 			style="margin-bottom: 10px; border-top: none; border-bottom: none;">
 			<table width="100%" cellpadding="3" cellspacing="0"
 				class="table table-bordered">
-				<tr>
-					<td style="text-indent: 2.5em" colspan="10"><strong>物流公司：${delivery_order.shippingName}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;发货时间：${delivery_order.addTimeString}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;操作人：${delivery_order.actionUser}</strong>
-					</td>
-				</tr>
-				<tr>
-					<td style="text-indent: 2.5em" colspan="10"><strong>快递单号：${delivery_order.invoiceNo}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;预计到达时间：${delivery_order.preArrivalDate}</strong>
-					</td>
-				</tr>
+				
+				<c:if test="${fn:length(deliveryOrders) > 0}">
+					<c:forEach var="deliveryOrder" items="${deliveryOrders}">
+						<tr>
+							<td style="text-indent: 2.5em" colspan="10"><strong>物流公司：${deliveryOrder.shippingName}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;发货时间：${deliveryOrder.addTimeString}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;操作人：${deliveryOrder.actionUser}</strong>
+							</td>
+						</tr>
+						<tr>
+							<td style="text-indent: 2.5em" colspan="10"><strong>快递单号：${deliveryOrder.invoiceNo}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;预计到达时间：${deliveryOrder.preArrivalDate}</strong>
+							</td>
+						</tr>
+						<tr/>
+					</c:forEach>
+				</c:if>
 			</table>
 		</div>
 	</c:if>
@@ -381,25 +390,30 @@
 				</c:forEach>
 			</c:if>
 		</table>
-
-		<c:if test="${fn:length(delivery_info) > 0}">
-			<div class="list-div"
-				style="margin-bottom: 10px; border-top: none; border-bottom: none;">
-				<table width="100%" cellpadding="3" cellspacing="0"
-					class="table table-bordered">
-					<tr>
-						<td style="text-indent: 2.5em" colspan="10"><strong>物流信息</strong>
-							<hr></td>
-					</tr>
-					<c:forEach var="data" items="${delivery_info}">
-						<tr>
-							<td scope="col"><div align="center">${data.ftime}</div></td>
-							<td scope="col"><div align="center">${data.context}</div></td>
-						</tr>
-					</c:forEach>
-				</table>
-			</div>
+		<c:if test="${fn:length(deliveryInfoPojos) > 0}">
+			<c:forEach var="deliveryInfoPojo" items="${deliveryInfoPojos}">
+					<c:if test="${fn:length(deliveryInfoPojo.deliveryInfos) > 0}">
+						<div class="list-div"
+							style="margin-bottom: 10px; border-top: none; border-bottom: none;">
+							<table width="100%" cellpadding="3" cellspacing="0"
+								class="table table-bordered">
+								<tr>
+									<td style="text-indent: 2.5em" colspan="10"><strong>（单号:${deliveryInfoPojo.invoiceNo}）物流信息</strong>
+										</td>
+								</tr>
+								<c:forEach var="data" items="${deliveryInfoPojo.deliveryInfos}">
+									<tr>
+										<td scope="col"><div align="center">${data.ftime}</div></td>
+										<td scope="col"><div align="center">${data.context}</div></td>
+									</tr>
+								</c:forEach>
+							</table>
+						</div>
+					</c:if>		
+					
+			</c:forEach>
 		</c:if>
+		
 		<c:if test="${is_show_exception}">
 			<input name="cancel" type="button" class="btn btn-primary btn-sm" value="确认已签收" class="button"
 				onclick="updateStatue('cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=signin','请确认签收？','${cvcOrderInfoEntity.id}')" />

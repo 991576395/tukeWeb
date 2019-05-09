@@ -146,11 +146,34 @@ public class ConmentHttp {
 		}
     }
     
-    
+    /**
+     * 手动拉取快递100
+     * @param value
+     */
     public static void postMyErrorOrder(String value) { 
 //    	String value = "{\"message\":\"ok\",\"nu\":\"240505147514\",\"ischeck\":\"1\",\"condition\":\"F00\",\"com\":\"shunfeng\",\"status\":\"200\",\"state\":\"3\",\"data\":[{\"time\":\"2019-01-21 10:43:32\",\"ftime\":\"2019-01-21 10:43:32\",\"context\":\"[周口市]已签收,感谢使用顺丰,期待再次为您服务\"},{\"time\":\"2019-01-21 10:43:14\",\"ftime\":\"2019-01-21 10:43:14\",\"context\":\"[周口市]快件交给李海燕，正在派送途中（联系电话：18839430299）\"},{\"time\":\"2019-01-20 09:26:05\",\"ftime\":\"2019-01-20 09:26:05\",\"context\":\"[周口市]收方客户要求自取快件,待自取\"},{\"time\":\"2019-01-20 09:09:48\",\"ftime\":\"2019-01-20 09:09:48\",\"context\":\"[周口市]快件交给梁磊阳，正在派送途中（联系电话：17538051642）\"},{\"time\":\"2019-01-20 08:27:20\",\"ftime\":\"2019-01-20 08:27:20\",\"context\":\"[周口市]快件到达 【周口扶沟鸿昌大道营业点】\"},{\"time\":\"2019-01-20 06:58:19\",\"ftime\":\"2019-01-20 06:58:19\",\"context\":\"[周口市]快件已发车\"},{\"time\":\"2019-01-19 22:17:22\",\"ftime\":\"2019-01-19 22:17:22\",\"context\":\"[周口市]快件在【周口开元集散点】已装车,准备发往 【周口扶沟鸿昌大道营业点】\"},{\"time\":\"2019-01-19 21:55:48\",\"ftime\":\"2019-01-19 21:55:48\",\"context\":\"[周口市]快件到达 【周口开元集散点】\"},{\"time\":\"2019-01-19 17:28:51\",\"ftime\":\"2019-01-19 17:28:51\",\"context\":\"[郑州市]快件已发车\"},{\"time\":\"2019-01-19 17:01:52\",\"ftime\":\"2019-01-19 17:01:52\",\"context\":\"[郑州市]快件在【郑州圃田集散中心】已装车,准备发往 【周口开元集散点】\"},{\"time\":\"2019-01-19 13:51:46\",\"ftime\":\"2019-01-19 13:51:46\",\"context\":\"[郑州市]快件到达 【郑州圃田集散中心】\"},{\"time\":\"2019-01-19 02:40:12\",\"ftime\":\"2019-01-19 02:40:12\",\"context\":\"[北京市]快件已发车\"},{\"time\":\"2019-01-19 02:39:58\",\"ftime\":\"2019-01-19 02:39:58\",\"context\":\"[北京市]快件在【北京大兴集散中心】已装车,准备发往下一站\"},{\"time\":\"2019-01-18 23:00:16\",\"ftime\":\"2019-01-18 23:00:16\",\"context\":\"[北京市]快件到达 【北京大兴集散中心】\"},{\"time\":\"2019-01-18 21:44:37\",\"ftime\":\"2019-01-18 21:44:37\",\"context\":\"[北京市]快件已发车\"},{\"time\":\"2019-01-18 21:05:49\",\"ftime\":\"2019-01-18 21:05:49\",\"context\":\"[北京市]快件在【北京百荣营业点】已装车,准备发往 【北京大兴集散中心】\"},{\"time\":\"2019-01-18 20:12:16\",\"ftime\":\"2019-01-18 20:12:16\",\"context\":\"[北京市]顺丰速运 已收取快件\"}]}";
     	
-    	String str = "{\"status\":\"shutdown\",\"billstatus\":\"check\",\"message\":\"\",\"lastResult\":"+value+"}";
+    	String str = "{\"type\":\"1\",\"status\":\"shutdown\",\"billstatus\":\"check\",\"message\":\"\",\"lastResult\":"+value+"}";
+    	// 开始请求
+        Request request = new Request.Builder().url(CALLBACK)
+                .post(new FormBody.Builder().add("param", str).build())
+                .build();
+        Response response = null;
+		try {
+			response = ConmentHttp.okHttpClient.newCall(request).execute();
+			String result = response.body().string();
+			logger.info("result:"+result);
+		} catch (IOException e) {
+			logger.error("订阅快递100异常",e);
+		}
+    }
+    
+    /**
+     * 发送获取申通结果
+     * @param value
+     */
+    public static void postShentong(String value) { 
+    	String str = "{\"type\":\"2\",\"status\":\"shutdown\",\"billstatus\":\"check\",\"message\":\"\",\"lastResult\":"+value+"}";
     	// 开始请求
         Request request = new Request.Builder().url(CALLBACK)
                 .post(new FormBody.Builder().add("param", str).build())

@@ -55,7 +55,7 @@ public interface CvcOrderInfoService {
 	 * @param orderId
 	 * @return
 	 */
-	public CvcDeliveryOrderEntity getDeliveryOrderByOrderId(int orderId);
+	public List<CvcDeliveryOrderEntity> getDeliveryOrderByOrderId(int orderId);
 	
 	
 	/**
@@ -129,4 +129,10 @@ public interface CvcOrderInfoService {
 	 * @return
 	 */
 	List<CvcOrderInfoEntity> getTogezelWuliuList();
+	
+	/**
+	 * 获得30天内需要查询的申通订单
+	 * @return
+	 */
+	List<CvcOrderInfoEntity> getShentongList();
 }

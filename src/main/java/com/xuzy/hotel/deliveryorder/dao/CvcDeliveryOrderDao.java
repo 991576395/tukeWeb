@@ -87,7 +87,11 @@ public interface CvcDeliveryOrderDao{
 	  * @return
 	  */
 	 @ResultType(CvcDeliveryOrderEntity.class)
-	 @Sql("SELECT shipping_name, invoice_no, pre_arrival_date,add_time FROM cvc_delivery_order WHERE order_id = :orderId order by delivery_id desc  limit 1")
-	 public CvcDeliveryOrderEntity getDeliveryOrderByOrderId(@Param("orderId") int orderId);
+	 @Sql("SELECT invoice_no,delivery_id,shipping_name, pre_arrival_date,add_time FROM cvc_delivery_order WHERE  " + 
+	 		"order_id = :orderId and " + 
+	 		"delivery_id in (" + 
+	 		"select MAX(delivery_id) from cvc_delivery_order where order_id = :orderId GROUP BY invoice_no " + 
+	 		") ")
+	 public List<CvcDeliveryOrderEntity> getDeliveryOrderByOrderId(@Param("orderId") int orderId);
 }
 

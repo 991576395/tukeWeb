@@ -6,6 +6,14 @@
 <head>
 <title>批量发货</title>
 <t:base type="jquery,easyui,tools"></t:base>
+
+<script type="text/javascript">
+	function uploadCallback(result){
+		if(!result.success){
+			alert(result.msg);
+		}
+	}
+</script>
 </head>
 <body style="overflow-y: hidden" scroll="no">
 	<t:formvalid formid="formobj" layout="div" dialog="true"
@@ -17,7 +25,7 @@
 				<div class="form">
 					<t:upload name="fiels" buttonText="选择要导入的文件"
 						uploader="cvcShippingBatch.do?importExcel" extend="*.xls;*.xlsx"
-						id="file_upload" formData="documentTitle,orderBatchNo"></t:upload>
+						id="file_upload" formData="documentTitle,orderBatchNo" onUploadSuccess="uploadCallback"></t:upload>
 				</div>
 				<div class="form" id="filediv" style="height: 50px"></div>
 			</fieldset>

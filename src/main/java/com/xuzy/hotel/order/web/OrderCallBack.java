@@ -8,7 +8,9 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.log4j.Logger;
+import org.jeecgframework.core.util.ResourceUtil;
 import org.jeecgframework.p3.core.web.BaseController;
+import org.jeecgframework.web.system.pojo.base.TSType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -160,9 +162,29 @@ public class OrderCallBack extends BaseController {
 			//已签收
 			return;
 		}
+		//关键子签收
+		boolean isQianshou = false; 
 		
 		if(CollectionUtils.isNotEmpty(callbaseRequest.getLastResult().getData())) {
 			List<CvcYlDeliveryInfoEntity> ylDeliveryInfoEntitys =cvcYlDeliveryInfoService.getList(cvcOrderInfoEntity.getId(),nu);
+			
+			if(cvcDeliveryInfo.getState() == 4) {
+				try {
+					//配送中订单   "【快宝驿站】"; 关键字过滤 签收状态
+					List<TSType> typeList = ResourceUtil.allTypes.get("qianshou".toLowerCase());
+					for(TSType type:typeList) {
+						if(callbaseRequest.getLastResult().getData().get(0).getContext().contains("【"+type.getTypename()+"】")) {
+							isQianshou = true;
+							logger.info(nu+"关键字签收成功!");
+							break;
+						}
+					}
+				} catch (Exception e) {
+					logger.error(nu+"关键字签收失败！",e);
+					isQianshou = false; 
+				}
+			}
+			
 			for(Data data:callbaseRequest.getLastResult().getData()) {
 //				CvcYlDeliveryInfoEntity ylDeliveryInfoEntity =cvcYlDeliveryInfoService.get(entity.getOrderId(),nu);
 				if(ylDeliveryInfoEntitys == null || !ylDeliveryInfoEntitys.contains(new CvcYlDeliveryInfoEntity(cvcOrderInfoEntity.getId(),nu,data.getFtime()))) {
@@ -187,6 +209,8 @@ public class OrderCallBack extends BaseController {
 				}
 			}
 		}
+		
+		
 		
 		//推送yl
 		if(cvcDeliveryInfo.getState() == 0 || cvcDeliveryInfo.getState() == 5
@@ -221,7 +245,7 @@ public class OrderCallBack extends BaseController {
 				}
 			}
 			return ;
-		}else if(cvcDeliveryInfo.getState() == 3){
+		}else if(cvcDeliveryInfo.getState() == 3 || isQianshou){
 			//推送至签收 
 			RequestSignInExchangeOrderJson  requestBody = new RequestSignInExchangeOrderJson();
 			requestBody.setOrderID(entity.getOrderId());

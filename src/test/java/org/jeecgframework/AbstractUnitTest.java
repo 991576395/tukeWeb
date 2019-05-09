@@ -13,7 +13,7 @@ import org.springframework.web.context.WebApplicationContext;
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(locations = {"classpath*:spring*.xml"})
-@Transactional
+//@Transactional
 public abstract class AbstractUnitTest {
 	@Autowired
 	protected WebApplicationContext wac;

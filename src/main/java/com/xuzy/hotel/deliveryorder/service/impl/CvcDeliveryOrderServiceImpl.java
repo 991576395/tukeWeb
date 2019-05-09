@@ -185,7 +185,7 @@ public class CvcDeliveryOrderServiceImpl implements CvcDeliveryOrderService {
 						cvcDeliveryGoods.setSendNumber(cvcOrderGoodsEntity.getGoodsNumber());
 						cvcDeliveryGoodsDao.insert(cvcDeliveryGoods);
 						//减去库存
-//						cvcInventoryTableService.subInventory(cvcOrderGoodsEntity.getGoodsId()+"",cvcOrderGoodsEntity.getGoodsNumber(), 0);
+						cvcInventoryTableService.subInventory(cvcOrderGoodsEntity.getGoodsId()+"",cvcOrderGoodsEntity.getGoodsNumber(), 0);
 					}
 				}
 			}

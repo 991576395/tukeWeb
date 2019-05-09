@@ -118,6 +118,10 @@ public class CvcShippingBatchController extends BaseController{
 			j.setMsg("订单批次号不能为空！");
 			return j;
 		}
+			
+		StringBuffer errorMsp = new StringBuffer(); 
+		errorMsp.append("文件导入失败:原因");
+		
 		
 		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
 		Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
@@ -134,16 +138,16 @@ public class CvcShippingBatchController extends BaseController{
 					cvcShippingBatchOrderService.batchInsert(batchOrderEntities, orderBatchNo);
 					j.setMsg("文件导入成功！");
 				}else {
-					j.setMsg("识别内容为空");
+					errorMsp.append(file.getOriginalFilename()+"识别内容为空");
 					j.setSuccess(false);
 				}
 			} catch (XuException e) {
 				j.setSuccess(false);
-				j.setMsg(e.getMessage());
+				errorMsp.append(e.getMessage()+",");
 				logger.error(ExceptionUtil.getExceptionMessage(e));
 			} catch (Exception e) {
 				j.setSuccess(false);
-				j.setMsg("文件导入失败！");
+				errorMsp.append(file.getOriginalFilename()+",");
 				logger.error(ExceptionUtil.getExceptionMessage(e));
 			} finally {
 				try {
@@ -152,6 +156,15 @@ public class CvcShippingBatchController extends BaseController{
 					e.printStackTrace();
 				}
 			}
+			try {
+				Thread.sleep(100);
+				//防止多文件上传 生成发货编号相同
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		if(!j.isSuccess()) {
+			j.setMsg(errorMsp.toString());
 		}
 		return j;
 	}

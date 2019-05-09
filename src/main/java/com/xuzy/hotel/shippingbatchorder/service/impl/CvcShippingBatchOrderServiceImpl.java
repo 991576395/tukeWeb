@@ -158,7 +158,12 @@ public class CvcShippingBatchOrderServiceImpl implements CvcShippingBatchOrderSe
 		}else {
 			//删除批次订单
 			cvcShippingBatchOrderDao.deleteBybatchNo(orderBatchNo);
-			throw new XuException("存在待配货订单！");
+			StringBuffer sBuffer = new StringBuffer();
+			for (Integer integer : notInOrders) {
+				sBuffer.append(integer);
+				sBuffer.append(",");
+			}
+			throw new XuException("存在待配货订单！"+sBuffer.toString());
 		}
 	}
 }
