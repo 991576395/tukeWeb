@@ -85,6 +85,12 @@ public class CvcGetOrderStatisticsController extends BaseController{
 	@RequestMapping(params = "datagrid")
 	public void datagrid(CvcGetOrderStatisticsEntity query,HttpServletRequest request, HttpServletResponse response, DataGrid dataGrid) {
 		MiniDaoPage<CvcGetOrderStatisticsEntity> list = cvcGetOrderStatisticsService.getAll(query, dataGrid.getPage(), dataGrid.getRows());
+		if(CollectionUtils.isNotEmpty(list.getResults())) {
+			for (CvcGetOrderStatisticsEntity entity : list.getResults()) {
+				entity.setAddTimeFormat(PhpDateUtils.parseDate(entity.getAddTime(), "yyyy-MM-dd HH:mm:ss"));
+			}
+		}
+		
 		dataGrid.setResults(SystemTools.convertPaginatedList(list));
 		dataGrid.setTotal(cvcGetOrderStatisticsService.getCount(query, dataGrid.getPage(), dataGrid.getRows()));
 		TagUtil.datagrid(response, dataGrid);

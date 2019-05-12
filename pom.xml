@@ -69,7 +69,9 @@
 		<commons-pool.version>1.6</commons-pool.version>
 		<commons-dbcp.version>1.4</commons-dbcp.version>
 		<druid.version>0.2.9</druid.version>
-        <mysql.version>5.1.27</mysql.version>
+        <!-- <mysql.version>5.1.27</mysql.version> -->
+        <mysql.version>8.0.12</mysql.version>
+        
         <!-- sqlserver 2008 -->
         <sqlserver.version>4.0</sqlserver.version>
         <!-- sqlserver2005
@@ -95,7 +97,8 @@
 		<xstream.version>1.4.4</xstream.version>
 		<groovy.version>2.3.3</groovy.version>
         <!--poi 工具类 -->
-        <jeasypoi.version>2.1.4</jeasypoi.version>
+        <!-- <jeasypoi.version>2.1.4</jeasypoi.version> -->
+         <jeasypoi.version>2.2.0</jeasypoi.version>
 		<cxf.version>3.0.2</cxf.version>
 		<!--maven插件变量-->
 		<tomcat.version>2.2</tomcat.version>
@@ -693,7 +696,7 @@
             <artifactId>poi-scratchpad</artifactId>
             <version>${poi.version}</version>
         </dependency>
-		<dependency>
+		<!-- <dependency>
             <groupId>org.jeecgframework</groupId>
             <artifactId>jeasypoi-base</artifactId>
             <version>${jeasypoi.version}</version>
@@ -703,7 +706,7 @@
             		<artifactId>jeasypoi-annotation</artifactId>
             	</exclusion>
             </exclusions>
-        </dependency>
+        </dependency> -->
         <dependency>
             <groupId>org.jeecgframework</groupId>
             <artifactId>jeasypoi-web</artifactId>
@@ -718,7 +721,7 @@
         <dependency>
             <groupId>org.jeecgframework</groupId>
             <artifactId>jeasypoi-annotation</artifactId>
-            <version>${jeasypoi.version}</version>
+            <version>2.1.6</version>
         </dependency>
         <!-- poi end-->
         <!-- openoffice start -->

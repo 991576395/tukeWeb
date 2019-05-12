@@ -389,7 +389,8 @@ public class CvcOrderInfoServiceImpl implements CvcOrderInfoService {
 		//3天前
 		calendar.add(Calendar.DAY_OF_YEAR, -3);
 		String startTime = DateFormatUtils.format(calendar, "yyyyMMddHHmmssSSS");
-		calendar.add(Calendar.HOUR_OF_DAY, 4);
+		calendar.add(Calendar.DAY_OF_YEAR, 2);
+		calendar.add(Calendar.HOUR_OF_DAY, 12);
 		String endTime = DateFormatUtils.format(calendar, "yyyyMMddHHmmssSSS");
 		return cvcOrderInfoDao.getTogezelWuliuList(startTime, endTime);
 	}

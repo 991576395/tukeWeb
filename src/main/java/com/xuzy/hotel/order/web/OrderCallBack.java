@@ -168,12 +168,12 @@ public class OrderCallBack extends BaseController {
 		if(CollectionUtils.isNotEmpty(callbaseRequest.getLastResult().getData())) {
 			List<CvcYlDeliveryInfoEntity> ylDeliveryInfoEntitys =cvcYlDeliveryInfoService.getList(cvcOrderInfoEntity.getId(),nu);
 			
-			if(cvcDeliveryInfo.getState() == 4) {
+			if(cvcOrderInfoEntity.getOrderStatus() == 4) {
 				try {
 					//配送中订单   "【快宝驿站】"; 关键字过滤 签收状态
 					List<TSType> typeList = ResourceUtil.allTypes.get("qianshou".toLowerCase());
 					for(TSType type:typeList) {
-						if(callbaseRequest.getLastResult().getData().get(0).getContext().contains("【"+type.getTypename()+"】")) {
+						if(callbaseRequest.getLastResult().getData().get(0).getContext().contains(type.getTypename())) {
 							isQianshou = true;
 							logger.info(nu+"关键字签收成功!");
 							break;

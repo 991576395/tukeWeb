@@ -1,5 +1,6 @@
 package com.xuzy.hotel.ylrequest;
 
+import java.util.Calendar;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -33,9 +34,19 @@ public class WuliuCheckTask implements Job{
 	private CvcShippingService cvcShippingService;
 	
 	public void run() {
+		if(true) {
+			return;
+		}
 		long start = System.currentTimeMillis();
 		org.jeecgframework.core.util.LogUtil.info("===================物流校验定时任务开始===================");
 		//离港时间
+		
+		Calendar calendar = Calendar.getInstance();
+		int hour = calendar.get(Calendar.HOUR_OF_DAY);
+		if(hour >= 0 && hour <= 6) {
+			org.jeecgframework.core.util.LogUtil.info("===================0 -- 6 点无需执行===================");
+			return;
+		}
 		
 		List<CvcOrderInfoEntity> results =cvcOrderInfoService.getTogezelWuliuList();
 		doOrderArrays(results);
