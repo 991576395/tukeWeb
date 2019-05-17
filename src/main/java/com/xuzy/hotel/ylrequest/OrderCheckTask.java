@@ -37,9 +37,9 @@ public class OrderCheckTask implements Job{
 	
 	/*@Scheduled(cron="0 0/1 * * * ?")*/
 	public void run() {
-		if(true) {
-			return;
-		}
+//		if(true) {
+//			return;
+//		}
 		long start = System.currentTimeMillis();
 		org.jeecgframework.core.util.LogUtil.info("===================订单校验定时任务开始===================");
 		

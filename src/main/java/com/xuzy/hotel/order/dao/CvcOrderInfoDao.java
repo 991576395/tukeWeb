@@ -154,7 +154,7 @@ public interface CvcOrderInfoDao{
 	@Sql("SELECT distinct o.order_id as id FROM  cvc_order_info AS o \r\n" + 
 			"	LEFT JOIN cvc_delivery_order AS d_o ON o.order_id=d_o.order_id \r\n" + 
 			"	LEFT JOIN cvc_delivery_info AS d_i ON d_o.invoice_no=d_i.number\r\n" + 
-			"where (tk_order_status=4 or tk_order_status=3) and (d_i.state = 3 or d_i.state = 5)")
+			"where (tk_order_status=4 or tk_order_status=3) and (yl_order_status = 3 or yl_order_status = 4) and (d_i.state = 3 or d_i.state = 5)")
 	@ResultType(CvcOrderInfoEntity.class)
 	List<CvcOrderInfoEntity> getWillSignList();
 	
@@ -166,7 +166,7 @@ public interface CvcOrderInfoDao{
 	
 	@Sql("select distinct coi.order_id as id,cdo.invoice_no,cdo.shipping_name from cvc_order_info coi " + 
 			"left join cvc_delivery_order cdo on coi.order_id = cdo.order_id  " + 
-			"where (coi.yl_order_status = 3 or coi.yl_order_status = 4) and cdo.delivery_sn > :startTime and cdo.delivery_sn < :endTime")
+			"where (coi.yl_order_status = 3 or coi.yl_order_status = 4) and (coi.tk_order_status = 3 or coi.tk_order_status = 4) and cdo.delivery_sn > :startTime and cdo.delivery_sn < :endTime")
 	@ResultType(CvcOrderInfoEntity.class)
 	List<CvcOrderInfoEntity> getTogezelWuliuList(@Param("startTime")  String startTime,@Param("endTime")String endTime);
 	
@@ -176,5 +176,17 @@ public interface CvcOrderInfoDao{
 			"where (coi.yl_order_status = 3 or coi.yl_order_status = 4) and cdo.shipping_name='申通快递' and coi.add_time > :startTime and coi.add_time < :endTime")
 	@ResultType(CvcOrderInfoEntity.class)
 	List<CvcOrderInfoEntity> getShentongList(@Param("startTime")  long startTime,@Param("endTime")long endTime);
+	
+	
+	@Sql("select distinct coi.order_id as id,coi.tk_order_status orderStatus,cdo.invoice_no,cdo.shipping_id shippingId,cdo.shipping_name,cdo.delivery_sn from cvc_order_info coi " + 
+			"left join cvc_delivery_order cdo on coi.order_id = cdo.order_id  " + 
+			"where (coi.yl_order_status = 3 or coi.yl_order_status = 4) and (coi.tk_order_status = 3 or coi.tk_order_status = 4)  order by cdo.delivery_sn")
+	@ResultType(CvcOrderInfoEntity.class)
+	public MiniDaoPage<CvcOrderInfoEntity> getTimeOutOrderList(@Param("page")  int page,@Param("rows") int rows);
+	
+	@Sql("select count(*) from cvc_order_info coi " + 
+			"left join cvc_delivery_order cdo on coi.order_id = cdo.order_id  " + 
+			"where (coi.yl_order_status = 3 or coi.yl_order_status = 4) and (coi.tk_order_status = 3 or coi.tk_order_status = 4) ")
+	public int getTimeOutOrderCount();
 }
 

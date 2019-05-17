@@ -34,9 +34,9 @@ public class WuliuCheckTask implements Job{
 	private CvcShippingService cvcShippingService;
 	
 	public void run() {
-		if(true) {
-			return;
-		}
+//		if(true) {
+//			return;
+//		}
 		long start = System.currentTimeMillis();
 		org.jeecgframework.core.util.LogUtil.info("===================物流校验定时任务开始===================");
 		//离港时间

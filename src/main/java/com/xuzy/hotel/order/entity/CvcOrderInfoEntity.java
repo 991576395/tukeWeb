@@ -474,7 +474,38 @@ public class CvcOrderInfoEntity implements Serializable{
 	 */
 	private String preArrivalDate;
 	
+	/**
+	 * 离发货时间
+	 */
+	private String timeOutValue;
+	/**
+	 * 发货时间
+	 */
+	private String deliverySn;
+	/**
+	 * 最近一条物流信息
+	 */
+	private String newDeleveryInfo;
 	
+	
+	public String getNewDeleveryInfo() {
+		return newDeleveryInfo;
+	}
+	public void setNewDeleveryInfo(String newDeleveryInfo) {
+		this.newDeleveryInfo = newDeleveryInfo;
+	}
+	public String getDeliverySn() {
+		return deliverySn;
+	}
+	public void setDeliverySn(String deliverySn) {
+		this.deliverySn = deliverySn;
+	}
+	public String getTimeOutValue() {
+		return timeOutValue;
+	}
+	public void setTimeOutValue(String timeOutValue) {
+		this.timeOutValue = timeOutValue;
+	}
 	public String getPreArrivalDate() {
 		return preArrivalDate;
 	}

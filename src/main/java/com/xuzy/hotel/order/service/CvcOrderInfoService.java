@@ -135,4 +135,14 @@ public interface CvcOrderInfoService {
 	 * @return
 	 */
 	List<CvcOrderInfoEntity> getShentongList();
+	
+	/**
+	 * 获取配送中订单超时列表
+	 * @param page
+	 * @param rows
+	 * @return
+	 */
+	public MiniDaoPage<CvcOrderInfoEntity> getTimeOutOrderList(int page, int rows);
+	
+	public int getTimeOutOrderCount();
 }

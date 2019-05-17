@@ -142,6 +142,45 @@ public class CvcOrderInfoController extends BaseController {
 	}
 	
 	/**
+	 * 签收超时订单列表
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(params = "timeOutOrderList")
+	public ModelAndView timeOutOrderList(HttpServletRequest request) {
+		return new ModelAndView("com/xuzy/hotel/order/tTimeOutOrderTableList");
+	}
+	
+	
+	@RequestMapping(params = "timeOutOrderListDatagrid")
+	public void timeOutOrderListDatagrid(CvcOrderInfoEntity query,HttpServletRequest request, HttpServletResponse response, DataGrid dataGrid) {
+		MiniDaoPage<CvcOrderInfoEntity> list = cvcOrderInfoService.getTimeOutOrderList(dataGrid.getPage(), dataGrid.getRows());
+		if(CollectionUtils.isNotEmpty(list.getResults())) {
+			for (CvcOrderInfoEntity entity : list.getResults()) {
+				try {
+					Date deleveryDate = DateUtils.parseDate(entity.getDeliverySn(),new String[] {"yyyyMMddHHmmssSSS"});
+					entity.setTimeOutValue(org.jeecgframework.core.util.DateUtils.getShortTime(deleveryDate));
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+				
+				CvcDeliveryInfoEntity cvcDeliveryInfoEntity = cvcDeliveryInfoService
+						.getDeliveryInfosByInvoiceNo(entity.getInvoiceNo());
+				List<Data> deliveryInfos = new ArrayList<>();
+				if (cvcDeliveryInfoEntity != null && StringUtils.isNotEmpty(cvcDeliveryInfoEntity.getData())) {
+					deliveryInfos = PHPAndJavaSerialize.unserializePHParray(cvcDeliveryInfoEntity.getData(), Data.class);
+				}
+				if(CollectionUtils.isNotEmpty(deliveryInfos)) {
+					entity.setNewDeleveryInfo(deliveryInfos.get(0).getFtime()+":"+deliveryInfos.get(0).getContext());
+				}
+			}
+		}
+		dataGrid.setResults(SystemTools.convertPaginatedList(list));
+		dataGrid.setTotal(cvcOrderInfoService.getTimeOutOrderCount());
+		TagUtil.datagrid(response, dataGrid);
+	}
+	
+	/**
 	 * 页面跳转
 	 * 
 	 * @return

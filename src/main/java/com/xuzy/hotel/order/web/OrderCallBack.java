@@ -157,11 +157,7 @@ public class OrderCallBack extends BaseController {
 			CvcDeliveryInfoEntity  cvcDeliveryInfo,String nu) throws Exception {
 		//查询订单状态
 		CvcOrderInfoEntity cvcOrderInfoEntity = cvcOrderInfoService.get(entity.getOrderId());
-		
-		if(cvcOrderInfoEntity.getOrderStatus() == 5) {
-			//已签收
-			return;
-		}
+	
 		//关键子签收
 		boolean isQianshou = false; 
 		
@@ -210,7 +206,28 @@ public class OrderCallBack extends BaseController {
 			}
 		}
 		
+		if(cvcOrderInfoEntity.getOrderStatus() == 5) {
+			//已签收
+			return;
+		}
 		
+		if(cvcDeliveryInfo.getState() == 3 || isQianshou){
+			//推送至签收 
+			RequestSignInExchangeOrderJson  requestBody = new RequestSignInExchangeOrderJson();
+			requestBody.setOrderID(entity.getOrderId());
+			requestBody.setSignInMan(callbaseRequest.getLastResult().getData().get(0).getContext());
+			requestBody.setSignInDate(callbaseRequest.getLastResult().getData().get(0).getFtime() );
+			ResponseHead responseHead = ConmentHttp.sendHttp(new TukeRequestBody.Builder()
+					.setSequence(2)
+					.setServiceCode("CRMIF.SignInExchangeOrderJson")
+					.setParams(requestBody).builder(), null);
+			if(responseHead.getReturn() >= 0) {
+				entity.setSigninDate(callbaseRequest.getLastResult().getData().get(0).getFtime());
+				cvcOrderInfoService.updateStatusByOrderId(entity.getOrderId(), 5);
+				cvcDeliveryOrderService.updateSignDate(callbaseRequest.getLastResult().getData().get(0).getFtime(),nu);
+			}
+			return ;
+		}
 		
 		//推送yl
 		if(cvcDeliveryInfo.getState() == 0 || cvcDeliveryInfo.getState() == 5
@@ -226,7 +243,7 @@ public class OrderCallBack extends BaseController {
 			if(responseHead.getReturn() >= 0) {
 				cvcOrderInfoService.updateStatusByOrderId(entity.getOrderId(), 4);
 				//修改成功后
-				if(cvcDeliveryInfo.getState() == 3){
+				if(cvcDeliveryInfo.getState() == 3 || isQianshou){
 					//推送至签收 
 					RequestSignInExchangeOrderJson  requestBodySign = new RequestSignInExchangeOrderJson();
 					requestBodySign.setOrderID(entity.getOrderId());

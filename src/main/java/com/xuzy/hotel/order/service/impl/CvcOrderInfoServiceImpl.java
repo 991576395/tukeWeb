@@ -394,7 +394,9 @@ public class CvcOrderInfoServiceImpl implements CvcOrderInfoService {
 		String endTime = DateFormatUtils.format(calendar, "yyyyMMddHHmmssSSS");
 		return cvcOrderInfoDao.getTogezelWuliuList(startTime, endTime);
 	}
-
+	
+	
+	
 	@Override
 	public List<CvcOrderInfoEntity> getShentongList() {
 		Calendar calendar = Calendar.getInstance();
@@ -403,5 +405,15 @@ public class CvcOrderInfoServiceImpl implements CvcOrderInfoService {
 		calendar.add(Calendar.DAY_OF_YEAR, -40);
 		long startTime = PhpDateUtils.getTime(calendar.getTime());
 		return cvcOrderInfoDao.getShentongList(startTime, endTime);
+	}
+
+	@Override
+	public MiniDaoPage<CvcOrderInfoEntity> getTimeOutOrderList(int page, int rows) {
+		return cvcOrderInfoDao.getTimeOutOrderList(page, rows);
+	}
+
+	@Override
+	public int getTimeOutOrderCount() {
+		return cvcOrderInfoDao.getTimeOutOrderCount();
 	}
 }

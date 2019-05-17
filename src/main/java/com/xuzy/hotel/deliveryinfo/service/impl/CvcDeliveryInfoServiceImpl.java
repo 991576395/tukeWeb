@@ -75,7 +75,7 @@ public class CvcDeliveryInfoServiceImpl implements CvcDeliveryInfoService {
 	public List<CvcDeliveryInfoEntity> getListOneHours() {
 		Calendar calendar = Calendar.getInstance();
 		String endTime = DateFormatUtils.format(calendar, "yyyy-MM-dd HH24");
-		calendar.add(Calendar.HOUR_OF_DAY, -1);
+		calendar.add(Calendar.HOUR_OF_DAY, -24);
 		String startTime = DateFormatUtils.format(calendar, "yyyy-MM-dd HH24");
 		return cvcDeliveryInfoDao.getListOneHours(startTime,endTime);
 	}

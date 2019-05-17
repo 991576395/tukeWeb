@@ -1,7 +1,9 @@
 package org.jeecgframework.core.util;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -9,7 +11,23 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.activation.DataHandler;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMultipart;
+import javax.mail.internet.MimeUtility;
+
+import org.apache.commons.mail.ByteArrayDataSource;
 import org.apache.commons.mail.HtmlEmail;
+import org.apache.commons.mail.MultiPartEmail;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.jeecgframework.poi.excel.ExcelExportUtil;
+import org.jeecgframework.poi.excel.entity.ExportParams;
+import org.jeecgframework.poi.excel.entity.params.ExcelExportEntity;
+import org.jeecgframework.poi.excel.entity.vo.MapExcelConstants;
+import org.jeecgframework.poi.excel.entity.vo.NormalExcelConstants;
+import org.jeecgframework.poi.excel.export.ExcelExportServer;
+import org.springframework.ui.ModelMap;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
 import freemarker.template.Configuration;
@@ -127,6 +145,87 @@ public class SendMailUtil
 	      org.jeecgframework.core.util.LogUtil.info("email send error!");
 	    }
    }
+	protected static final String HSSF = ".xls";
+	protected static final String XSSF = ".xlsx";
+	
+	/**
+	 * 发送 邮箱 附件
+	 * @param toMailAddrs
+	 * @param subject
+	 * @param model 
+	 * @param templatePath
+	 * @param map
+	 */
+	public static void sendWithFileMail(List<String> toMailAddrs, String subject,
+			Object... maps){
+		MultiPartEmail hemail = new MultiPartEmail();
+		try {
+			hemail.setHostName(getHost(from));
+			hemail.setSmtpPort(getSmtpPort(from));
+			hemail.setCharset(charSet);
+			for (String string : toMailAddrs) {
+				hemail.addTo(string);
+			}
+
+			hemail.addBcc(from);
+			hemail.setFrom(from, fromName);
+			hemail.setAuthentication(username, password);
+			hemail.setSubject(subject);
+			hemail.setSSL(true);
+
+			
+			MimeMultipart mm = new MimeMultipart();
+			for (int i = 0; i < maps.length; i++) {
+				if(maps[i] instanceof ModelMap) {
+					ModelMap model = (ModelMap) maps[i];
+					String codedFileName = "临时文件";
+					Workbook workbook = null;
+					if (model.containsKey(NormalExcelConstants.MAP_LIST)) {
+						List<Map<String, Object>> list = (List<Map<String, Object>>) model.get(NormalExcelConstants.MAP_LIST);
+						if (list.size() == 0) {
+							throw new RuntimeException("MAP_LIST IS NULL");
+						}
+						workbook = ExcelExportUtil.exportExcel((ExportParams) list.get(0).get(NormalExcelConstants.PARAMS), (Class<?>) list.get(0).get(NormalExcelConstants.CLASS), (Collection<?>) list.get(0).get(NormalExcelConstants.DATA_LIST));
+						for (int j = 1; j < list.size(); j++) {
+							new ExcelExportServer().createSheet(workbook, (ExportParams) list.get(j).get(NormalExcelConstants.PARAMS), (Class<?>) list.get(j).get(NormalExcelConstants.CLASS), (Collection<?>) list.get(j).get(NormalExcelConstants.DATA_LIST));
+						}
+					} else {
+						workbook = ExcelExportUtil.exportExcel((ExportParams) model.get(NormalExcelConstants.PARAMS), (Class<?>) model.get(NormalExcelConstants.CLASS), (Collection<?>) model.get(NormalExcelConstants.DATA_LIST));
+					}
+					if (model.containsKey(NormalExcelConstants.FILE_NAME)) {
+						codedFileName = (String) model.get(NormalExcelConstants.FILE_NAME);
+					}
+					if (workbook instanceof HSSFWorkbook) {
+						codedFileName += HSSF;
+					} else {
+						codedFileName += XSSF;
+					}
+					
+					ByteArrayOutputStream bos = new ByteArrayOutputStream();
+					workbook.write(bos);
+					bos.close();
+					// 9. 创建附件"节点"
+			        MimeBodyPart attachment = new MimeBodyPart();
+			        // 读取本地文件
+			        DataHandler dh2 = new DataHandler(new ByteArrayDataSource(bos.toByteArray(), "application/vnd.ms-excel"));
+			        // 将附件数据添加到"节点"
+			        attachment.setDataHandler(dh2);
+			        // 设置附件的文件名（需要编码）
+			        attachment.setFileName(MimeUtility.encodeText(codedFileName));     
+			        mm.addBodyPart(attachment);     // 如果有多个附件，可以创建多个多次添加
+				}
+			}
+	        
+	        mm.setSubType("mixed"); 
+	        hemail.setContent(mm);
+			hemail.send();
+			org.jeecgframework.core.util.LogUtil.info("email send true!");
+		} catch (Exception e) {
+			e.printStackTrace();
+			org.jeecgframework.core.util.LogUtil.info("email send error!");
+		}
+   }
+	
 
 	/**
 	 * 发送普通邮件
