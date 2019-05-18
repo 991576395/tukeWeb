@@ -9,6 +9,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.log4j.Logger;
 import org.jeecgframework.core.util.ResourceUtil;
+import org.jeecgframework.jwt.util.GsonUtil;
 import org.jeecgframework.p3.core.web.BaseController;
 import org.jeecgframework.web.system.pojo.base.TSType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,8 @@ import com.util.PHPAndJavaSerialize;
 import com.util.PhpDateUtils;
 import com.xuzy.hotel.deliveryinfo.entity.CvcDeliveryInfoEntity;
 import com.xuzy.hotel.deliveryinfo.service.CvcDeliveryInfoService;
+import com.xuzy.hotel.deliveryinfonew.entity.CvcDeliveryInfoNewEntity;
+import com.xuzy.hotel.deliveryinfonew.service.CvcDeliveryInfoNewServiceI;
 import com.xuzy.hotel.deliveryorder.entity.CvcDeliveryOrderEntity;
 import com.xuzy.hotel.deliveryorder.service.CvcDeliveryOrderService;
 import com.xuzy.hotel.getorderstatistics.service.CvcGetOrderStatisticsService;
@@ -65,7 +68,8 @@ public class OrderCallBack extends BaseController {
 	@Autowired
 	private CvcYlDeliveryInfoService cvcYlDeliveryInfoService;
 	
-	
+	@Autowired
+	private CvcDeliveryInfoNewServiceI cvcDeliveryInfoNewService;
 	
 	 /**
 	 * Logger for this class
@@ -88,61 +92,7 @@ public class OrderCallBack extends BaseController {
 		logger.info("param:"+param);
 		try {
 			CallBaseRequest callbaseRequest = ConmentHttp.gson.fromJson(param, CallBaseRequest.class);
-			if(StringUtils.isNotEmpty(callbaseRequest.getLastResult().getMessage())
-					&& "ok".equals(callbaseRequest.getLastResult().getMessage())) {
-				String nu = callbaseRequest.getLastResult().getNu().trim();
-				
-				CvcDeliveryInfoEntity  cvcDeliveryInfo = new CvcDeliveryInfoEntity();
-				cvcDeliveryInfo.setNumber(nu);
-				cvcDeliveryInfo.setMessage(callbaseRequest.getMessage());
-				cvcDeliveryInfo.setData(PHPAndJavaSerialize.serialize(callbaseRequest.getLastResult().getData()));
-				cvcDeliveryInfo.setState(callbaseRequest.getLastResult().getState());
-				cvcDeliveryInfo.setCreateDate(DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
-				//快递信息
-				cvcDeliveryInfoService.insert(cvcDeliveryInfo);
-				
-				List<CvcDeliveryOrderEntity> entitys = cvcDeliveryOrderService.getEntityByinvoiceNo(nu);
-				for(CvcDeliveryOrderEntity entity:entitys) {
-					if(entity != null) {
-						doEntity(entity,callbaseRequest,cvcDeliveryInfo,nu);
-					}
-				}
-				
-			}else {
-				if("abort".equals(callbaseRequest.getStatus())) {
-					//快递信息录入错误
-					if(callbaseRequest.getMessage().contains("3天")) {
-						if(!StringUtils.isEmpty(callbaseRequest.getLastResult().getComNew())) {
-							cvcDeliveryOrderService.updateErrorCode(callbaseRequest.getLastResult().getComNew(), callbaseRequest.getLastResult().getNu());
-						}else {
-							//快递单号异常
-							List<CvcDeliveryOrderEntity> entitys = cvcDeliveryOrderService.getEntityByinvoiceNo(callbaseRequest.getLastResult().getNu());
-							for(CvcDeliveryOrderEntity entity:entitys) {
-								if(entity != null) {
-									cvcOrderInfoService.updateErrorStatusByOrderId(entity.getOrderId(), 4);
-									CvcOrderInfoEntity orderInfoEntity = cvcOrderInfoService.get(entity.getOrderId());
-									if(orderInfoEntity != null) {
-										cvcGetOrderStatisticsService.addExceptionCount(orderInfoEntity.getBatchNo());
-									}
-								}
-							}
-						}
-					}else if(callBackResponse.getMessage().contains("60天")) {
-						//超时关闭
-						List<CvcDeliveryOrderEntity> entitys = cvcDeliveryOrderService.getEntityByinvoiceNo(callbaseRequest.getLastResult().getNu());
-						for(CvcDeliveryOrderEntity entity:entitys) {
-							if(entity != null) {
-								cvcOrderInfoService.updateErrorStatusByOrderId(entity.getOrderId(), 5);
-								CvcOrderInfoEntity orderInfoEntity = cvcOrderInfoService.get(entity.getOrderId());
-								if(orderInfoEntity != null) {
-									cvcGetOrderStatisticsService.addExceptionCount(orderInfoEntity.getBatchNo());
-								}
-							}
-						}
-					}
-					
-				}
-			}
+			runByRequest(callbaseRequest);
 		} catch (Exception e) {
 			callBackResponse.setMessage("失败");
 			callBackResponse.setResult("false");
@@ -150,6 +100,107 @@ public class OrderCallBack extends BaseController {
 			logger.error("推送信息异常", e);
 		}
 		return callBackResponse;
+	}
+	
+	/**
+	 * 处理
+	 * @param callbaseRequest
+	 * @throws Exception 
+	 */
+	public void runByRequest(CallBaseRequest callbaseRequest) throws Exception {
+		
+		if(StringUtils.isNotEmpty(callbaseRequest.getLastResult().getMessage())
+				&& "ok".equals(callbaseRequest.getLastResult().getMessage())) {
+			String nu = callbaseRequest.getLastResult().getNu().trim();
+			List<Data> datas = callbaseRequest.getLastResult().getData();
+			if(CollectionUtils.isNotEmpty(datas)) {
+				datas.sort(new Data.DataSortByDate());
+			}
+			callbaseRequest.getLastResult().setData(datas);
+			try {
+				CvcDeliveryInfoNewEntity cvcDeliveryInfoNewEntity = null;
+				List<CvcDeliveryInfoNewEntity> cvcDeliveryInfoNewEntities = cvcDeliveryInfoNewService.findByProperty(CvcDeliveryInfoNewEntity.class, "invoiceNo", nu);
+				if(CollectionUtils.isNotEmpty(cvcDeliveryInfoNewEntities)) {
+					cvcDeliveryInfoNewEntity = cvcDeliveryInfoNewEntities.get(0);
+				}
+				if(cvcDeliveryInfoNewEntity == null) {
+					cvcDeliveryInfoNewEntity = new CvcDeliveryInfoNewEntity();
+				}
+				cvcDeliveryInfoNewEntity.setInvoiceNo(nu);
+				switch (callbaseRequest.getType()) {
+					case "":
+					case "1":
+						//快递100查询
+						//快递100订阅
+						cvcDeliveryInfoNewEntity.setKuaid100Result(GsonUtil.toJson(callbaseRequest.getLastResult().getData()));
+						cvcDeliveryInfoNewEntity.setKuaid100Ftime(DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
+						cvcDeliveryInfoNewEntity.setKuaid100Status(callbaseRequest.getLastResult().getState()+"");
+						break;
+					case "2":
+						//申通
+						cvcDeliveryInfoNewEntity.setShentongResult(GsonUtil.toJson(callbaseRequest.getLastResult().getData()));
+						cvcDeliveryInfoNewEntity.setShentongFtime(DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
+						cvcDeliveryInfoNewEntity.setShentongStatus(callbaseRequest.getLastResult().getState()+"");
+						break;
+					default:
+						break;
+				}
+				cvcDeliveryInfoNewService.saveOrUpdate(cvcDeliveryInfoNewEntity);
+			} catch (Exception e) {
+				LOG.error("新物流记录表更新失败！", e);
+			}
+			
+			CvcDeliveryInfoEntity  cvcDeliveryInfo = new CvcDeliveryInfoEntity();
+			cvcDeliveryInfo.setNumber(nu);
+			cvcDeliveryInfo.setMessage(callbaseRequest.getMessage());
+			cvcDeliveryInfo.setData(PHPAndJavaSerialize.serialize(callbaseRequest.getLastResult().getData()));
+			cvcDeliveryInfo.setState(callbaseRequest.getLastResult().getState());
+			cvcDeliveryInfo.setCreateDate(DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
+			//快递信息
+			cvcDeliveryInfoService.insert(cvcDeliveryInfo);
+			
+			List<CvcDeliveryOrderEntity> entitys = cvcDeliveryOrderService.getEntityByinvoiceNo(nu);
+			for(CvcDeliveryOrderEntity entity:entitys) {
+				if(entity != null) {
+					doEntity(entity,callbaseRequest,cvcDeliveryInfo,nu);
+				}
+			}
+			
+		}else {
+			if("abort".equals(callbaseRequest.getStatus())) {
+				//快递信息录入错误
+				if(callbaseRequest.getMessage().contains("3天")) {
+					if(!StringUtils.isEmpty(callbaseRequest.getLastResult().getComNew())) {
+						cvcDeliveryOrderService.updateErrorCode(callbaseRequest.getLastResult().getComNew(), callbaseRequest.getLastResult().getNu());
+					}else {
+						//快递单号异常
+						List<CvcDeliveryOrderEntity> entitys = cvcDeliveryOrderService.getEntityByinvoiceNo(callbaseRequest.getLastResult().getNu());
+						for(CvcDeliveryOrderEntity entity:entitys) {
+							if(entity != null) {
+								cvcOrderInfoService.updateErrorStatusByOrderId(entity.getOrderId(), 4);
+								CvcOrderInfoEntity orderInfoEntity = cvcOrderInfoService.get(entity.getOrderId());
+								if(orderInfoEntity != null) {
+									cvcGetOrderStatisticsService.addExceptionCount(orderInfoEntity.getBatchNo());
+								}
+							}
+						}
+					}
+				}else if(callbaseRequest.getMessage().contains("60天")) {
+					//超时关闭
+					List<CvcDeliveryOrderEntity> entitys = cvcDeliveryOrderService.getEntityByinvoiceNo(callbaseRequest.getLastResult().getNu());
+					for(CvcDeliveryOrderEntity entity:entitys) {
+						if(entity != null) {
+							cvcOrderInfoService.updateErrorStatusByOrderId(entity.getOrderId(), 5);
+							CvcOrderInfoEntity orderInfoEntity = cvcOrderInfoService.get(entity.getOrderId());
+							if(orderInfoEntity != null) {
+								cvcGetOrderStatisticsService.addExceptionCount(orderInfoEntity.getBatchNo());
+							}
+						}
+					}
+				}
+				
+			}
+		}
 	}
 	
 	
@@ -202,33 +253,17 @@ public class OrderCallBack extends BaseController {
 						ylDeliveryInfoEntity.setFtime(data.getFtime());
 						cvcYlDeliveryInfoService.insert(ylDeliveryInfoEntity);
 					}
+				}else {
+					//后面成功结束
+					break;
 				}
 			}
 		}
-		
+		isQianshou = true; 
 		if(cvcOrderInfoEntity.getOrderStatus() == 5) {
 			//已签收
 			return;
 		}
-		
-		if(cvcDeliveryInfo.getState() == 3 || isQianshou){
-			//推送至签收 
-			RequestSignInExchangeOrderJson  requestBody = new RequestSignInExchangeOrderJson();
-			requestBody.setOrderID(entity.getOrderId());
-			requestBody.setSignInMan(callbaseRequest.getLastResult().getData().get(0).getContext());
-			requestBody.setSignInDate(callbaseRequest.getLastResult().getData().get(0).getFtime() );
-			ResponseHead responseHead = ConmentHttp.sendHttp(new TukeRequestBody.Builder()
-					.setSequence(2)
-					.setServiceCode("CRMIF.SignInExchangeOrderJson")
-					.setParams(requestBody).builder(), null);
-			if(responseHead.getReturn() >= 0) {
-				entity.setSigninDate(callbaseRequest.getLastResult().getData().get(0).getFtime());
-				cvcOrderInfoService.updateStatusByOrderId(entity.getOrderId(), 5);
-				cvcDeliveryOrderService.updateSignDate(callbaseRequest.getLastResult().getData().get(0).getFtime(),nu);
-			}
-			return ;
-		}
-		
 		//推送yl
 		if(cvcDeliveryInfo.getState() == 0 || cvcDeliveryInfo.getState() == 5
 				|| (cvcDeliveryInfo.getState() == 3 && cvcOrderInfoEntity.getOrderStatus() == 3)) {
@@ -253,7 +288,7 @@ public class OrderCallBack extends BaseController {
 					responseHead = ConmentHttp.sendHttp(new TukeRequestBody.Builder()
 							.setSequence(2)
 							.setServiceCode("CRMIF.SignInExchangeOrderJson")
-							.setParams(requestBody).builder(), null);
+							.setParams(requestBodySign).builder(), null);
 					if(responseHead.getReturn() >= 0) {
 						entity.setSigninDate(callbaseRequest.getLastResult().getData().get(0).getFtime());
 						cvcOrderInfoService.updateStatusByOrderId(entity.getOrderId(), 5);

@@ -131,12 +131,6 @@ public interface CvcOrderInfoService {
 	List<CvcOrderInfoEntity> getTogezelWuliuList();
 	
 	/**
-	 * 获得30天内需要查询的申通订单
-	 * @return
-	 */
-	List<CvcOrderInfoEntity> getShentongList();
-	
-	/**
 	 * 获取配送中订单超时列表
 	 * @param page
 	 * @param rows
@@ -145,4 +139,9 @@ public interface CvcOrderInfoService {
 	public MiniDaoPage<CvcOrderInfoEntity> getTimeOutOrderList(int page, int rows);
 	
 	public int getTimeOutOrderCount();
+	
+	/**
+	 * 查询申通订单
+	 */
+	public void shengtongSearch();
 }

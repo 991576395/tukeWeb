@@ -78,6 +78,23 @@ public class ResourceUtil {
 		}
 		return "";
 	}
+	
+	/**
+	 * 字典项快速获取code
+	 * @param fatherCode
+	 * @return
+	 */
+	public static String searchAllCodeByName(String name,String fatherCode) {
+		List<TSType> typeList = allTypes.get(fatherCode.toLowerCase());
+		if(CollectionUtils.isNotEmpty(typeList)) {
+			for (TSType tsType : typeList) {
+				if(name.equals(tsType.getTypename())) {
+					return tsType.getTypecode();
+				}
+			}
+		}
+		return "";
+	}
 
 	/**
 	 * 获取session定义名称

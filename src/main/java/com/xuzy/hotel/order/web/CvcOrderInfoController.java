@@ -699,6 +699,8 @@ public class CvcOrderInfoController extends BaseController {
 				j.setMsg("操作订单不存在");
 				return j;
 			}
+			
+			
 			if("offharbour".equals(tkOrderStatus)) {
 				//推送至离港 
 				RequestOFFHarbourExchangeOrderJson  requestBody = new RequestOFFHarbourExchangeOrderJson();
@@ -847,6 +849,20 @@ public class CvcOrderInfoController extends BaseController {
 				}else {
 					j.setSuccess(false);
 					j.setMsg("同步失败:只能取消 配送中与离港状态订单！");
+				}
+			}else if("signFailureGo".equals(tkOrderStatus)) {
+				//签收失败
+				RequestRefuseExchangeOrderJson exchangeOrderJson = new RequestRefuseExchangeOrderJson();
+				exchangeOrderJson.setOrderID(id);
+				ResponseHead head = ConmentHttp.sendHttp(new TukeRequestBody.Builder()
+							.setParams(exchangeOrderJson).setSequence(2)
+							.setServiceCode("CRMIF.RefuseExchangeOrderJson").builder(), null);
+				if(head.getReturn() >= 0) {
+					cvcOrderInfoService.updateStatusByOrderId(id, 6);
+					j.setMsg("订单签收失败操作成功");
+				}else {
+					cvcOrderInfoService.updateStatusByOrderId(id, 6);
+					j.setMsg("订单签收失败成功！ 伊利接口失败 原因:"+head.getReturnInfo());
 				}
 			}
 		} catch (Exception e) {

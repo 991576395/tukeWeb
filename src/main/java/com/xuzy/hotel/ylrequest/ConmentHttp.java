@@ -2,10 +2,12 @@ package com.xuzy.hotel.ylrequest;
 
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -15,12 +17,15 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.jeecgframework.core.util.HttpRequest;
+import org.jeecgframework.core.util.ResourceUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.google.gson.Gson;
@@ -79,6 +84,11 @@ public class ConmentHttp {
 	private static final String URLNOW = "https://poll.kuaidi100.com/poll/query.do";
 	private static final String CALLBACK = "http://happygosc.com/jeecg/callBack.do?result";
 //	private static final String CALLBACK = "http://localhost:8080/tukeWeb/callBack.do?result";
+	
+	/**
+	 * 申通接口
+	 */
+	private static final String URLShentong = "http://tracequery.sto-express.cn/track.aspx?billcode=";
 	
     /**
      * 公用 mSequence
@@ -169,26 +179,6 @@ public class ConmentHttp {
     }
     
     /**
-     * 发送获取申通结果
-     * @param value
-     */
-    public static void postShentong(String value) { 
-    	String str = "{\"type\":\"2\",\"status\":\"shutdown\",\"billstatus\":\"check\",\"message\":\"\",\"lastResult\":"+value+"}";
-    	// 开始请求
-        Request request = new Request.Builder().url(CALLBACK)
-                .post(new FormBody.Builder().add("param", str).build())
-                .build();
-        Response response = null;
-		try {
-			response = ConmentHttp.okHttpClient.newCall(request).execute();
-			String result = response.body().string();
-			logger.info("result:"+result);
-		} catch (IOException e) {
-			logger.error("订阅快递100异常",e);
-		}
-    }
-    
-    /**
      * 物流状态监听
      * @param company 
      * @param number 
@@ -224,6 +214,69 @@ public class ConmentHttp {
 			logger.error("订阅快递100异常",e);
 		}
 		return null;
+    }
+    
+    public static void main(String[] args) throws Exception {
+    	postShentongValue(FileUtils.readFileToString(new File("/Users/zmeng/Documents/ceshi"), "utf-8"));
+	}
+    
+    /**
+     * 请求申通接口
+     */
+    public static CallBaseRequest postShentongValue(String number) {
+    	CallBaseRequest baseRequest = new CallBaseRequest();
+    	baseRequest.setType("2");
+    	String params = URLShentong+number;
+    	// 开始请求
+        Request request = new Request.Builder().url(params)
+                .get().build();
+        Response response = null;
+		try {
+			response = ConmentHttp.okHttpClient.newCall(request).execute();
+			String result = response.body().string();
+			logger.info("result:"+result);
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			Document document = builder.parse(new ByteArrayInputStream(result.getBytes()));
+			Element element = document.getDocumentElement();
+			
+			LastResult lastResult = new LastResult();
+			lastResult.setMessage("ok");
+			lastResult.setNu(number);
+			lastResult.setCom("shentong");
+			lastResult.setStatus("200");
+			List<Data> datas = new ArrayList<>();
+			NodeList list = element.getElementsByTagName("detail");
+			int code = 0;
+			for (int i = 0; i < list.getLength(); i++) {
+				Node detail = list.item(i);
+				NodeList childList = detail.getChildNodes();
+				Data data = new Data();
+				for (int j = 0; j < childList.getLength(); j++) {
+					if("time".equals(childList.item(j).getNodeName())) {
+						data.setFtime(childList.item(j).getNodeValue());
+					}else if("scantype".equals(childList.item(j).getNodeName())) {
+						try {
+							int numnerOrder = Integer.parseInt(ResourceUtil.searchAllCodeByName(childList.item(j).getNodeValue(),"stOrder"));
+							code = numnerOrder > code?numnerOrder:code;
+						} catch (Exception e) {
+						}
+					}else if("memo".equals(childList.item(j).getNodeName())) {
+						data.setContext(childList.item(j).getNodeValue());
+					}
+				}
+				datas.add(data);
+			}
+			String typeValue = ResourceUtil.searchAllTypesByCode(code+"","stOrder");
+			String shengtongStatus = ResourceUtil.searchAllCodeByName(typeValue,"stCode");
+			lastResult.setState(Integer.parseInt(StringUtils.isEmpty(shengtongStatus)?"-1":shengtongStatus));
+			lastResult.setData(datas);
+			baseRequest.setLastResult(lastResult);
+			return baseRequest;
+		} catch (Exception e) {
+			logger.error("调用申通接口异常",e);
+			return null;
+		}
     }
     
     /**
@@ -507,7 +560,7 @@ public class ConmentHttp {
 	
 	
 	
-	public static void main(String[] args) throws Exception {
+	public static void main1(String[] args) throws Exception {
 //		getOrder();
 //		postMyErrorOrder();
 		

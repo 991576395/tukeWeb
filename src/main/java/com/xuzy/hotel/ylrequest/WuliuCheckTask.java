@@ -3,6 +3,8 @@ package com.xuzy.hotel.ylrequest;
 import java.util.Calendar;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jeecgframework.minidao.pojo.MiniDaoPage;
@@ -20,6 +22,7 @@ import com.xuzy.hotel.order.entity.CvcOrderInfoEntity;
 import com.xuzy.hotel.order.module.Data;
 import com.xuzy.hotel.order.module.DelivetyJson;
 import com.xuzy.hotel.order.service.CvcOrderInfoService;
+import com.xuzy.hotel.order.web.OrderCallBack;
 import com.xuzy.hotel.shipping.entity.CvcShippingEntity;
 import com.xuzy.hotel.shipping.service.CvcShippingService;
 
@@ -32,6 +35,9 @@ public class WuliuCheckTask implements Job{
 	
 	@Autowired
 	private CvcShippingService cvcShippingService;
+	
+	@Autowired
+	private OrderCallBack orderCallBack;
 	
 	public void run() {
 //		if(true) {
@@ -75,13 +81,16 @@ public class WuliuCheckTask implements Job{
 					String result = "";
 					result = ConmentHttp.getOrderWuliu(cvcShippingEntity.getShippingCode(), entity.getInvoiceNo(), entity.getTel());
 					if(StringUtils.isNotEmpty(result) && result.contains("\"message\":\"ok\"")) {
-						ConmentHttp.postMyErrorOrder(result);
+						String str = "{\"type\":\"1\",\"status\":\"shutdown\",\"billstatus\":\"check\",\"message\":\"\",\"lastResult\":"+result+"}";
+//						ConmentHttp.postMyErrorOrder(result);
+						orderCallBack.result(str);
 						org.jeecgframework.core.util.LogUtil.info("手动获取物流："+result);
 					}
 				} catch (Exception e) {
 					org.jeecgframework.core.util.LogUtil.error("处理异常："+ entity.getId(), e);
 				}
 			}
+			
 		}
 		
 	}

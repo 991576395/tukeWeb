@@ -31,6 +31,9 @@
 				<input name="delivery_confirmed" type="button" value="推送至签收"
 					class="btn btn-primary btn-sm"
 					onclick="toUpdate('cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=signin')" />
+				<input name="delivery_confirmed" type="button" value="强制推送至签收失败"
+					class="btn btn-primary btn-sm"
+					onclick="toUpdate('cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=signFailureGo')" />
 			</div>
 		</div>
 	</form>

@@ -187,7 +187,7 @@ public class CvcInventoryTableServiceImpl extends CommonServiceImpl implements C
 			if(result == 1) {
 				return result;
 			}else {
-				if(tryTime >= 5) {
+				if(tryTime >= 4) {
 					throw new XuException("减仓失败，请重试！");
 				}
 				

@@ -212,10 +212,8 @@ public class CvcDeliveryOrderServiceImpl implements CvcDeliveryOrderService {
 			cvcOrderAction.setActionUser(ResourceUtil.getSessionUser().getUserName());
 			cvcOrderAction.setOrderStatus(orderInfoEntity.getOrderStatus());
 			cvcOrderAction.setShippingStatus(orderInfoEntity.getShippingStatus());
-			cvcOrderAction.setPayStatus(0);
-			cvcOrderAction.setActionPlace(0);
-			cvcOrderAction.setActionNote("");
 			cvcOrderAction.setLogTime((int)PhpDateUtils.getTime());
+			cvcOrderAction.setActionNote("发货");
 			cvcOrderActionDao.insert(cvcOrderAction );
 		} catch (Exception e) {
 			logger.error("订单发货异常！", e);

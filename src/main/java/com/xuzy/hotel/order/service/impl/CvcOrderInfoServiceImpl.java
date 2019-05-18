@@ -15,6 +15,7 @@ import org.jeecgframework.minidao.pojo.MiniDaoPage;
 import org.jeecgframework.p3.core.common.utils.AjaxJson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.appinterface.app.base.exception.XuException;
 import com.util.PHPAndJavaSerialize;
@@ -28,9 +29,13 @@ import com.xuzy.hotel.deliveryorder.entity.CvcDeliveryOrderEntity;
 import com.xuzy.hotel.deliveryorder.service.CvcDeliveryOrderService;
 import com.xuzy.hotel.order.dao.CvcOrderInfoDao;
 import com.xuzy.hotel.order.entity.CvcOrderInfoEntity;
+import com.xuzy.hotel.order.module.CallBaseRequest;
 import com.xuzy.hotel.order.module.Data;
 import com.xuzy.hotel.order.module.DelivetyJson;
 import com.xuzy.hotel.order.service.CvcOrderInfoService;
+import com.xuzy.hotel.order.web.OrderCallBack;
+import com.xuzy.hotel.orderaction.dao.CvcOrderActionDao;
+import com.xuzy.hotel.orderaction.entity.CvcOrderActionEntity;
 import com.xuzy.hotel.shipping.dao.CvcShippingDao;
 import com.xuzy.hotel.shipping.entity.CvcShippingEntity;
 import com.xuzy.hotel.shippingbatchorder.dao.CvcShippingBatchOrderDao;
@@ -68,7 +73,11 @@ public class CvcOrderInfoServiceImpl implements CvcOrderInfoService {
 	@Resource
 	private CvcShippingDao cvcShippingDao;
 	
+	@Resource
+	private CvcOrderActionDao cvcOrderActionDao;
 	
+	@Resource
+	private OrderCallBack orderCallBack;
 	
 
 	 /**
@@ -181,6 +190,18 @@ public class CvcOrderInfoServiceImpl implements CvcOrderInfoService {
 	@Override
 	public void updateStatusByOrderId(int orderId, int status) {
 		cvcOrderInfoDao.updateStatusByOrderId(orderId, status);
+		
+		try {
+			//添加操作记录
+			CvcOrderActionEntity cvcOrderAction = new CvcOrderActionEntity();
+			cvcOrderAction.setOrderId(orderId);
+			cvcOrderAction.setActionUser(ResourceUtil.getSessionUser().getUserName());
+			cvcOrderAction.setLogTime((int)PhpDateUtils.getTime());
+			cvcOrderAction.setActionNote("推送订单状态为"+ResourceUtil.searchAllTypesByCode("OStatus",status+""));
+			cvcOrderActionDao.insert(cvcOrderAction );
+		} catch (Exception e) {
+			logger.info("添加操作日志失败=="+e.getMessage());
+		}
 	}
 
 	@Override
@@ -207,6 +228,7 @@ public class CvcOrderInfoServiceImpl implements CvcOrderInfoService {
 			,String preArrivalDate) {
 		AjaxJson j = new AjaxJson();
 		try {
+			shippingName = shippingName.trim();
 			if (cvcOrderInfoEntity == null) {
 				j.setSuccess(false);
 				j.setMsg("订单查询失败！");
@@ -395,17 +417,6 @@ public class CvcOrderInfoServiceImpl implements CvcOrderInfoService {
 		return cvcOrderInfoDao.getTogezelWuliuList(startTime, endTime);
 	}
 	
-	
-	
-	@Override
-	public List<CvcOrderInfoEntity> getShentongList() {
-		Calendar calendar = Calendar.getInstance();
-		long endTime = PhpDateUtils.getTime(calendar.getTime());
-		//40天前
-		calendar.add(Calendar.DAY_OF_YEAR, -40);
-		long startTime = PhpDateUtils.getTime(calendar.getTime());
-		return cvcOrderInfoDao.getShentongList(startTime, endTime);
-	}
 
 	@Override
 	public MiniDaoPage<CvcOrderInfoEntity> getTimeOutOrderList(int page, int rows) {
@@ -415,5 +426,25 @@ public class CvcOrderInfoServiceImpl implements CvcOrderInfoService {
 	@Override
 	public int getTimeOutOrderCount() {
 		return cvcOrderInfoDao.getTimeOutOrderCount();
+	}
+	
+	
+	@Transactional
+	@Override
+	public void shengtongSearch() {
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.HOUR_OF_DAY, -12);
+		String endTime = DateFormatUtils.format(calendar, "yyyyMMddHHmmssSSS");
+		List<CvcOrderInfoEntity> cvcOrderInfoEntities = cvcOrderInfoDao.getShenTongList(endTime);
+		if(CollectionUtils.isNotEmpty(cvcOrderInfoEntities)) {
+			for (CvcOrderInfoEntity entity : cvcOrderInfoEntities) {
+				CallBaseRequest baseRequest = ConmentHttp.postShentongValue(entity.getInvoiceNo());
+				try {
+					orderCallBack.runByRequest(baseRequest);
+				} catch (Exception e) {
+					logger.error("处理物流返回异常", e);
+				}
+			}
+		}
 	}
 }
