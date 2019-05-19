@@ -65,6 +65,7 @@ import com.xuzy.hotel.ylrequest.module.RequestOFFHarbourExchangeOrderJson;
 import com.xuzy.hotel.ylrequest.module.RequestReNewExchangeEMSJson;
 import com.xuzy.hotel.ylrequest.module.RequestReNewExchangeSignDateJson;
 import com.xuzy.hotel.ylrequest.module.RequestRefuseExchangeOrderJson;
+import com.xuzy.hotel.ylrequest.module.RequestReturnedExchangeOrderJson;
 import com.xuzy.hotel.ylrequest.module.RequestSignInExchangeOrderJson;
 
 /**
@@ -685,7 +686,8 @@ public class CvcOrderInfoController extends BaseController {
 	@ResponseBody
 	public AjaxJson orderStatusUpdate(@RequestParam(required = true, value = "id") int id,
 			@RequestParam(required = true, value = "tkOrderStatus") String tkOrderStatus,
-			@RequestParam(required = false, value = "backingReason") String backingReason) {
+			@RequestParam(required = false, value = "backingReason") String backingReason,
+			@RequestParam(required = false, value = "returnReason") String returnReason) {
 		AjaxJson j = new AjaxJson();
 		try {
 			if(StringUtils.isEmpty(tkOrderStatus)) {
@@ -767,9 +769,31 @@ public class CvcOrderInfoController extends BaseController {
 					j.setMsg("订单签收失败 原因:"+responseHead.getReturnInfo());
 				}
 			}else if("return".equals(tkOrderStatus)) {
-				//退货
-				cvcOrderInfoService.updateStatusByOrderId(id, 7);
-				j.setMsg("订单退货成功");
+				RequestReturnedExchangeOrderJson exchangeOrderJson = new RequestReturnedExchangeOrderJson();
+				exchangeOrderJson.setOrderID(id);
+				exchangeOrderJson.setReturningReason(returnReason);
+				ResponseHead head = ConmentHttp.sendHttp(new TukeRequestBody.Builder()
+							.setParams(exchangeOrderJson).setSequence(2)
+							.setServiceCode("CRMIF.ReturningExchangeOrderJson").builder(), null);
+				if(head.getReturn() >= 0) {
+					cvcOrderInfoService.updateStatusByOrderId(id, 7);
+					exchangeOrderJson.setReturningReason("");
+					exchangeOrderJson.setReturnedReason(returnReason);
+					head = ConmentHttp.sendHttp(new TukeRequestBody.Builder()
+							.setParams(exchangeOrderJson).setSequence(2)
+							.setServiceCode("CRMIF.ReturnedExchangeOrderJson").builder(), null);
+					if(head.getReturn() >= 0) {
+						//退货
+						cvcOrderInfoService.updateStatusByOrderId(id, 8);
+						j.setMsg("订单退货成功");
+					}else {
+						j.setSuccess(false);
+						j.setMsg("订单退货失败");
+					}
+				}else {
+					j.setSuccess(false);
+					j.setMsg("订单退货失败");
+				}
 			}else if("returnWareHouse".equals(tkOrderStatus)) {
 				//申请返仓
 				RequestBackingExchangeOrderJson exchangeOrderJson = new RequestBackingExchangeOrderJson();

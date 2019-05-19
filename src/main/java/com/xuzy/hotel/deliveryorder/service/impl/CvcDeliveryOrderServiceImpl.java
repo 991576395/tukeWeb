@@ -213,6 +213,8 @@ public class CvcDeliveryOrderServiceImpl implements CvcDeliveryOrderService {
 			cvcOrderAction.setOrderStatus(orderInfoEntity.getOrderStatus());
 			cvcOrderAction.setShippingStatus(orderInfoEntity.getShippingStatus());
 			cvcOrderAction.setLogTime((int)PhpDateUtils.getTime());
+			cvcOrderAction.setPayStatus(0);
+			cvcOrderAction.setActionPlace(0);
 			cvcOrderAction.setActionNote("发货");
 			cvcOrderActionDao.insert(cvcOrderAction );
 		} catch (Exception e) {

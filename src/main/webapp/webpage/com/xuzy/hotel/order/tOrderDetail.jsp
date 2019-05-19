@@ -98,6 +98,25 @@
 				});
 		 }
 		 
+		 
+		function returnGood(order_id){
+			layer.open({
+				title:"系统提示",
+				content:"是否申请退货",
+				icon:7,
+				shade: 0.3,
+				yes:function(index){
+					request('cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=return&id='+order_id+'&returnReason='+$('#returnReason').val(),function (d){
+						window.location.href= 'cvcOrderInfo.do?toDetail&id='+order_id;  
+					});
+				},
+				btn:['确定','取消'],
+				btn2:function(index){
+					layer.close(index);
+				}
+			});
+		}
+		 
 		 //申请返货
 		 function returnWareHouse(order_id){
 			 layer.open({
@@ -121,7 +140,7 @@
 			 function request(url,fn){
 				 $.ajax({
 						url : url,
-						type : 'post',
+						type : 'get',
 						cache : false,
 						success : function(data) {
 							var d = $.parseJSON(data);
@@ -233,7 +252,7 @@
 					</c:if> 
 					<!-- 退货 --> 
 					<c:if test="${cvcOrderInfoEntity.orderStatus eq 5}">
-						<!--input name="return" type="submit" value="{$lang.op_return}" class="button" /-->
+						<!--input name="" type="submit" value="{$lang.op_return}" class="button" /-->
 					</c:if> <input name="order_id" type="hidden"
 					value="${smarty.request.order_id}">
 					
@@ -255,6 +274,17 @@
 						onclick="returnWareHouse('${cvcOrderInfoEntity.id}')">申请返仓</button>
 					</td>
 					
+			</tr>
+			<tr>
+				<td style="text-indent: 2.5em" colspan="6" align="left">
+						退货原因：
+						<input type="text" id="returnReason" name="returnReason" style="width: 200px">
+						<!-- 申请返仓 -->
+						 &nbsp;&nbsp;
+						<button type="button" name="return" class="btn btn-primary btn-sm"
+							style="margin-left: 20px;"
+							onclick="returnGood('${cvcOrderInfoEntity.id}')">申请退货</button>
+					</td>
 			</tr>
 		</table>
 	</div>

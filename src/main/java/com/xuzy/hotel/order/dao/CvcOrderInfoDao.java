@@ -126,7 +126,7 @@ public interface CvcOrderInfoDao{
 	  * 通过订单号查询操作人
 	  * @return
 	  */
-	 @Sql("SELECT action_user FROM cvc_order_action WHERE order_id = :orderId group by action_user")
+	 @Sql("SELECT action_user FROM cvc_order_action WHERE order_id = :orderId group by action_user limit 1")
 	 public String getActionUserByOrderId(@Param("orderId") int orderId);
 	
 	

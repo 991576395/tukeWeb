@@ -191,17 +191,17 @@ public class CvcOrderInfoServiceImpl implements CvcOrderInfoService {
 	public void updateStatusByOrderId(int orderId, int status) {
 		cvcOrderInfoDao.updateStatusByOrderId(orderId, status);
 		
-		try {
-			//添加操作记录
-			CvcOrderActionEntity cvcOrderAction = new CvcOrderActionEntity();
-			cvcOrderAction.setOrderId(orderId);
-			cvcOrderAction.setActionUser(ResourceUtil.getSessionUser().getUserName());
-			cvcOrderAction.setLogTime((int)PhpDateUtils.getTime());
-			cvcOrderAction.setActionNote("推送订单状态为"+ResourceUtil.searchAllTypesByCode("OStatus",status+""));
-			cvcOrderActionDao.insert(cvcOrderAction );
-		} catch (Exception e) {
-			logger.info("添加操作日志失败=="+e.getMessage());
-		}
+//		try {
+//			//添加操作记录
+//			CvcOrderActionEntity cvcOrderAction = new CvcOrderActionEntity();
+//			cvcOrderAction.setOrderId(orderId);
+//			cvcOrderAction.setActionUser(ResourceUtil.getSessionUser().getUserName());
+//			cvcOrderAction.setLogTime((int)PhpDateUtils.getTime());
+//			cvcOrderAction.setActionNote("推送订单状态为"+ResourceUtil.searchAllTypesByCode("OStatus",status+""));
+//			cvcOrderActionDao.insert(cvcOrderAction );
+//		} catch (Exception e) {
+//			logger.info("添加操作日志失败=="+e.getMessage());
+//		}
 	}
 
 	@Override

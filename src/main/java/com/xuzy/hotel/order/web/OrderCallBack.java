@@ -259,7 +259,6 @@ public class OrderCallBack extends BaseController {
 				}
 			}
 		}
-		isQianshou = true; 
 		if(cvcOrderInfoEntity.getOrderStatus() == 5) {
 			//已签收
 			return;
