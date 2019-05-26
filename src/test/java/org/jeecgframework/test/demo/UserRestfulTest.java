@@ -1,7 +1,6 @@
 package org.jeecgframework.test.demo;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.jeecgframework.AbstractUnitTest;
 import org.jeecgframework.core.util.PasswordUtil;
@@ -16,6 +15,9 @@ import org.springframework.web.client.RestTemplate;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.xuzy.hotel.order.entity.CvcOrderInfoEntity;
+import com.xuzy.hotel.order.service.CvcOrderInfoService;
+import com.xuzy.hotel.ylrequest.WuliuCheckTask;
 
 /**
  * UserRestful单元测试Demo
@@ -28,6 +30,12 @@ public class UserRestfulTest extends AbstractUnitTest {
 
 	@Autowired
 	private RestTemplate template;
+	
+	@Autowired
+	private CvcOrderInfoService cvcOrderInfoService;
+	
+	@Autowired
+	private WuliuCheckTask wuliuCheckTask;
 
 	// 测试get单个用户
 	// @Test
@@ -82,11 +90,17 @@ public class UserRestfulTest extends AbstractUnitTest {
 	}
 	
 	//测试del
-	//@Test
+	@Test
 	public void testDelete() throws Exception {
-		HttpHeaders headers = new HttpHeaders();
-		headers.add("X-Auth-Token", UUID.randomUUID().toString());
-		headers.setContentType(MediaType.APPLICATION_JSON);
-		template.delete("http://localhost:8080/jeecg/rest/user/{id}","111111");
+//		HttpHeaders headers = new HttpHeaders();
+//		headers.add("X-Auth-Token", UUID.randomUUID().toString());
+//		headers.setContentType(MediaType.APPLICATION_JSON);
+//		template.delete("http://localhost:8080/jeecg/rest/user/{id}","111111");
+		
+//		List<CvcOrderInfoEntity> cvcOrderInfoEntities = cvcOrderInfoService.getTogezelWuliuList();
+//		for (CvcOrderInfoEntity cvcOrderInfoEntity : cvcOrderInfoEntities) {
+//			System.out.println(cvcOrderInfoEntity.getId());
+//		}
+		wuliuCheckTask.run();
 	}
 }

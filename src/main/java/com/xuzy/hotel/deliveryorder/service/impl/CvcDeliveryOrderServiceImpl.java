@@ -66,8 +66,6 @@ public class CvcDeliveryOrderServiceImpl implements CvcDeliveryOrderService {
 	@Resource
 	private CvcOrderActionDao cvcOrderActionDao;
 	
-	@Autowired
-	private CvcInventoryTableServiceI cvcInventoryTableService;
 
 	@Override
 	public CvcDeliveryOrderEntity get(String id) {
@@ -132,7 +130,8 @@ public class CvcDeliveryOrderServiceImpl implements CvcDeliveryOrderService {
 
 	@Override
 	@Transactional(rollbackFor=XuException.class)
-	public void addDeliveryOrderByOrder(CvcOrderInfoEntity orderInfoEntity,String shippingName,String batchSendNo,int isPostorder) {
+	public List<CvcOrderGoodsEntity> addDeliveryOrderByOrder(CvcOrderInfoEntity orderInfoEntity,String shippingName,String batchSendNo,int isPostorder) {
+		List<CvcOrderGoodsEntity> cvcOrderGoodsEntities = null;
 		try {
 			if(!StringUtils.isEmpty(shippingName)) {
 				CvcShippingEntity cvcShippingEntity = cvcShippingDao.get(shippingName);
@@ -169,7 +168,7 @@ public class CvcDeliveryOrderServiceImpl implements CvcDeliveryOrderService {
 				cvcDeliveryOrderEntity.setInvoiceNo(orderInfoEntity.getInvoiceNo());
 				
 				int deliveryId = insert(cvcDeliveryOrderEntity);
-				List<CvcOrderGoodsEntity> cvcOrderGoodsEntities = cvcOrderGoodsDao.getGoods(orderInfoEntity.getId());
+				cvcOrderGoodsEntities = cvcOrderGoodsDao.getGoods(orderInfoEntity.getId());
 				if(CollectionUtils.isNotEmpty(cvcOrderGoodsEntities)) {
 					for(CvcOrderGoodsEntity entity:cvcOrderGoodsEntities) {
 						entity.setFormatedSubtotal(entity.getGoodsPrice().multiply(new BigDecimal(entity.getGoodsNumber())));
@@ -184,8 +183,6 @@ public class CvcDeliveryOrderServiceImpl implements CvcDeliveryOrderService {
 						cvcDeliveryGoods.setGoodsId(cvcOrderGoodsEntity.getGoodsId());
 						cvcDeliveryGoods.setSendNumber(cvcOrderGoodsEntity.getGoodsNumber());
 						cvcDeliveryGoodsDao.insert(cvcDeliveryGoods);
-						//减去库存
-						cvcInventoryTableService.subInventory(cvcOrderGoodsEntity.getGoodsId()+"",cvcOrderGoodsEntity.getGoodsNumber(), 0);
 					}
 				}
 			}
@@ -221,6 +218,7 @@ public class CvcDeliveryOrderServiceImpl implements CvcDeliveryOrderService {
 			logger.error("订单发货异常！", e);
 			throw new XuException("订单发货异常！");
 		}
+		return cvcOrderGoodsEntities;
 	}
 
 	@Override

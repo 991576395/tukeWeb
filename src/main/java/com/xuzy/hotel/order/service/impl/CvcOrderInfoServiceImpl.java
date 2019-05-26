@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.appinterface.app.base.exception.XuException;
+import com.google.gson.Gson;
+import com.sun.org.apache.bcel.internal.generic.NEW;
 import com.util.PHPAndJavaSerialize;
 import com.util.PhpDateUtils;
 import com.xuzy.hotel.deliverygoods.dao.CvcDeliveryGoodsDao;
@@ -27,6 +29,7 @@ import com.xuzy.hotel.deliveryinfo.service.CvcDeliveryInfoService;
 import com.xuzy.hotel.deliveryorder.dao.CvcDeliveryOrderDao;
 import com.xuzy.hotel.deliveryorder.entity.CvcDeliveryOrderEntity;
 import com.xuzy.hotel.deliveryorder.service.CvcDeliveryOrderService;
+import com.xuzy.hotel.inventory.service.CvcInventoryTableServiceI;
 import com.xuzy.hotel.order.dao.CvcOrderInfoDao;
 import com.xuzy.hotel.order.entity.CvcOrderInfoEntity;
 import com.xuzy.hotel.order.module.CallBaseRequest;
@@ -36,6 +39,7 @@ import com.xuzy.hotel.order.service.CvcOrderInfoService;
 import com.xuzy.hotel.order.web.OrderCallBack;
 import com.xuzy.hotel.orderaction.dao.CvcOrderActionDao;
 import com.xuzy.hotel.orderaction.entity.CvcOrderActionEntity;
+import com.xuzy.hotel.ordergoods.entity.CvcOrderGoodsEntity;
 import com.xuzy.hotel.shipping.dao.CvcShippingDao;
 import com.xuzy.hotel.shipping.entity.CvcShippingEntity;
 import com.xuzy.hotel.shippingbatchorder.dao.CvcShippingBatchOrderDao;
@@ -75,6 +79,9 @@ public class CvcOrderInfoServiceImpl implements CvcOrderInfoService {
 	
 	@Resource
 	private CvcOrderActionDao cvcOrderActionDao;
+	
+	@Autowired
+	private CvcInventoryTableServiceI cvcInventoryTableService;
 	
 	@Resource
 	private OrderCallBack orderCallBack;
@@ -299,8 +306,15 @@ public class CvcOrderInfoServiceImpl implements CvcOrderInfoService {
 					? 1: 0;
 				}
 				// 添加发货订单
-				cvcDeliveryOrderService.addDeliveryOrderByOrder(cvcOrderInfoEntity, shippingName, batchSendNo,
+				List<CvcOrderGoodsEntity> cvcOrderGoodsEntities = cvcDeliveryOrderService.addDeliveryOrderByOrder(cvcOrderInfoEntity, shippingName, batchSendNo,
 						isPostorder);
+				if(CollectionUtils.isNotEmpty(cvcOrderGoodsEntities)) {
+					//发货单商品入库
+					for(CvcOrderGoodsEntity cvcOrderGoodsEntity:cvcOrderGoodsEntities) {
+						//减去库存
+						cvcInventoryTableService.subInventory(cvcOrderGoodsEntity.getGoodsId()+"",cvcOrderGoodsEntity.getGoodsNumber(), 0);
+					}
+				}
 				j.setSuccess(true);
 				j.setMsg("发货成功");
 			}
@@ -429,20 +443,22 @@ public class CvcOrderInfoServiceImpl implements CvcOrderInfoService {
 	}
 	
 	
-	@Transactional
 	@Override
 	public void shengtongSearch() {
 		Calendar calendar = Calendar.getInstance();
-		calendar.add(Calendar.HOUR_OF_DAY, -12);
 		String endTime = DateFormatUtils.format(calendar, "yyyyMMddHHmmssSSS");
-		List<CvcOrderInfoEntity> cvcOrderInfoEntities = cvcOrderInfoDao.getShenTongList(endTime);
+		//10天前
+		calendar.add(Calendar.DAY_OF_YEAR, -20);
+		String startTime = DateFormatUtils.format(calendar, "yyyyMMddHHmmssSSS");
+		List<CvcOrderInfoEntity> cvcOrderInfoEntities = cvcOrderInfoDao.getShenTongList(startTime,endTime);
 		if(CollectionUtils.isNotEmpty(cvcOrderInfoEntities)) {
 			for (CvcOrderInfoEntity entity : cvcOrderInfoEntities) {
-				CallBaseRequest baseRequest = ConmentHttp.postShentongValue(entity.getInvoiceNo());
 				try {
+					CallBaseRequest baseRequest = ConmentHttp.postShentongValue(entity.getInvoiceNo());
+					logger.info("申通接口:"+new Gson().toJson(baseRequest));
 					orderCallBack.runByRequest(baseRequest);
 				} catch (Exception e) {
-					logger.error("处理物流返回异常", e);
+					logger.error(entity.getInvoiceNo()+":处理物流返回异常", e);
 				}
 			}
 		}

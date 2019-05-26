@@ -191,8 +191,9 @@ public class CvcInventoryTableServiceImpl extends CommonServiceImpl implements C
 					throw new XuException("减仓失败，请重试！");
 				}
 				
-				long sleepTime = new Random(100).nextInt();
+				int sleepTime = new Random().nextInt(100);
 				try {
+					System.out.println(100 + sleepTime);
 					Thread.sleep(100 + sleepTime);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
@@ -200,6 +201,7 @@ public class CvcInventoryTableServiceImpl extends CommonServiceImpl implements C
 				subInventory(goodNumber,size,++tryTime);
 			}
 		} catch (Exception e) {
+//			TAG.info("减库存操作失败！"+e.getMessage());
 			TAG.error("减库存操作失败！", e);
 		}
 		return 0;

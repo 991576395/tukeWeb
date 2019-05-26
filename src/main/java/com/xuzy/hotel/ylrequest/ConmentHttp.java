@@ -1,11 +1,13 @@
 package com.xuzy.hotel.ylrequest;
 
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,6 +22,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateFormatUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.jeecgframework.core.util.HttpRequest;
 import org.jeecgframework.core.util.ResourceUtil;
@@ -27,10 +31,12 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.util.KuaidiUtils;
 import com.wustrive.aesrsa.util.AES;
 import com.wustrive.aesrsa.util.Base64;
 import com.wustrive.aesrsa.util.RSA;
@@ -111,6 +117,14 @@ public class ConmentHttp {
      * @param number 
      */
     public static Kuaidi100Response postorder(String company, String number) { 
+    	if("shentong".equals(company)) {
+    		//申通不需要订阅
+    		Kuaidi100Response kuaidi100Response = new Kuaidi100Response();
+    		kuaidi100Response.setResult(false);
+    		kuaidi100Response.setMessage("");
+    		return kuaidi100Response;
+    	}
+    	
     	Kuaidi100Request kuaidi100Request = new Kuaidi100Request();
     	kuaidi100Request.setCompany(company);
     	kuaidi100Request.setNumber(number);
@@ -234,10 +248,13 @@ public class ConmentHttp {
 		try {
 			response = ConmentHttp.okHttpClient.newCall(request).execute();
 			String result = response.body().string();
+//			String result = number;
 			logger.info("result:"+result);
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = factory.newDocumentBuilder();
-			Document document = builder.parse(new ByteArrayInputStream(result.getBytes()));
+			BufferedReader br= new BufferedReader(new InputStreamReader(new ByteArrayInputStream(result.getBytes()),"utf-8"));
+			InputSource is = new InputSource(br);
+			Document document = builder.parse(is);
 			Element element = document.getDocumentElement();
 			
 			LastResult lastResult = new LastResult();
@@ -254,24 +271,62 @@ public class ConmentHttp {
 				Data data = new Data();
 				for (int j = 0; j < childList.getLength(); j++) {
 					if("time".equals(childList.item(j).getNodeName())) {
-						data.setFtime(childList.item(j).getNodeValue());
+						String fTime = DateFormatUtils.format(DateUtils.parseDate(childList.item(j).getTextContent(), new String[]{"yyyy/MM/dd HH:mm:ss"}), "yyyy-MM-dd HH:mm:ss");
+						data.setFtime(fTime);
 					}else if("scantype".equals(childList.item(j).getNodeName())) {
+						data.setShentongStatus(childList.item(j).getTextContent());
 						try {
-							int numnerOrder = Integer.parseInt(ResourceUtil.searchAllCodeByName(childList.item(j).getNodeValue(),"stOrder"));
-							code = numnerOrder > code?numnerOrder:code;
+							String thisStatus = ResourceUtil.searchAllCodeByName(childList.item(j).getTextContent().trim(),"stOrder");
+							if(!StringUtils.isEmpty(thisStatus)) {
+								int numnerOrder = Integer.parseInt(thisStatus);
+								data.statusNumber = numnerOrder;
+								//最后为异常，强制赋值
+								if(45 == numnerOrder || 40 == numnerOrder) {
+									//派件与异常件 按先后次序出现
+									code = numnerOrder;
+								}else {
+									code = numnerOrder > code ? numnerOrder : code;
+								}
+							}
 						} catch (Exception e) {
+							logger.error("状态转换失败",e);
 						}
 					}else if("memo".equals(childList.item(j).getNodeName())) {
-						data.setContext(childList.item(j).getNodeValue());
+						data.setContext(childList.item(j).getTextContent());
 					}
 				}
 				datas.add(data);
 			}
+			if(CollectionUtils.isNotEmpty(datas)) {
+				String firstSendAdd = "";
+				boolean isTuihui = false;
+				for (int i = 0; i < datas.size(); i++) {
+					if(datas.get(i).statusNumber == -1  && StringUtils.isEmpty(firstSendAdd)) {
+						firstSendAdd = KuaidiUtils.getFirstValue(datas.get(i).getContext());
+					}else if(datas.get(i).statusNumber == 40 && !StringUtils.isEmpty(firstSendAdd)) {
+						if(firstSendAdd.equals(KuaidiUtils.getFirstValue(datas.get(i).getContext()))) {
+							//表示退回
+							isTuihui = true;
+						}else {
+							isTuihui = false;
+						}
+					}
+				}
+				if(isTuihui && code == 50) {
+					//表示退签
+					code = 52;
+				}else if(isTuihui) {
+					code = 51;
+				}
+			}
+			
 			String typeValue = ResourceUtil.searchAllTypesByCode(code+"","stOrder");
 			String shengtongStatus = ResourceUtil.searchAllCodeByName(typeValue,"stCode");
-			lastResult.setState(Integer.parseInt(StringUtils.isEmpty(shengtongStatus)?"-1":shengtongStatus));
+			lastResult.setState(Integer.parseInt(StringUtils.isEmpty(shengtongStatus)?"0":shengtongStatus));
 			lastResult.setData(datas);
+			lastResult.setCom("shentong");
 			baseRequest.setLastResult(lastResult);
+			baseRequest.setMessage("ok");
 			return baseRequest;
 		} catch (Exception e) {
 			logger.error("调用申通接口异常",e);
@@ -286,6 +341,11 @@ public class ConmentHttp {
      * @throws Exception 
      */
     public static String getOrderWuliu(String company, String number,String phone) throws Exception { 
+    	if("shentong".equals(company)) {
+    		//申通不需要订阅
+    		return null;
+    	}
+    	
     	String param ="{\"com\":\""+company+"\",\"num\":\""+number+"\"";
     	if(!StringUtils.isEmpty(phone)) {
     		param +=",\"phone\":\""+phone+"\"";

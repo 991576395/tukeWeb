@@ -62,7 +62,7 @@ public class CvcInventoryTableEntity implements java.io.Serializable {
 	@Excel(name="商品剩余数量",width=15)
 	private java.lang.Integer goodSize;
 	/**修改版本*/
-	private java.lang.Integer uodateVersion;
+	private java.lang.Integer uodateVersion = 0;
 	
 	/**
 	 *方法: 取得java.lang.String

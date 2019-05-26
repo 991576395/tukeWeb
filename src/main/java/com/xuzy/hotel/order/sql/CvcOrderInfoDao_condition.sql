@@ -26,6 +26,11 @@
 		<#if (cvcOrderInfo.exceptionStatusString )?? && cvcOrderInfo.exceptionStatusString ="2">
 			and coi.exception_status = 0 
 		</#if>
+		
+		<#if (cvcOrderInfo.exceptionStatus )?? && cvcOrderInfo.exceptionStatus gt 0 >
+			and coi.exception_status = :cvcOrderInfo.exceptionStatus
+		</#if>
+		
 		<#if ( cvcOrderInfo.orderStatus )?? && cvcOrderInfo.orderStatus ?length gt 0>
 		    /* order_status */
 			and coi.tk_order_status = :cvcOrderInfo.orderStatus

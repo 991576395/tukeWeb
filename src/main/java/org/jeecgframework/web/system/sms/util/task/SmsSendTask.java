@@ -22,17 +22,17 @@ import org.springframework.stereotype.Service;
 public class SmsSendTask implements Job{
 	
 	@Autowired
-	private TSSmsServiceI tSSmsService; 
+//	private TSSmsServiceI tSSmsService; 
 	
 	/*@Scheduled(cron="0 0/1 * * * ?")*/
 	public void run() {
 		long start = System.currentTimeMillis();
 		org.jeecgframework.core.util.LogUtil.info("===================推送消息定时任务开始===================");
-		try {			
-			tSSmsService.send();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+//		try {			
+//			tSSmsService.send();
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 		org.jeecgframework.core.util.LogUtil.info("===================推送消息定时任务结束===================");
 		long end = System.currentTimeMillis();
 		long times = end - start;

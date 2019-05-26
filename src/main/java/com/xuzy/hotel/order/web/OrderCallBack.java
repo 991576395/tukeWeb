@@ -108,7 +108,6 @@ public class OrderCallBack extends BaseController {
 	 * @throws Exception 
 	 */
 	public void runByRequest(CallBaseRequest callbaseRequest) throws Exception {
-		
 		if(StringUtils.isNotEmpty(callbaseRequest.getLastResult().getMessage())
 				&& "ok".equals(callbaseRequest.getLastResult().getMessage())) {
 			String nu = callbaseRequest.getLastResult().getNu().trim();
@@ -117,37 +116,44 @@ public class OrderCallBack extends BaseController {
 				datas.sort(new Data.DataSortByDate());
 			}
 			callbaseRequest.getLastResult().setData(datas);
-			try {
-				CvcDeliveryInfoNewEntity cvcDeliveryInfoNewEntity = null;
-				List<CvcDeliveryInfoNewEntity> cvcDeliveryInfoNewEntities = cvcDeliveryInfoNewService.findByProperty(CvcDeliveryInfoNewEntity.class, "invoiceNo", nu);
-				if(CollectionUtils.isNotEmpty(cvcDeliveryInfoNewEntities)) {
-					cvcDeliveryInfoNewEntity = cvcDeliveryInfoNewEntities.get(0);
+			if("shentong".equals(callbaseRequest.getLastResult().getCom())) {
+				try {
+					CvcDeliveryInfoNewEntity cvcDeliveryInfoNewEntity = null;
+					List<CvcDeliveryInfoNewEntity> cvcDeliveryInfoNewEntities = cvcDeliveryInfoNewService.findByProperty(CvcDeliveryInfoNewEntity.class, "invoiceNo", nu);
+					if(CollectionUtils.isNotEmpty(cvcDeliveryInfoNewEntities)) {
+						cvcDeliveryInfoNewEntity = cvcDeliveryInfoNewEntities.get(0);
+					}
+					if(cvcDeliveryInfoNewEntity == null) {
+						cvcDeliveryInfoNewEntity = new CvcDeliveryInfoNewEntity();
+					}
+					cvcDeliveryInfoNewEntity.setInvoiceNo(nu);
+					cvcDeliveryInfoNewEntity.setShippingName(callbaseRequest.getLastResult().getCom());
+					switch (callbaseRequest.getType()) {
+						case "":
+						case "1":
+							//快递100查询
+							//快递100订阅
+							cvcDeliveryInfoNewEntity.setKuaid100Result(GsonUtil.toJson(callbaseRequest.getLastResult().getData()));
+							cvcDeliveryInfoNewEntity.setKuaid100Ftime(DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
+							cvcDeliveryInfoNewEntity.setKuaid100Status(callbaseRequest.getLastResult().getState()+"");
+							break;
+						case "2":
+							//申通
+							cvcDeliveryInfoNewEntity.setShentongResult(GsonUtil.toJson(callbaseRequest.getLastResult().getData()));
+							cvcDeliveryInfoNewEntity.setShentongFtime(DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
+							cvcDeliveryInfoNewEntity.setShentongStatus(callbaseRequest.getLastResult().getState()+"");
+							break;
+						default:
+							break;
+					}
+					cvcDeliveryInfoNewService.saveOrUpdate(cvcDeliveryInfoNewEntity);
+//					if("2".equals(callbaseRequest.getType())) {
+//						//测试申通阶段不做处理
+//						return;
+//					}
+				} catch (Exception e) {
+					LOG.error("新物流记录表更新失败！", e);
 				}
-				if(cvcDeliveryInfoNewEntity == null) {
-					cvcDeliveryInfoNewEntity = new CvcDeliveryInfoNewEntity();
-				}
-				cvcDeliveryInfoNewEntity.setInvoiceNo(nu);
-				switch (callbaseRequest.getType()) {
-					case "":
-					case "1":
-						//快递100查询
-						//快递100订阅
-						cvcDeliveryInfoNewEntity.setKuaid100Result(GsonUtil.toJson(callbaseRequest.getLastResult().getData()));
-						cvcDeliveryInfoNewEntity.setKuaid100Ftime(DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
-						cvcDeliveryInfoNewEntity.setKuaid100Status(callbaseRequest.getLastResult().getState()+"");
-						break;
-					case "2":
-						//申通
-						cvcDeliveryInfoNewEntity.setShentongResult(GsonUtil.toJson(callbaseRequest.getLastResult().getData()));
-						cvcDeliveryInfoNewEntity.setShentongFtime(DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
-						cvcDeliveryInfoNewEntity.setShentongStatus(callbaseRequest.getLastResult().getState()+"");
-						break;
-					default:
-						break;
-				}
-				cvcDeliveryInfoNewService.saveOrUpdate(cvcDeliveryInfoNewEntity);
-			} catch (Exception e) {
-				LOG.error("新物流记录表更新失败！", e);
 			}
 			
 			CvcDeliveryInfoEntity  cvcDeliveryInfo = new CvcDeliveryInfoEntity();

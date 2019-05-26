@@ -6,6 +6,7 @@ import org.jeecgframework.minidao.annotation.Param;
 import org.jeecgframework.minidao.pojo.MiniDaoPage;
 import com.xuzy.hotel.deliveryorder.entity.CvcDeliveryOrderEntity;
 import com.xuzy.hotel.order.entity.CvcOrderInfoEntity;
+import com.xuzy.hotel.ordergoods.entity.CvcOrderGoodsEntity;
 
 /**
  * 描述：物流信息表
@@ -70,5 +71,5 @@ public interface CvcDeliveryOrderService {
 	 * @param batchSendNo2 
 	 * @return
 	 */
-	public void addDeliveryOrderByOrder(CvcOrderInfoEntity orderInfoEntity,String shippingName,String batchSendNo, int isPostorder);
+	public List<CvcOrderGoodsEntity> addDeliveryOrderByOrder(CvcOrderInfoEntity orderInfoEntity,String shippingName,String batchSendNo, int isPostorder);
 }
