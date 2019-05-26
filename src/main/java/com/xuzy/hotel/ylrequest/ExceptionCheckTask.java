@@ -68,7 +68,10 @@ public class ExceptionCheckTask implements Job{
 							&& StringUtils.isNotEmpty(cvcDeliveryInfoEntity2.getCreateDate()))
 									? cvcDeliveryInfoEntity2.getCreateDate()
 									: cvcDeliveryInfoEntity.getCreateDate());
-					objs.add(entity);
+					
+					if(!objs.contains(entity)) {
+						objs.add(entity);
+					}
 				}
 			}
 			if (CollectionUtils.isNotEmpty(objs)) {

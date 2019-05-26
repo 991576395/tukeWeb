@@ -108,7 +108,6 @@ public class OrderCallBack extends BaseController {
 	 * @throws Exception 
 	 */
 	public void runByRequest(CallBaseRequest callbaseRequest) throws Exception {
-		
 		if(StringUtils.isNotEmpty(callbaseRequest.getLastResult().getMessage())
 				&& "ok".equals(callbaseRequest.getLastResult().getMessage())) {
 			String nu = callbaseRequest.getLastResult().getNu().trim();
@@ -146,6 +145,11 @@ public class OrderCallBack extends BaseController {
 						break;
 				}
 				cvcDeliveryInfoNewService.saveOrUpdate(cvcDeliveryInfoNewEntity);
+				
+				if("2".equals(callbaseRequest.getType())) {
+					//测试申通阶段不做处理
+					return;
+				}
 			} catch (Exception e) {
 				LOG.error("新物流记录表更新失败！", e);
 			}

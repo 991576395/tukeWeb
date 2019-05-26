@@ -200,7 +200,8 @@ public class CvcInventoryTableServiceImpl extends CommonServiceImpl implements C
 				subInventory(goodNumber,size,++tryTime);
 			}
 		} catch (Exception e) {
-			TAG.error("减库存操作失败！", e);
+			TAG.info("减库存操作失败！"+e.getMessage());
+//			TAG.error("减库存操作失败！", e);
 		}
 		return 0;
 	}

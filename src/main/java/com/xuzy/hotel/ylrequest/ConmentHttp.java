@@ -1,11 +1,13 @@
 package com.xuzy.hotel.ylrequest;
 
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,6 +29,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -234,10 +237,13 @@ public class ConmentHttp {
 		try {
 			response = ConmentHttp.okHttpClient.newCall(request).execute();
 			String result = response.body().string();
+//			String result = number;
 			logger.info("result:"+result);
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = factory.newDocumentBuilder();
-			Document document = builder.parse(new ByteArrayInputStream(result.getBytes()));
+			BufferedReader br= new BufferedReader(new InputStreamReader(new ByteArrayInputStream(result.getBytes()),"utf-8"));
+			InputSource is = new InputSource(br);
+			Document document = builder.parse(is);
 			Element element = document.getDocumentElement();
 			
 			LastResult lastResult = new LastResult();
@@ -254,22 +260,27 @@ public class ConmentHttp {
 				Data data = new Data();
 				for (int j = 0; j < childList.getLength(); j++) {
 					if("time".equals(childList.item(j).getNodeName())) {
-						data.setFtime(childList.item(j).getNodeValue());
+						data.setFtime(childList.item(j).getTextContent());
 					}else if("scantype".equals(childList.item(j).getNodeName())) {
+						data.setShentongStatus(childList.item(j).getTextContent());
 						try {
-							int numnerOrder = Integer.parseInt(ResourceUtil.searchAllCodeByName(childList.item(j).getNodeValue(),"stOrder"));
+							int numnerOrder = Integer.parseInt(ResourceUtil.searchAllCodeByName(childList.item(j).getTextContent().trim(),"stOrder"));
 							code = numnerOrder > code?numnerOrder:code;
+							
+							if(childList.item(j).getTextContent().trim().contains("签收")) {
+								code = 50;
+							}
 						} catch (Exception e) {
 						}
 					}else if("memo".equals(childList.item(j).getNodeName())) {
-						data.setContext(childList.item(j).getNodeValue());
+						data.setContext(childList.item(j).getTextContent());
 					}
 				}
 				datas.add(data);
 			}
 			String typeValue = ResourceUtil.searchAllTypesByCode(code+"","stOrder");
 			String shengtongStatus = ResourceUtil.searchAllCodeByName(typeValue,"stCode");
-			lastResult.setState(Integer.parseInt(StringUtils.isEmpty(shengtongStatus)?"-1":shengtongStatus));
+			lastResult.setState(Integer.parseInt(StringUtils.isEmpty(shengtongStatus)?"0":shengtongStatus));
 			lastResult.setData(datas);
 			baseRequest.setLastResult(lastResult);
 			return baseRequest;

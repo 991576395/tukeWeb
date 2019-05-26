@@ -12,6 +12,7 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import com.util.PHPAndJavaSerialize;
@@ -39,13 +40,32 @@ public class WuliuCheckTask implements Job{
 	@Autowired
 	private OrderCallBack orderCallBack;
 	
+	@Autowired
+	private ThreadPoolTaskExecutor taskExecutor;
+	
 	public void run() {
 //		if(true) {
 //			return;
 //		}
 		long start = System.currentTimeMillis();
 		org.jeecgframework.core.util.LogUtil.info("===================物流校验定时任务开始===================");
-		//离港时间
+//		taskExecutor.execute(new Runnable() {
+//			@Override
+//			public void run() {
+//				try {
+//					Thread.sleep(1000 * 60);
+//				} catch (InterruptedException e) {
+//					e.printStackTrace();
+//				}
+//				long start = System.currentTimeMillis();
+//				org.jeecgframework.core.util.LogUtil.info("===================申通物流校验定时任务开始===================");
+//				//执行申通接口
+//				cvcOrderInfoService.shengtongSearch();
+//				long end = System.currentTimeMillis();
+//				long times = end - start;
+//				org.jeecgframework.core.util.LogUtil.info("===================申通物流校验定时任务开始========总耗时"+times+"毫秒");
+//			}
+//		});
 		
 		Calendar calendar = Calendar.getInstance();
 		int hour = calendar.get(Calendar.HOUR_OF_DAY);
@@ -54,8 +74,14 @@ public class WuliuCheckTask implements Job{
 			return;
 		}
 		
+		org.jeecgframework.core.util.LogUtil.info("===================申通物流校验定时任务开始===================");
+		//执行申通接口
+		cvcOrderInfoService.shengtongSearch();
+		org.jeecgframework.core.util.LogUtil.info("===================申通物流校验定时任务结束===================");
+		
 		List<CvcOrderInfoEntity> results =cvcOrderInfoService.getTogezelWuliuList();
 		doOrderArrays(results);
+		
 		org.jeecgframework.core.util.LogUtil.info("===================物流校验定时任务结束===================");
 		long end = System.currentTimeMillis();
 		long times = end - start;
@@ -90,7 +116,6 @@ public class WuliuCheckTask implements Job{
 					org.jeecgframework.core.util.LogUtil.error("处理异常："+ entity.getId(), e);
 				}
 			}
-			
 		}
 		
 	}

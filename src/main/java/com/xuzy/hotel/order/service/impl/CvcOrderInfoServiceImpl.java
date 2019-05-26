@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.appinterface.app.base.exception.XuException;
+import com.google.gson.Gson;
+import com.sun.org.apache.bcel.internal.generic.NEW;
 import com.util.PHPAndJavaSerialize;
 import com.util.PhpDateUtils;
 import com.xuzy.hotel.deliverygoods.dao.CvcDeliveryGoodsDao;
@@ -429,20 +431,24 @@ public class CvcOrderInfoServiceImpl implements CvcOrderInfoService {
 	}
 	
 	
-	@Transactional
 	@Override
 	public void shengtongSearch() {
 		Calendar calendar = Calendar.getInstance();
-		calendar.add(Calendar.HOUR_OF_DAY, -12);
+		//3天前
+		calendar.add(Calendar.DAY_OF_YEAR, -3);
+		String startTime = DateFormatUtils.format(calendar, "yyyyMMddHHmmssSSS");
+		calendar.add(Calendar.DAY_OF_YEAR, 2);
+		calendar.add(Calendar.HOUR_OF_DAY, 12);
 		String endTime = DateFormatUtils.format(calendar, "yyyyMMddHHmmssSSS");
-		List<CvcOrderInfoEntity> cvcOrderInfoEntities = cvcOrderInfoDao.getShenTongList(endTime);
+		List<CvcOrderInfoEntity> cvcOrderInfoEntities = cvcOrderInfoDao.getShenTongList(startTime,endTime);
 		if(CollectionUtils.isNotEmpty(cvcOrderInfoEntities)) {
 			for (CvcOrderInfoEntity entity : cvcOrderInfoEntities) {
-				CallBaseRequest baseRequest = ConmentHttp.postShentongValue(entity.getInvoiceNo());
 				try {
+					CallBaseRequest baseRequest = ConmentHttp.postShentongValue(entity.getInvoiceNo());
+					logger.info("申通接口:"+new Gson().toJson(baseRequest));
 					orderCallBack.runByRequest(baseRequest);
 				} catch (Exception e) {
-					logger.error("处理物流返回异常", e);
+					logger.error(entity.getInvoiceNo()+":处理物流返回异常", e);
 				}
 			}
 		}

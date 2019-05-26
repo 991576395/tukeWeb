@@ -17,6 +17,9 @@ public class Data implements Serializable{
 	private String ftime;
 	
 	private String context;
+	
+	private String shentongStatus;
+	
 
 	public String getTime() {
 		return time;
@@ -40,6 +43,14 @@ public class Data implements Serializable{
 
 	public void setContext(String context) {
 		this.context = context;
+	}
+
+	public String getShentongStatus() {
+		return shentongStatus;
+	}
+
+	public void setShentongStatus(String shentongStatus) {
+		this.shentongStatus = shentongStatus;
 	}
 
 	@Override
