@@ -50,14 +50,12 @@ public class WuliuCheckTask implements Job{
 		long start = System.currentTimeMillis();
 		org.jeecgframework.core.util.LogUtil.info("===================物流校验定时任务开始===================");
 		
-		
 		Calendar calendar = Calendar.getInstance();
 		int hour = calendar.get(Calendar.HOUR_OF_DAY);
 		if(hour >= 0 && hour <= 6) {
 			org.jeecgframework.core.util.LogUtil.info("===================0 -- 6 点无需执行===================");
 			return;
 		}
-		
 		taskExecutor.execute(new Runnable() {
 			@Override
 			public void run() {
@@ -71,10 +69,10 @@ public class WuliuCheckTask implements Job{
 			}
 		});
 		
-//		org.jeecgframework.core.util.LogUtil.info("===================申通物流校验定时任务开始===================");
-//		//执行申通接口
-//		cvcOrderInfoService.shengtongSearch();
-//		org.jeecgframework.core.util.LogUtil.info("===================申通物流校验定时任务结束===================");
+		org.jeecgframework.core.util.LogUtil.info("===================申通物流校验定时任务开始===================");
+		//执行申通接口
+		cvcOrderInfoService.shengtongSearch();
+		
 		List<CvcOrderInfoEntity> results =cvcOrderInfoService.getTogezelWuliuList();
 		doOrderArrays(results);
 		

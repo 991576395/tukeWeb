@@ -120,7 +120,7 @@ public class ConmentHttp {
     	if("shentong".equals(company)) {
     		//申通不需要订阅
     		Kuaidi100Response kuaidi100Response = new Kuaidi100Response();
-    		kuaidi100Response.setResult(false);
+    		kuaidi100Response.setResult(true);
     		kuaidi100Response.setMessage("");
     		return kuaidi100Response;
     	}
@@ -230,8 +230,8 @@ public class ConmentHttp {
 		return null;
     }
     
-    public static void main(String[] args) throws Exception {
-    	postShentongValue(FileUtils.readFileToString(new File("/Users/zmeng/Documents/ceshi"), "utf-8"));
+    public static void main1(String[] args) throws Exception {
+//    	postShentongValue(FileUtils.readFileToString(new File("/Users/zmeng/Documents/ceshi"), "utf-8"));
 	}
     
     /**
@@ -620,7 +620,7 @@ public class ConmentHttp {
 	
 	
 	
-	public static void main1(String[] args) throws Exception {
+	public static void main(String[] args) throws Exception {
 //		getOrder();
 //		postMyErrorOrder();
 		
@@ -642,246 +642,6 @@ public class ConmentHttp {
 //		String path = name.replace(".", "/").replace("/dao/", "/sql/") + "_" + method.getName() + ".sql";
 //		System.out.println(path);
 //		getOrderWuliu("","");
-		//20181214
-//		postorder("shentong","3391128260685");
-//		postorder("shentong","3391128485761");
-//		postorder("shentong","3391128042280");
-//		postorder("shentong","3391128402366");
-//		postorder("shentong","3391128402342");
-//		postorder("shentong","3391128187997");
-//		postorder("shentong","3391128042205");
-//		postorder("shentong","3391128327211");
-//		postorder("shentong","3391128042163");
-//		postorder("shentong","3391128116536");
-//		postorder("shentong","3391128042138");
-//		postorder("shentong","3391128402263");
-//		postorder("shentong","3391128402238");
-//		postorder("shentong","3391128187875");
-//		postorder("shentong","3391128187810");
-//		postorder("shentong","3391127940317");
-//		postorder("shentong","3391127347564");
-//		postorder("shentong","3391128402226");
-//		postorder("shentong","3391128485566");
-			
-		//20181213
-//		postorder("shentong","3390260303900");
-//		postorder("shentong","3390260285172");
-//		postorder("shentong","3390260359752");
-//		postorder("shentong","3390260280745");
-//		postorder("shentong","3390259434007");
-//		postorder("shentong","3390260211909");
-//		postorder("shentong","3390259274791");
-//		postorder("shentong","3390259274808");
-//		postorder("shentong","3390260211892");
-//		postorder("shentong","3390259430708");
-//		postorder("shentong","3390260126730");
-//		postorder("shentong","3390260126728");
-//		postorder("shentong","3390260273219");
-//		postorder("shunfeng","297236785316");
-//		postorder("shentong","3390260261468");
-//		postorder("shentong","3390259492882");
-//		postorder("shentong","3390260385844");
-//		postorder("shentong","3390259424050");
-//		postorder("shentong","3390259265703");
-//		postorder("shentong","3390259492810");
-//		postorder("shentong","3390260073236");
-//		postorder("shentong","3390260116295");
-//		postorder("shentong","3390260192499");
-		//20181217
-//		postorder("shentong","3391127378866");
-//		postorder("shentong","3391127302578");
-//		postorder("shentong","3391126696582");
-//		postorder("shentong","3391127302580");
-//		postorder("shentong","3391127465992");
-//		postorder("shentong","3391127544099");
-//		postorder("shentong","3391127618187");
-//		postorder("shentong","3391127193834");
-//		postorder("shentong","3391127544129");
-//		postorder("shentong","3391127686868");
-//		postorder("shentong","3391127378957");
-//		postorder("shentong","3391127544257");
-//		postorder("shentong","3391126696703");
-//		postorder("shentong","3391127236061");
-//		postorder("shentong","3391127114644");
-//		postorder("shentong","3391127687163");
-//		postorder("shentong","3391127544324");
-//		postorder("shentong","3391127687254");
-//		postorder("shentong","3391127379392");
-//		postorder("shentong","3391127236292");
-//		postorder("shentong","3391127544464");
-//		postorder("shentong","3391127236437");
-//		postorder("shentong","3391127687369");
-//		postorder("shentong","3391126697071");
-//		postorder("shentong","3391126697113");
-//		postorder("shentong","3391127687412");
-//		postorder("shentong","3391127466754");
-//		postorder("shentong","3391127302920");
-//		postorder("shentong","3391127379665");
-//		postorder("shentong","3391127194669");
-//		postorder("shentong","3391127618801");
-//		postorder("shentong","3391127379695");
-//		postorder("shentong","3391126697253");
-//		postorder("shentong","3391127544968");
-//		postorder("shentong","3391127618886");
-//		postorder("shentong","3391127687855");
-//		postorder("shentong","3391127545032");
-//		postorder("shentong","3391127379847");
-//		postorder("shentong","3391127687886");
-//		postorder("shentong","3391127303146");
-//		postorder("shentong","3391127687965");
-//		postorder("shentong","3391127115443");
-//		postorder("shentong","3391126697370");
-//		postorder("shentong","3391127195085");
-//		postorder("shentong","3391126697411");
-//		postorder("shentong","3391126697423");
-//		postorder("shentong","3391127619125");
-//		postorder("shentong","3391127688107");
-//		postorder("shentong","3391127688119");
-//		postorder("shentong","3391127688132");
-//		postorder("shentong","3391127115686");
-//		postorder("shentong","3391127115698");
-//		postorder("shentong","3391126697605");
-//		postorder("shentong","3391127195304");
-//		postorder("shentong","3391126697666");
-//		postorder("shentong","3391127380076");
-//		postorder("shentong","3391126697691");
-//		postorder("shentong","3391127380106");
-//		postorder("shentong","3391127619351");
-//		postorder("shentong","3391126697775");
-//		postorder("shentong","3391127115870");
-//		postorder("shentong","3391127115893");
-//		postorder("shentong","3391127467784");
-//		postorder("shentong","3391126697848");
-//		postorder("shentong","3391127303535");
-//		postorder("shentong","3391126697885");
-//		postorder("shentong","3391127380131");
-//		postorder("shentong","3391127619545");
-//		postorder("shentong","3391127619612");
-//		postorder("shentong","3391127237431");
-//		postorder("shentong","3391127468250");
-//		postorder("shentong","3391127237485");
-//		postorder("shentong","3391127303640");
-//		postorder("shentong","3391126697988");
-//		postorder("shentong","3391127195780");
-//		postorder("shentong","3391127116187");
-//		postorder("shentong","3391127882799");
-		//20181218
-//		postorder("shentong","3391282846958");
-			
-		//20181219
-//		postorder("shentong","3391284130689");
-//		postorder("shentong","3391283981040");
-//		postorder("shentong","3391284131749");
-//		postorder("shentong","3391283981348");
-//		postorder("shentong","3391283730163");
-//		postorder("shentong","3391283729650");
-
-		
-//		postorderNow("shunfeng","297236769433");
-//		postorder("shentong","3392772492063");
-		
-//		postorder("shunfeng","296909731486");	
-		
-		
-//		postorder("shentong","3391456772945");
-//		postorder("shentong","3391456303085");
-//		postorder("shentong","3391456149335");
-//		postorder("shentong","3391457043990");
-//		postorder("shentong","3391456980524");
-//		postorder("shentong","3391456297415");
-//		postorder("shentong","3391456620831");
-//		postorder("shentong","3391456758075");
-//		postorder("shentong","3391456980548");
-//		postorder("shentong","3391456149354");
-//		postorder("shentong","3391456303103");
-//		postorder("shentong","3391456902327");
-//		postorder("shentong","3391456823399");
-//		postorder("shentong","3391457119169");
-//		postorder("shentong","3391457133395");
-//		postorder("shentong","3391457059257");
-//		postorder("shentong","3391456149366");
-//		postorder("shentong","3391456823405");
-//		postorder("shentong","3391457059275");
-//		postorder("shentong","3391456634927");
-//		postorder("shentong","3391456902339");
-//		postorder("shentong","3391456758105");
-//		postorder("shentong","3391456902345");
-//		postorder("shentong","3391457133474");
-//		postorder("shentong","3391456823521");
-//		postorder("shentong","3391456895793");
-//		postorder("shentong","3391456823533");
-//		postorder("shentong","3391457059336");
-//		postorder("shentong","3391457133619");
-//		postorder("shentong","3391457133632");
-//		postorder("shentong","3391456823569");
-//		postorder("shentong","3391456635106");
-//		postorder("shentong","3391456902388");
-//		postorder("shentong","3391456823605");
-//		postorder("shentong","3391457059415");
-//		postorder("shentong","3391456823624");
-//		postorder("shentong","3391456823648");
-//		postorder("shentong","3391457133814");
-//		postorder("shentong","3391456902406");
-//		postorder("shentong","3391456708936");
-//		postorder("shentong","3391456709050");
-//		postorder("shentong","3391456773385");
-//		postorder("shentong","3391456149457");
-//		postorder("shentong","3391456149469");
-//		postorder("shentong","3391456303346");
-//		postorder("shentong","3391457059531");
-//		postorder("shentong","3391456620915");
-//		postorder("shentong","3391456297460");
-//		postorder("shentong","3391456823685");
-//		postorder("shentong","3391456149494");
-//		postorder("shentong","3391457133929");
-//		postorder("shentong","3391456823697");
-//		postorder("shentong","3391456149536");
-//		postorder("shentong","3391456694287");
-//		postorder("shentong","3391456898189");
-//		postorder("shentong","3391456635507");
-//		postorder("shentong","3391456149561");
-//		postorder("shentong","3391456709218");
-//		postorder("shentong","3391456635532");
-//		postorder("shentong","3391456980937");
-//		postorder("shentong","3391457059755");
-//		postorder("shentong","3391456902467");
-//		postorder("shentong","3391456149615");
-//		postorder("shentong","3391457059798");
-//		postorder("shentong","3391456980974");
-//		postorder("shentong","3391456149676");
-//		postorder("shentong","3391457134169");
-//		postorder("shunfeng","252397283386");
-//		postorder("shunfeng","252397283304");
-//		postorder("shunfeng","252397283491");
-//		postorder("shunfeng","252397283816");
-//		postorder("shentong","3391457059830");
-//		postorder("shentong","3391456303425");
-//		postorder("shentong","3391456709437");
-//		postorder("shentong","3391456303437");
-//		postorder("shentong","3391456981025");
-//		postorder("shentong","3391456303455");
-//		postorder("shentong","3391456303462");
-//		postorder("shentong","3391457134339");
-//		postorder("shentong","3391456902583");
-//		postorder("shentong","3391456981074");
-//		postorder("shentong","3391457134479");
-//		postorder("shentong","3391456709528");
-//		postorder("shentong","3391456709530");
-//		postorder("shentong","3391456762335");
-//		postorder("shentong","3391457060105");
-//		postorder("shentong","3391456823820");
-//		postorder("shentong","3391457060124");
-//		postorder("shentong","3391456144958");
-//		postorder("shentong","3391456981116");
-//		postorder("shentong","3391457134583");
-//		postorder("shentong","3391456902315");
-//		postorder("shentong","3391456823326");
-//		postorder("shentong","3391456303516");
-//		postorder("shentong","3391456709607");
-//		postorder("shentong","3391456902716");
-//		postorder("shentong","3391456981268");
-//		postorder("shentong","3391456902303");
-//		postorder("shentong","3391456149785");
 		
 		
 //		RequestSetOrdersReadJson params = new RequestSetOrdersReadJson();
@@ -893,8 +653,56 @@ public class ConmentHttp {
 		
 			
 		
-		String result = getOrderWuliu("shunfeng","363074563311","18020455799");
-		System.out.println(result);
-		ConmentHttp.postMyErrorOrder(result);
+//		String result = getOrderWuliu("shunfeng","363074563311","18020455799");
+//		System.out.println(result);
+		
+		LastResult lastResult = new LastResult();
+		lastResult.setCom("jd");
+		lastResult.setMessage("ok");
+		lastResult.setNu("97329653950");
+		lastResult.setState(3);
+		lastResult.setStatus("200");
+		
+		List<Data> datas = new ArrayList<>();
+		
+		
+		//2019-06-07/周五08:49:16已完成配送，欢迎您再次光临！
+		//00:02:51配送员已经从站点出发，请您准备收货，姓名:纪辉,手机号：13601522884,投诉与咨询电话：13861707147
+		//2019-06-06/周四14:57:23上车扫描，送往无锡市夫刚运输途中
+		//14:56:44打包完成
+
+		Data data = new Data();
+		data.setContext("上车扫描，送往京东帮萧县服务店A途中");
+		data.setFtime("2019-06-07 20:01:03");
+		data.setTime("2019-06-07 20:01:03");
+		datas.add(data);
+		
+		Data data1 = new Data();
+		data1.setContext("【承运商上海鑫臻物流有限公司】发往【承运商京东帮萧县服务店A】");
+		data1.setFtime("2019-06-07 20:48:28");
+		data1.setTime("2019-06-07 20:48:28");
+		datas.add(data1);
+		
+		
+		Data data2 = new Data();
+		data2.setContext("【承运商京东帮萧县服务店A】接收了订单");
+		data2.setFtime("2019-06-07 22:13:11");
+		data2.setTime("2019-06-07 22:13:11");
+		datas.add(data2);
+		
+		Data data3 = new Data();
+		data3.setContext("配送员已经从站点出发，请您准备收货，姓名:朱存艳,手机号：13043626938,投诉与咨询电话：13956881941");
+		data3.setFtime("2019-06-08 15:42:37");
+		data3.setTime("2019-06-08 15:42:37");
+		datas.add(data3);
+		
+		Data data4 = new Data();
+		data4.setContext("已完成配送，欢迎您再次光临！");
+		data4.setFtime("2019-06-08 15:42:37");
+		data4.setTime("2019-06-08 15:42:37");
+		datas.add(data4);
+		
+		lastResult.setData(datas);
+		ConmentHttp.postMyErrorOrder(new Gson().toJson(lastResult));
 	}
 }

@@ -31,32 +31,6 @@
 	<script type="text/javascript">
 		var totelSize = 0, sucSize = 0, faildSize = 0;
 
-		function ship(title, url, id, width, height, isRestful) {
-			layer.open({
-				title : "系统提示",
-				content : "确认发货？",
-				icon : 7,
-				shade : 0.3,
-				yes : function(index) {
-					request(url + "&first=1", function(d) {
-						sucSize += d.obj.sucSize;
-						faildSize += d.obj.faildSize;
-						if (d.obj.totelSize == 0) {
-							sucSize = 0;
-							faildSize = 0;
-							tBatchOrderListsearch();
-							tip(d.msg);
-						} else {
-							requestall(url, 1, totelSize, sucSize, faildSize);
-						}
-					});
-				},
-				btn : [ '确定', '取消' ],
-				btn2 : function(index) {
-					layer.close(index);
-				}
-			});
-		}
 
 		function tipAlert(title, id) {
 			layer.open({
@@ -92,6 +66,8 @@
 		}
 
 		function responseCall(url, d) {
+			sucSize = d.obj.sucSize;
+			faildSize = d.obj.faildSize;
 			if (d.obj.totelSize == 0) {
 				tBatchOrderListsearch();
 				sucSize = 0;
@@ -101,6 +77,7 @@
 				//检查发货单状况
 			//	checkSize();
 			} else {
+				$('div.layui-layer-content').html("已完成:"+sucSize);
 				requestall(url, 0, d.obj.totelSize, d.obj.sucSize,
 						d.obj.faildSize);
 			}
@@ -188,6 +165,36 @@
 				cancelVal : '关闭',
 				cancel : true
 			/*为true等价于function(){}*/
+			});
+		}
+		
+		
+		function ship(title, url, id, width, height, isRestful) {
+			layer.open({
+				title : "系统提示",
+				content : "确认发货？",
+				icon : 7,
+				shade : 0.3,
+				yes : function(index) {
+					/* layer.close(index); */
+					request(url + "&first=1", function(d) {
+						sucSize += d.obj.sucSize;
+						faildSize += d.obj.faildSize;
+						if (d.obj.totelSize == 0) {
+							sucSize = 0;
+							faildSize = 0;
+							tBatchOrderListsearch();
+							tip(d.msg);
+						} else {
+							$('div.layui-layer-content').html("已完成:"+sucSize);
+							requestall(url, 1, totelSize, sucSize, faildSize);
+						}
+					});
+				},
+				btn : [ '确定', '取消' ],
+				btn2 : function(index) {
+					layer.close(index);
+				}
 			});
 		}
 	</script>

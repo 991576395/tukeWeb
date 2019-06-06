@@ -451,6 +451,10 @@ public class CvcOrderInfoServiceImpl implements CvcOrderInfoService {
 		calendar.add(Calendar.DAY_OF_YEAR, -20);
 		String startTime = DateFormatUtils.format(calendar, "yyyyMMddHHmmssSSS");
 		List<CvcOrderInfoEntity> cvcOrderInfoEntities = cvcOrderInfoDao.getShenTongList(startTime,endTime);
+		List<CvcOrderInfoEntity> cvcOrderInfoEntities2 = cvcOrderInfoDao.getShenTongTwoList(startTime, endTime);
+		if(CollectionUtils.isNotEmpty(cvcOrderInfoEntities2)) {
+			cvcOrderInfoEntities.addAll(cvcOrderInfoEntities2);
+		}
 		if(CollectionUtils.isNotEmpty(cvcOrderInfoEntities)) {
 			for (CvcOrderInfoEntity entity : cvcOrderInfoEntities) {
 				try {

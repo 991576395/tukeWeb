@@ -1,5 +1,6 @@
 package com.xuzy.hotel.inventory.service.impl;
 import com.xuzy.hotel.inventory.service.CvcInventoryTableServiceI;
+import com.xuzy.hotel.inventory.service.IStockCallback;
 import com.xuzy.hotel.message.entity.CvcMessageTableEntity;
 import com.xuzy.hotel.message.service.CvcMessageTableServiceI;
 
@@ -38,6 +39,9 @@ public class CvcInventoryTableServiceImpl extends CommonServiceImpl implements C
 	
 	@Autowired
 	private CvcMessageTableServiceI cvcMessageTableService;
+	
+	@Autowired
+	private StockService stockService;
 	
  	public void delete(CvcInventoryTableEntity entity) throws Exception{
  		super.delete(entity);
@@ -163,43 +167,77 @@ public class CvcInventoryTableServiceImpl extends CommonServiceImpl implements C
 		}
  	}
 
+ 	
+ 	/**
+     * 获取初始的库存
+     *
+     * @return
+     */
+    private int initStock(String goodNumber) {
+    	List<CvcInventoryTableEntity> cvcInventoryTableEntitys = findByProperty(CvcInventoryTableEntity.class, "goodNumber", goodNumber);
+		if(CollectionUtils.isEmpty(cvcInventoryTableEntitys)) {
+			throw new XuException("不存在该商品编号库存，请添加库存后重试！");
+		}
+		CvcInventoryTableEntity cvcInventoryTableEntity =  cvcInventoryTableEntitys.get(0);
+		if(cvcInventoryTableEntity == null) {
+			throw new XuException("不存在该商品编号库存，请添加库存后重试！");
+		}
+		
+		if(cvcInventoryTableEntity.getGoodSize() == 0) {
+			throw new XuException("该商品库存已清空，请先补充！");
+		}
+		TAG.info("版本号："+cvcInventoryTableEntity.getUodateVersion());
+		
+		return cvcInventoryTableEntity.getGoodSize();
+    }
+
+ 	
 	@Override
-	public int subInventory(String goodNumber,int size,int tryTime) {
+	public int subInventory(final String goodNumber,int size,int tryTime) {
 		try {
 			if(StringUtils.isEmpty(goodNumber)) {
 				throw new XuException("商品编号不能为空！");
 			}
-			List<CvcInventoryTableEntity> cvcInventoryTableEntitys = findByProperty(CvcInventoryTableEntity.class, "goodNumber", goodNumber);
-			if(CollectionUtils.isEmpty(cvcInventoryTableEntitys)) {
-				throw new XuException("不存在该商品编号库存，请添加库存后重试！");
-			}
-			CvcInventoryTableEntity cvcInventoryTableEntity =  cvcInventoryTableEntitys.get(0);
-			if(cvcInventoryTableEntity == null) {
-				throw new XuException("不存在该商品编号库存，请添加库存后重试！");
-			}
-			
-			if(cvcInventoryTableEntity.getGoodSize() == 0) {
-				throw new XuException("该商品库存已清空，请先补充！");
-			}
-			
-			int result = executeSql("update cvc_inventory_table set GOOD_SIZE = GOOD_SIZE - ?,UODATE_VERSION = UODATE_VERSION + 1 where GOOD_NUMBER = ? and UODATE_VERSION = ?",size,cvcInventoryTableEntity.getGoodNumber(),
-					cvcInventoryTableEntity.getUodateVersion());
-			if(result == 1) {
-				return result;
-			}else {
-				if(tryTime >= 4) {
-					throw new XuException("减仓失败，请重试！");
+//			List<CvcInventoryTableEntity> cvcInventoryTableEntitys = findByProperty(CvcInventoryTableEntity.class, "goodNumber", goodNumber);
+//			if(CollectionUtils.isEmpty(cvcInventoryTableEntitys)) {
+//				throw new XuException("不存在该商品编号库存，请添加库存后重试！");
+//			}
+//			CvcInventoryTableEntity cvcInventoryTableEntity =  cvcInventoryTableEntitys.get(0);
+//			if(cvcInventoryTableEntity == null) {
+//				throw new XuException("不存在该商品编号库存，请添加库存后重试！");
+//			}
+//			
+//			if(cvcInventoryTableEntity.getGoodSize() == 0) {
+//				throw new XuException("该商品库存已清空，请先补充！");
+//			}
+//			TAG.info("版本号："+cvcInventoryTableEntity.getUodateVersion());
+			// 库存ID
+	        String redisKey = "redis_key:stock:" + goodNumber;
+	        stockService.value.put(redisKey, goodNumber);
+	        long result = stockService.stock(redisKey, 60 * 60L, size, new IStockCallback() {
+				@Override
+				public int getStock() {
+					return initStock(goodNumber);
 				}
-				
-				int sleepTime = new Random().nextInt(100);
-				try {
-					System.out.println(100 + sleepTime);
-					Thread.sleep(100 + sleepTime);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				subInventory(goodNumber,size,++tryTime);
-			}
+			});
+//			int result = executeSql("update cvc_inventory_table set GOOD_SIZE = GOOD_SIZE - ?,UODATE_VERSION = UODATE_VERSION + 1 where GOOD_NUMBER = ? and UODATE_VERSION = ?",size,cvcInventoryTableEntity.getGoodNumber(),
+//					cvcInventoryTableEntity.getUodateVersion());
+//			if(result == 1) {
+//				return result;
+//			}else {
+//				if(tryTime >= 4) {
+//					throw new XuException("减仓失败，请重试！");
+//				}
+//				
+//				int sleepTime = new Random().nextInt(100);
+//				try {
+//					Thread.sleep(100 + sleepTime);
+//				} catch (InterruptedException e) {
+//					e.printStackTrace();
+//				}
+//				subInventory(goodNumber,size,++tryTime);
+//			}
+			return (int)result;
 		} catch (Exception e) {
 //			TAG.info("减库存操作失败！"+e.getMessage());
 			TAG.error("减库存操作失败！", e);
