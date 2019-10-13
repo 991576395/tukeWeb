@@ -110,12 +110,12 @@ public class CvcDeliveryOrderServiceImpl implements CvcDeliveryOrderService {
 
 	@Override
 	public void updateSigndate(int orderId, String signdate) {
-		cvcDeliveryOrderDao.updateSigndate(orderId, signdate);
+		cvcDeliveryOrderDao.updateSigndate(orderId, signdate,PhpDateUtils.getTime());
 	}
 
 	@Override
 	public void updateNu(int orderId, int shippingId, String shippingName, String invoiceNo) {
-		cvcDeliveryOrderDao.updateNu(orderId, shippingId, shippingName, invoiceNo);
+		cvcDeliveryOrderDao.updateNu(orderId, shippingId, shippingName, invoiceNo,PhpDateUtils.getTime());
 	}
 
 	@Override
@@ -223,6 +223,6 @@ public class CvcDeliveryOrderServiceImpl implements CvcDeliveryOrderService {
 
 	@Override
 	public int updateSignDate(String signDate, String invoiceNo) {
-		return cvcDeliveryOrderDao.updateSignDate(signDate, invoiceNo);
+		return cvcDeliveryOrderDao.updateSignDate(signDate, invoiceNo,PhpDateUtils.getTime());
 	}
 }

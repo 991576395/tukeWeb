@@ -19,4 +19,4 @@ d.signin_date
                 ON
                     g.upc_id = u.upc_id 
                 WHERE 
-                    d.order_id = :orderId order by d.delivery_id desc limit 1;
+                    d.order_id = :orderId order by d.update_time desc limit 1;

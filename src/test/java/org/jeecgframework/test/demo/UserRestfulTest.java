@@ -1,10 +1,15 @@
 package org.jeecgframework.test.demo;
 
+import java.io.File;
 import java.util.List;
 
+import javax.annotation.Resource;
+
+import org.apache.commons.io.FileUtils;
 import org.jeecgframework.AbstractUnitTest;
 import org.jeecgframework.core.util.PasswordUtil;
 import org.jeecgframework.web.system.pojo.base.TSUser;
+import org.jeecgframework.web.system.service.SystemService;
 import org.jeecgframework.web.system.service.UserService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +20,16 @@ import org.springframework.web.client.RestTemplate;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.xuzy.hotel.checkingaccount.entity.CvcCheckingAccountEntity;
+import com.xuzy.hotel.checkingaccount.service.CvcCheckingAccountService;
+import com.xuzy.hotel.checkingaccountorder.service.CvcCheckingAccountOrderService;
+import com.xuzy.hotel.inventory.service.CvcInventoryTableServiceI;
 import com.xuzy.hotel.order.entity.CvcOrderInfoEntity;
+import com.xuzy.hotel.order.module.CallBaseRequest;
 import com.xuzy.hotel.order.service.CvcOrderInfoService;
+import com.xuzy.hotel.order.web.CvcOrderInfoController;
+import com.xuzy.hotel.order.web.OrderCallBack;
+import com.xuzy.hotel.ylrequest.ConmentHttp;
 import com.xuzy.hotel.ylrequest.WuliuCheckTask;
 
 /**
@@ -36,7 +49,16 @@ public class UserRestfulTest extends AbstractUnitTest {
 	
 	@Autowired
 	private WuliuCheckTask wuliuCheckTask;
+	
+	 @Autowired
+	 private CvcCheckingAccountService cvcCheckingAccountService;
 
+	@Resource
+	private OrderCallBack orderCallBack; 
+	
+	@Resource
+	SystemService systemService;
+	  
 	// 测试get单个用户
 	// @Test
 	public void testGet() throws Exception {
@@ -61,6 +83,8 @@ public class UserRestfulTest extends AbstractUnitTest {
 		}
 	}
 
+	
+	
 	// 测试create
 	 @Test
 	public void testCreate() throws Exception {
@@ -80,14 +104,53 @@ public class UserRestfulTest extends AbstractUnitTest {
 		 //  输出结果
 		 System.out.println(response.getBody());
 	}
-
+	 
+	 @Autowired
+	 CvcOrderInfoController cvcOrderInfoController;
+	 
+	 @Autowired
+	  private CvcCheckingAccountOrderService cvcCheckingAccountOrderService;
 	// 测试update
-	// @Test
+	@Test
 	public void testUpdate() throws Exception {
-		TSUser user = userService.get(TSUser.class, "402880e74d75c4dd014d75d44af30005");
-		user.setRealName("real demo");
-		template.put("http://localhost:8080/jeecg/rest/user/{id}", user, "402880e74d75c4dd014d75d44af30005");
+//		TSUser user = userService.get(TSUser.class, "402880e74d75c4dd014d75d44af30005");
+//		user.setRealName("real demo");
+//		template.put("http://localhost:8080/jeecg/rest/user/{id}", user, "402880e74d75c4dd014d75d44af30005");
+		
+//		int checkingAccountId = 864;
+//		CvcCheckingAccountEntity  cvcOrderInfoEntity = cvcCheckingAccountService.get(checkingAccountId+"");
+//		int page = 1;
+//		CvcCheckingAccountOrderEntity query = new CvcCheckingAccountOrderEntity();
+//		query.setIsAddCheckingAccount(0);
+//		query.setOrderId(14032581);
+//		MiniDaoPage<CvcCheckingAccountOrderEntity> list = cvcCheckingAccountOrderService.getAll(query, page, 10);
+//		if(CollectionUtils.isNotEmpty(list.getResults())) {
+//			for (CvcCheckingAccountOrderEntity entity : list.getResults()) {
+//				RequestCheckingAccountDetailAddJson checkingAccountDetailAddJson = new RequestCheckingAccountDetailAddJson();
+//				checkingAccountDetailAddJson.setCheckAccountInfoID(checkingAccountId);
+//				checkingAccountDetailAddJson.setOrderID(entity.getOrderId());
+//				checkingAccountDetailAddJson.setProductCode(entity.getGoodsSn());
+//				checkingAccountDetailAddJson.setQuantity(entity.getGoodsNumber());
+//				checkingAccountDetailAddJson.setEMSCompany("百世快递");
+//				checkingAccountDetailAddJson.setDeliver(cvcOrderInfoEntity.getDeliver());
+//				checkingAccountDetailAddJson.setAccountType(cvcOrderInfoEntity.getAccountType());
+//				checkingAccountDetailAddJson.setOppStaff(cvcOrderInfoEntity.getOppstaff());
+////				
+////				//调用上传订单详情接口
+//				ResponseHead responseHead = ConmentHttp.sendHttp(new TukeRequestBody.Builder()
+//						.setSequence(2)
+//						.setServiceCode("CRMIF.CheckingAccountDetailAddJson")
+//						.setParams(checkingAccountDetailAddJson).builder(), null);
+//				if(responseHead.getReturn() >= 0) {
+//					cvcCheckingAccountOrderService.updateAddCheckingAccount(checkingAccountId, entity.getOrderId(), PhpDateUtils.getTime());
+//				}
+//			}
+//		}
+		cvcOrderInfoController.orderStatusUpdate(14119978, "returnWareHouse", "", "");
 	}
+	
+	@Autowired
+	private CvcInventoryTableServiceI cvcInventoryTableService;
 	
 	//测试del
 	@Test
@@ -101,6 +164,51 @@ public class UserRestfulTest extends AbstractUnitTest {
 //		for (CvcOrderInfoEntity cvcOrderInfoEntity : cvcOrderInfoEntities) {
 //			System.out.println(cvcOrderInfoEntity.getId());
 //		}
-		wuliuCheckTask.run();
+//		wuliuCheckTask.run();
+		
+//		final CountDownLatch countDownLatch = new CountDownLatch(100);
+//		for(int i = 0; i < 100;i++) {
+//			new Thread(new Runnable() {
+//				@Override
+//				public void run() {
+//					try {
+//						countDownLatch.await();
+//					} catch (InterruptedException e) {
+//						e.printStackTrace();
+//					}
+//					//测试库存
+//					cvcInventoryTableService.subInventory("100507001", 1, 0);
+//				}
+//			}).start();
+//			countDownLatch.countDown();
+//			System.out.println("启动:"+i);
+//		}
+//		
+//		Thread.sleep(1000*60*60*10);
+		
+		systemService.initAllTypeGroups();
+		
+		CallBaseRequest baseRequest = ConmentHttp.postShentongValue("773001633635405",FileUtils.readFileToString(new File("/Users/zmeng/Documents/ceshi"), "utf-8"));
+		ConmentHttp.postMyErrorOrder(baseRequest);
+		orderCallBack.runByRequest(baseRequest);
+//		发送物流
+//		CvcCheckingAccountEntity cvcCheckingAccount = cvcCheckingAccountService.get("854");
+//		List<CvcOrderInfoEntity> cvcOrderInfoEntities = cvcOrderInfoService.getAccountOrderList("", cvcCheckingAccount.getStartTime(), cvcCheckingAccount.getEndTime());
+//		cvcCheckingAccountService.update(cvcCheckingAccount,cvcCheckingAccount.getCheckingAccountId(),cvcOrderInfoEntities);
+//		RequestReturnedExchangeOrderJson exchangeOrderJson = new RequestReturnedExchangeOrderJson();
+//		int id = 14108428;
+//		exchangeOrderJson.setOrderID(id);
+//		exchangeOrderJson.setReturningReason("");
+//		exchangeOrderJson.setReturnedReason("");
+//		ResponseHead head = ConmentHttp.sendHttp(new TukeRequestBody.Builder()
+//				.setParams(exchangeOrderJson).setSequence(2)
+//				.setServiceCode("CRMIF.ReturnedExchangeOrderJson").builder(), null);
+//		if(head.getReturn() >= 0) {
+//			//退货
+//			cvcOrderInfoService.updateStatusByOrderId(id, 8);
+//		}
+	
 	}
 }
+
+

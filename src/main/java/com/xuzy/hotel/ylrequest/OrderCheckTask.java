@@ -16,9 +16,12 @@ import com.util.PhpDateUtils;
 import com.xuzy.hotel.deliveryinfo.entity.CvcDeliveryInfoEntity;
 import com.xuzy.hotel.deliveryinfo.service.CvcDeliveryInfoService;
 import com.xuzy.hotel.order.entity.CvcOrderInfoEntity;
+import com.xuzy.hotel.order.module.CallBaseRequest;
 import com.xuzy.hotel.order.module.Data;
 import com.xuzy.hotel.order.module.DelivetyJson;
+import com.xuzy.hotel.order.module.LastResult;
 import com.xuzy.hotel.order.service.CvcOrderInfoService;
+import com.xuzy.hotel.order.web.OrderCallBack;
 import com.xuzy.hotel.shipping.entity.CvcShippingEntity;
 import com.xuzy.hotel.shipping.service.CvcShippingService;
 
@@ -35,6 +38,9 @@ public class OrderCheckTask implements Job{
 	@Autowired
 	private CvcDeliveryInfoService cvcDeliveryInfoService;
 	
+	@Autowired
+	private OrderCallBack orderCallBack;
+	
 	/*@Scheduled(cron="0 0/1 * * * ?")*/
 	public void run() {
 //		if(true) {
@@ -44,11 +50,23 @@ public class OrderCheckTask implements Job{
 		org.jeecgframework.core.util.LogUtil.info("===================订单校验定时任务开始===================");
 		
 		//已签收
-		List<CvcDeliveryInfoEntity> entities = cvcDeliveryInfoService.getAllError();
-		for (CvcDeliveryInfoEntity entity : entities) {
-			List<Data> datas = PHPAndJavaSerialize.unserializePHParray(entity.getData(),DelivetyJson.class);
-			ConmentHttp.postErrorOrder(datas, entity);
-		}
+//		List<CvcDeliveryInfoEntity> entities = cvcDeliveryInfoService.getAllError();
+//		for (CvcDeliveryInfoEntity entity : entities) {
+//			List<Data> datas = PHPAndJavaSerialize.unserializePHParray(entity.getData(),DelivetyJson.class);
+//			CallBaseRequest callbaseRequest = new CallBaseRequest();
+//	    	callbaseRequest.setMessage("ok");
+//	    	LastResult lastResult = new LastResult();
+//	    	lastResult.setData(datas);
+//	    	lastResult.setState(entity.getState());
+//	    	lastResult.setNu(entity.getNumber());
+//	    	lastResult.setMessage("ok");
+//	    	callbaseRequest.setLastResult(lastResult);
+//	    	try {
+//				orderCallBack.runByRequest(callbaseRequest);
+//			} catch (Exception e) {
+//				org.jeecgframework.core.util.LogUtil.error("处理异常订单唤醒异常："+ entity.getNumber(), e);
+//			}
+//		}
 		
 		//离港中 且有异常订单
 		CvcOrderInfoEntity query = new CvcOrderInfoEntity();

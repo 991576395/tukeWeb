@@ -14,11 +14,11 @@ public class P3CodeGenerateUtil {
 
 	public static void main(String[] args) {
 		//表名（多个表可用逗号隔开）
-		String code_cg_tables = "cvc_shipping_batch";
+		String code_cg_tables = "cvc_addedvalue_tax";
 		
 		//执行代码生成器
 		for (String tableName : code_cg_tables.split(",")) {
-			CodeGenerateFactory.codeGenerateByFTL(tableName, "批量发货表", FtlDef.KEY_TYPE_02);
+			CodeGenerateFactory.codeGenerateByFTL(tableName, "增值税配置表", FtlDef.KEY_TYPE_02);
 		}
 	}
 }

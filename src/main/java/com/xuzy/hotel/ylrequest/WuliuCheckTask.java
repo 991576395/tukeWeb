@@ -44,9 +44,9 @@ public class WuliuCheckTask implements Job{
 	private ThreadPoolTaskExecutor taskExecutor;
 	
 	public void run() {
-//		if(true) {
-//			return;
-//		}
+		if(true) {
+			return;
+		}
 		long start = System.currentTimeMillis();
 		org.jeecgframework.core.util.LogUtil.info("===================物流校验定时任务开始===================");
 		
@@ -71,7 +71,7 @@ public class WuliuCheckTask implements Job{
 		
 		org.jeecgframework.core.util.LogUtil.info("===================申通物流校验定时任务开始===================");
 		//执行申通接口
-		cvcOrderInfoService.shengtongSearch();
+//		cvcOrderInfoService.shengtongSearch();
 		
 		List<CvcOrderInfoEntity> results =cvcOrderInfoService.getTogezelWuliuList();
 		doOrderArrays(results);

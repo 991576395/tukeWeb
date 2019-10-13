@@ -41,9 +41,9 @@ public class ExceptionCheckTask implements Job{
 	
 	/*@Scheduled(cron="0 0/1 * * * ?")*/
 	public void run() {
-//		if(true) {
-//			return;
-//		}
+		if(true) {
+			return;
+		}
 		long start = System.currentTimeMillis();
 		org.jeecgframework.core.util.LogUtil.info("===================异常订单监控定时任务开始===================");
 		//异常订单

@@ -108,7 +108,7 @@ public class ConmentHttp {
 
 
     public static OkHttpClient okHttpClient = new okhttp3.OkHttpClient.Builder()
-            .connectTimeout(1, TimeUnit.MINUTES).writeTimeout(1, TimeUnit.MINUTES).readTimeout(1, TimeUnit.MINUTES)
+            .connectTimeout(5, TimeUnit.MINUTES).writeTimeout(5, TimeUnit.MINUTES).readTimeout(5, TimeUnit.MINUTES)
             .build();
     
     /**
@@ -193,6 +193,25 @@ public class ConmentHttp {
     }
     
     /**
+     * 手动拉取快递100
+     * @param value
+     */
+    public static void postMyErrorOrder(CallBaseRequest value) { 
+    	// 开始请求
+        Request request = new Request.Builder().url(CALLBACK)
+                .post(new FormBody.Builder().add("param", new Gson().toJson(value)).build())
+                .build();
+        Response response = null;
+		try {
+			response = ConmentHttp.okHttpClient.newCall(request).execute();
+			String result = response.body().string();
+			logger.info("result:"+result);
+		} catch (IOException e) {
+			logger.error("订阅快递100异常",e);
+		}
+    }
+    
+    /**
      * 物流状态监听
      * @param company 
      * @param number 
@@ -230,8 +249,8 @@ public class ConmentHttp {
 		return null;
     }
     
-    public static void main1(String[] args) throws Exception {
-//    	postShentongValue(FileUtils.readFileToString(new File("/Users/zmeng/Documents/ceshi"), "utf-8"));
+    public static void main(String[] args) throws Exception {
+    	postShentongValue(FileUtils.readFileToString(new File("/Users/zmeng/Documents/ceshi"), "utf-8"));
 	}
     
     /**
@@ -249,7 +268,100 @@ public class ConmentHttp {
 			response = ConmentHttp.okHttpClient.newCall(request).execute();
 			String result = response.body().string();
 //			String result = number;
-			logger.info("result:"+result);
+//			logger.info("result:"+result);
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			BufferedReader br= new BufferedReader(new InputStreamReader(new ByteArrayInputStream(result.getBytes()),"utf-8"));
+			InputSource is = new InputSource(br);
+			Document document = builder.parse(is);
+			Element element = document.getDocumentElement();
+			
+			LastResult lastResult = new LastResult();
+			lastResult.setMessage("ok");
+			lastResult.setNu(number);
+			lastResult.setCom("shentong");
+			lastResult.setStatus("200");
+			List<Data> datas = new ArrayList<>();
+			NodeList list = element.getElementsByTagName("detail");
+			int code = 0;
+			for (int i = 0; i < list.getLength(); i++) {
+				Node detail = list.item(i);
+				NodeList childList = detail.getChildNodes();
+				Data data = new Data();
+				for (int j = 0; j < childList.getLength(); j++) {
+					if("time".equals(childList.item(j).getNodeName())) {
+						String fTime = DateFormatUtils.format(DateUtils.parseDate(childList.item(j).getTextContent(), new String[]{"yyyy/MM/dd HH:mm:ss"}), "yyyy-MM-dd HH:mm:ss");
+						data.setFtime(fTime);
+					}else if("scantype".equals(childList.item(j).getNodeName())) {
+						data.setShentongStatus(childList.item(j).getTextContent());
+						try {
+							String thisStatus = ResourceUtil.searchAllCodeByName(childList.item(j).getTextContent().trim(),"stOrder");
+							if(!StringUtils.isEmpty(thisStatus)) {
+								int numnerOrder = Integer.parseInt(thisStatus);
+								data.statusNumber = numnerOrder;
+								//最后为异常，强制赋值
+								if(45 == numnerOrder || 40 == numnerOrder) {
+									//派件与异常件 按先后次序出现
+									code = numnerOrder;
+								}else {
+									code = numnerOrder > code ? numnerOrder : code;
+								}
+							}
+						} catch (Exception e) {
+							logger.error("状态转换失败",e);
+						}
+					}else if("memo".equals(childList.item(j).getNodeName())) {
+						data.setContext(childList.item(j).getTextContent());
+					}
+				}
+				datas.add(data);
+			}
+			if(CollectionUtils.isNotEmpty(datas)) {
+				String firstSendAdd = "";
+				boolean isTuihui = false;
+				for (int i = 0; i < datas.size(); i++) {
+					if(datas.get(i).statusNumber == -1  && StringUtils.isEmpty(firstSendAdd)) {
+						firstSendAdd = KuaidiUtils.getFirstValue(datas.get(i).getContext());
+					}else if(datas.get(i).statusNumber == 40 && !StringUtils.isEmpty(firstSendAdd)) {
+						if(firstSendAdd.equals(KuaidiUtils.getFirstValue(datas.get(i).getContext()))) {
+							//表示退回
+							isTuihui = true;
+						}else {
+							isTuihui = false;
+						}
+					}
+				}
+				if(isTuihui && code == 50) {
+					//表示退签
+					code = 52;
+				}else if(isTuihui) {
+					code = 51;
+				}
+			}
+			
+			String typeValue = ResourceUtil.searchAllTypesByCode(code+"","stOrder");
+			String shengtongStatus = ResourceUtil.searchAllCodeByName(typeValue,"stCode");
+			lastResult.setState(Integer.parseInt(StringUtils.isEmpty(shengtongStatus)?"0":shengtongStatus));
+			lastResult.setData(datas);
+			lastResult.setCom("shentong");
+			baseRequest.setLastResult(lastResult);
+			baseRequest.setMessage("ok");
+			return baseRequest;
+		} catch (Exception e) {
+			logger.error("调用申通接口异常",e);
+			return null;
+		}
+    }
+    
+    /**
+     * 请求申通接口
+     */
+    public static CallBaseRequest postShentongValue(String number,String wuliuData) {
+    	CallBaseRequest baseRequest = new CallBaseRequest();
+    	baseRequest.setType("2");
+    	String params = URLShentong+number;
+		try {
+			String result = wuliuData;
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = factory.newDocumentBuilder();
 			BufferedReader br= new BufferedReader(new InputStreamReader(new ByteArrayInputStream(result.getBytes()),"utf-8"));
@@ -620,7 +732,7 @@ public class ConmentHttp {
 	
 	
 	
-	public static void main(String[] args) throws Exception {
+	public static void main1(String[] args) throws Exception {
 //		getOrder();
 //		postMyErrorOrder();
 		

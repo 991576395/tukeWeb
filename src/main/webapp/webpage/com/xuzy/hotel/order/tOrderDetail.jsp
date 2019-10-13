@@ -422,7 +422,7 @@
 		</table>
 		<c:if test="${fn:length(deliveryInfoPojos) > 0}">
 			<c:forEach var="deliveryInfoPojo" items="${deliveryInfoPojos}">
-					<c:if test="${fn:length(deliveryInfoPojo.deliveryInfos) > 0}">
+					
 						<div class="list-div"
 							style="margin-bottom: 10px; border-top: none; border-bottom: none;">
 							<table width="100%" cellpadding="3" cellspacing="0"
@@ -431,16 +431,16 @@
 									<td style="text-indent: 2.5em" colspan="10"><strong>（单号:${deliveryInfoPojo.invoiceNo}）物流信息</strong>
 										</td>
 								</tr>
+								<c:if test="${fn:length(deliveryInfoPojo.deliveryInfos) > 0}">
 								<c:forEach var="data" items="${deliveryInfoPojo.deliveryInfos}">
 									<tr>
 										<td scope="col"><div align="center">${data.ftime}</div></td>
 										<td scope="col"><div align="center">${data.context}</div></td>
 									</tr>
 								</c:forEach>
+								</c:if>		
 							</table>
 						</div>
-					</c:if>		
-					
 			</c:forEach>
 		</c:if>
 		

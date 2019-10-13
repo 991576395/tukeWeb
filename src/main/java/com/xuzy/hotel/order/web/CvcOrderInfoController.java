@@ -805,18 +805,20 @@ public class CvcOrderInfoController extends BaseController {
 				if(head.getReturn() >= 0) {
 					//申请返仓
 					cvcOrderInfoService.updateStatusByOrderId(id, 23);
-					//用户反仓完成
-					RequestRefuseExchangeOrderJson exchangeOrderJson2 = new RequestRefuseExchangeOrderJson();
-					exchangeOrderJson.setOrderID(id);
-					head = ConmentHttp.sendHttp(new TukeRequestBody.Builder()
-								.setParams(exchangeOrderJson2).setSequence(2)
-								.setServiceCode("CRMIF.BackedExchangeOrderJson").builder(), null);
-					if(head.getReturn() >= 0) {
-						cvcOrderInfoService.updateStatusByOrderId(id, 24);
-						j.setMsg("订单推送返仓完成操作成功");
-					}else {
-						j.setSuccess(false);
-						j.setMsg("订单推送返仓完成操作失败 原因:"+head.getReturnInfo());
+					if(cvcOrderInfoEntity.getOrderStatus() == 23) {
+						//用户反仓完成
+						RequestRefuseExchangeOrderJson exchangeOrderJson2 = new RequestRefuseExchangeOrderJson();
+						exchangeOrderJson2.setOrderID(id);
+						head = ConmentHttp.sendHttp(new TukeRequestBody.Builder()
+									.setParams(exchangeOrderJson2).setSequence(2)
+									.setServiceCode("CRMIF.BackedExchangeOrderJson").builder(), null);
+						if(head.getReturn() >= 0) {
+							cvcOrderInfoService.updateStatusByOrderId(id, 24);
+							j.setMsg("订单推送返仓完成操作成功");
+						}else {
+							j.setSuccess(false);
+							j.setMsg("订单推送返仓完成操作失败 原因:"+head.getReturnInfo());
+						}
 					}
 				}else {
 					j.setSuccess(false);
@@ -848,7 +850,10 @@ public class CvcOrderInfoController extends BaseController {
 			}else if("getOrderWuliu".equals(tkOrderStatus)) {
 				//获取物流信息，并同步
 				if(cvcOrderInfoEntity.getOrderStatus() == 3
-						|| cvcOrderInfoEntity.getOrderStatus() == 4) {
+						|| cvcOrderInfoEntity.getOrderStatus() == 4
+						|| cvcOrderInfoEntity.getOrderStatus() == 24
+						 ) {
+					
 					CvcShippingEntity cvcShipping = new CvcShippingEntity();
 					cvcShipping.setEnabled(1);
 					cvcShipping.setShippingName(cvcOrderInfoEntity.getShippingName());
@@ -872,7 +877,7 @@ public class CvcOrderInfoController extends BaseController {
 					}
 				}else {
 					j.setSuccess(false);
-					j.setMsg("同步失败:只能取消 配送中与离港状态订单！");
+					j.setMsg("同步失败:只能同步 完成反仓/配送中/离港状态订单！");
 				}
 			}else if("signFailureGo".equals(tkOrderStatus)) {
 				//签收失败

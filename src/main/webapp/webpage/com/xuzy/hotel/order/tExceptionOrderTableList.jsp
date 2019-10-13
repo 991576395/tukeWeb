@@ -8,13 +8,17 @@
    <t:dgCol title="礼品编号" field="goodsSn"   width="80"></t:dgCol>
    <t:dgCol title="订单号" field="id" queryMode="single"  query="true"   width="80"></t:dgCol>
    <t:dgCol title="收货人" field="consignee"   width="80"></t:dgCol>
+  <!--  
    <t:dgCol title="订单状态" field="orderStatus" queryMode="single" dictionary="OStatus"  width="100"></t:dgCol>
    <t:dgCol title="伊利订单状态" field="ylOrderStatus" queryMode="single" dictionary="OStatus"   width="120"></t:dgCol>
+   -->
    <t:dgCol title="快递公司" field="shippingId" queryMode="single" dictionary="cvc_shipping where enabled = '1',shipping_id,shipping_name" query="true"  width="100"></t:dgCol>
    <t:dgCol title="快递单号" field="invoiceNo" queryMode="single"  query="true"  width="120"></t:dgCol>
    <t:dgCol title="异常信息" field="exceptionStatus" queryMode="single" dictionary="extype"  query="true"  width="70"></t:dgCol>
    <t:dgCol title="异常生成时间" field="addTime" formatter="yyyy-MM-dd hh:mm:ss"  width="120"></t:dgCol>
+   <!--  
    <t:dgCol title="处理状态" field="handleStatus" dictionary="dostatus" queryMode="single"  query="true"   width="120"></t:dgCol>
+   -->
    <t:dgCol title="处理时间" field="HandleTimeFormat"   width="120"></t:dgCol>
    <t:dgCol title="操作人" field="handleUser"  width="80"></t:dgCol>
    <t:dgToolBar title="查看详情" icon="icon-search" url="cvcOrderInfo.do?toDetail" width="1200" height="800" funname="goLook"></t:dgToolBar>
