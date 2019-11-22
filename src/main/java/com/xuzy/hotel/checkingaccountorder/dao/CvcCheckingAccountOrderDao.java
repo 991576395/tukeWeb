@@ -27,6 +27,11 @@ public interface CvcCheckingAccountOrderDao{
 	@Sql("SELECT * FROM cvc_checking_account_order WHERE checking_account_id = :checkingAccountId and order_id = :orderId")
 	CvcCheckingAccountOrderEntity get(@Param("checkingAccountId") int checkingAccountId,@Param("orderId") int orderId);
 	
+	
+	@Sql("SELECT * FROM cvc_checking_account_order WHERE id = :id")
+	CvcCheckingAccountOrderEntity getById(@Param("id") int id);
+	
+	
 	/**
 	 * 修改数据
 	 * @param cvcCheckingAccountOrder

@@ -18,14 +18,33 @@
    	<t:dgToolBar title="上传对账明细" icon="icon-putout" url="cvcCheckingAccountOrder.do?addCheckingAccount&checkingAccountId=${checkingAccountId}"  funname="addCheckingAccount"></t:dgToolBar>
    	<t:dgToolBar title="重新生成对账明细" icon="icon-edit"   onclick="doMyGo('cvcCheckingAccount.do?updateCheckingAccountOrder&checkingAccountId=${checkingAccountId}')"></t:dgToolBar>
  	<t:dgToolBar title="封账" icon="icon-add" onclick="doMyGo('cvcCheckingAccount.do?makeBalance&checkingAccountId=${checkingAccountId}')"></t:dgToolBar>
+ 	<t:dgToolBar title="编辑" icon="icon-edit" url="cvcCheckingAccountOrder.do?goUpdate" funname="toUpdate"></t:dgToolBar>
  	<t:dgToolBar title="导出EXCEL" icon="icon-put" onclick="exportEXCEL('cvcCheckingAccountOrder.do?exportXls&checkingAccountId=${checkingAccountId}')"></t:dgToolBar>
- 	<t:dgToolBar title="删除" icon="icon-remove" url="cvcCheckingAccountOrder.do?doDelete&id=${checkingAccountId}" funname="deleteOrder" ></t:dgToolBar>
+ 	<t:dgToolBar title="删除" icon="icon-remove" url="cvcCheckingAccountOrder.do?doDelete" funname="deleteOrder" ></t:dgToolBar>
  
   </t:datagrid>
   </div>
   
   
   <script type="text/javascript">
+  
+  function toUpdate(title, url, id, width, height, isRestful) {
+	  	var rowsData = $('#' + id).datagrid('getSelections');
+		if (!rowsData || rowsData.length == 0) {
+			tip('请选择操作订单');
+			return;
+		}
+		if (rowsData.length > 1) {
+			tip('请选择一条订单再操作');
+			return;
+		}
+		url += '&id=' + ${checkingAccountId};
+		url += '&orderId=' + rowsData[0].orderId;
+		
+		createwindow(title,url,width,height);
+	}
+  
+  
 	  	function exportEXCEL(url) {
 			 window.location.href=url;
 		}
@@ -89,9 +108,9 @@
 					return;
 				}
 				if (isRestful != 'undefined' && isRestful) {
-					url += '/' + rowsData[0].orderId;
+					url += '/' + rowsData[0].id;
 				} else {
-					url += '&orderId=' + rowsData[0].orderId;
+					url += '&id=' + rowsData[0].id;
 				}
 				layer.open({
 					title : "系统提示",
