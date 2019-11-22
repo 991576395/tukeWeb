@@ -107,4 +107,9 @@ public class CvcCheckingAccountOrderServiceImpl implements CvcCheckingAccountOrd
 	public void deleteByCheckingAccountId(String id) {
 		cvcCheckingAccountOrderDao.delete(id);
 	}
+
+	@Override
+	public CvcCheckingAccountOrderEntity getById(int id) {
+		return cvcCheckingAccountOrderDao.getById(id);
+	}
 }

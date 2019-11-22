@@ -44,9 +44,9 @@ public class WuliuCheckTask implements Job{
 	private ThreadPoolTaskExecutor taskExecutor;
 	
 	public void run() {
-		if(true) {
-			return;
-		}
+//		if(true) {
+//			return;
+//		}
 		long start = System.currentTimeMillis();
 		org.jeecgframework.core.util.LogUtil.info("===================物流校验定时任务开始===================");
 		
@@ -56,25 +56,25 @@ public class WuliuCheckTask implements Job{
 			org.jeecgframework.core.util.LogUtil.info("===================0 -- 6 点无需执行===================");
 			return;
 		}
-		taskExecutor.execute(new Runnable() {
-			@Override
-			public void run() {
-				long start = System.currentTimeMillis();
-				org.jeecgframework.core.util.LogUtil.info("===================申通物流校验定时任务开始===================");
-				//执行申通接口
-				cvcOrderInfoService.shengtongSearch();
-				long end = System.currentTimeMillis();
-				long times = end - start;
-				org.jeecgframework.core.util.LogUtil.info("===================申通物流校验定时任务开始========总耗时"+times+"毫秒");
-			}
-		});
+//		taskExecutor.execute(new Runnable() {
+//			@Override
+//			public void run() {
+//				long start = System.currentTimeMillis();
+//				org.jeecgframework.core.util.LogUtil.info("===================申通物流校验定时任务开始===================");
+//				//执行申通接口
+//				cvcOrderInfoService.shengtongSearch();
+//				long end = System.currentTimeMillis();
+//				long times = end - start;
+//				org.jeecgframework.core.util.LogUtil.info("===================申通物流校验定时任务开始========总耗时"+times+"毫秒");
+//			}
+//		});
 		
 		org.jeecgframework.core.util.LogUtil.info("===================申通物流校验定时任务开始===================");
 		//执行申通接口
-//		cvcOrderInfoService.shengtongSearch();
+		cvcOrderInfoService.shengtongSearch();
 		
-		List<CvcOrderInfoEntity> results =cvcOrderInfoService.getTogezelWuliuList();
-		doOrderArrays(results);
+//		List<CvcOrderInfoEntity> results =cvcOrderInfoService.getTogezelWuliuList();
+//		doOrderArrays(results);
 		
 		org.jeecgframework.core.util.LogUtil.info("===================物流校验定时任务结束===================");
 		long end = System.currentTimeMillis();

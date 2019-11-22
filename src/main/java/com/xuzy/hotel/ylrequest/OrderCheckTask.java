@@ -43,9 +43,9 @@ public class OrderCheckTask implements Job{
 	
 	/*@Scheduled(cron="0 0/1 * * * ?")*/
 	public void run() {
-//		if(true) {
-//			return;
-//		}
+		if(true) {
+			return;
+		}
 		long start = System.currentTimeMillis();
 		org.jeecgframework.core.util.LogUtil.info("===================订单校验定时任务开始===================");
 		
@@ -72,7 +72,7 @@ public class OrderCheckTask implements Job{
 		CvcOrderInfoEntity query = new CvcOrderInfoEntity();
 		query.setOrderStatus(3);
 		query.setExceptionStatusString("1");
-		MiniDaoPage<CvcOrderInfoEntity> list = cvcOrderInfoService.getAll(query, 1, 500);
+		MiniDaoPage<CvcOrderInfoEntity> list = cvcOrderInfoService.getAll(query, 1, 3000);
 		doOrderArrays(list.getResults());
 		//已签收订单
 		List<CvcOrderInfoEntity>  cvcOrderInfoEntities = cvcOrderInfoService.getWillSignList();

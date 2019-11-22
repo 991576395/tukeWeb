@@ -193,8 +193,8 @@ public interface CvcOrderInfoDao{
 	
 	@Sql("select distinct coi.order_id as id,cdo.invoice_no,cdo.shipping_name from cvc_order_info coi " + 
 			"left join cvc_delivery_order cdo on coi.order_id = cdo.order_id  " + 
-			"where (coi.yl_order_status = 3 or coi.yl_order_status = 4) "
-			+ "and (coi.tk_order_status = 3 or coi.tk_order_status = 4) and cdo.shipping_id = 39 and "
+			"where (coi.yl_order_status = 3 or coi.yl_order_status = 4 or coi.yl_order_status = 23 or coi.yl_order_status = 24) "
+			+ "and (coi.tk_order_status = 3 or coi.tk_order_status = 4 or coi.tk_order_status = 23 or coi.tk_order_status = 24) and cdo.shipping_id = 39 and "
 			+ "cdo.delivery_sn > :startTime and cdo.delivery_sn < :endTime")
 	@ResultType(CvcOrderInfoEntity.class)
 	List<CvcOrderInfoEntity> getShenTongList(@Param("startTime")  String startTime,@Param("endTime")String endTime);

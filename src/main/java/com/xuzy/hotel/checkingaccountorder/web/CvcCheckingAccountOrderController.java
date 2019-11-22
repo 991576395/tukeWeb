@@ -12,6 +12,7 @@ import org.apache.velocity.VelocityContext;
 import org.jeecgframework.core.common.hibernate.qbc.CriteriaQuery;
 import org.jeecgframework.core.common.model.json.DataGrid;
 import org.jeecgframework.core.util.ResourceUtil;
+import org.jeecgframework.core.util.StringUtil;
 import org.jeecgframework.minidao.pojo.MiniDaoPage;
 import org.jeecgframework.p3.core.common.utils.AjaxJson;
 import org.jeecgframework.p3.core.page.SystemTools;
@@ -210,6 +211,18 @@ public class CvcCheckingAccountOrderController extends BaseController{
 
 
 	/**
+	 * 公司维护编辑页面跳转
+	 * 
+	 * @return
+	 */
+	@RequestMapping(params = "goUpdate")
+	public ModelAndView goUpdate(@RequestParam(required = false, value = "id" ) Integer id,@RequestParam(required = false, value = "orderId" ) Integer orderId,HttpServletRequest req) {
+		CvcCheckingAccountOrderEntity  checkingAccountOrderEntity = cvcCheckingAccountOrderService.get(id,orderId);
+		req.setAttribute("checkingAccountOrderEntity", checkingAccountOrderEntity);
+		return new ModelAndView("com/xuzy/hotel/checkaccount/tCheckingAccountOrder-update");
+	}
+	
+	/**
 	 * 编辑
 	 * @return
 	 */
@@ -218,7 +231,12 @@ public class CvcCheckingAccountOrderController extends BaseController{
 	public AjaxJson doEdit(@ModelAttribute CvcCheckingAccountOrderEntity cvcCheckingAccountOrder){
 		AjaxJson j = new AjaxJson();
 		try {
-			cvcCheckingAccountOrderService.update(cvcCheckingAccountOrder);
+			CvcCheckingAccountOrderEntity accountOrderEntity = cvcCheckingAccountOrderService.getById(cvcCheckingAccountOrder.getId());
+			if(accountOrderEntity != null) {
+				accountOrderEntity.setInvoiceNo(cvcCheckingAccountOrder.getInvoiceNo());
+				accountOrderEntity.setShippingName(cvcCheckingAccountOrder.getShippingName());
+				cvcCheckingAccountOrderService.update(accountOrderEntity);
+			}
 			j.setMsg("编辑成功");
 		} catch (Exception e) {
 		    log.info(e.getMessage());
@@ -235,15 +253,15 @@ public class CvcCheckingAccountOrderController extends BaseController{
 	 */
 	@RequestMapping(params="doDelete",method = RequestMethod.POST)
 	@ResponseBody
-	public AjaxJson doDelete(@RequestParam(required = false, value = "id" ) Integer id,@RequestParam(required = false, value = "orderId" ) Integer orderId){
+	public AjaxJson doDelete(@RequestParam(required = false, value = "id" ) Integer id){
 			AjaxJson j = new AjaxJson();
 			try {
-				if(id == null || orderId == null) {
+				if(id == null) {
 					j.setSuccess(false);
 					j.setMsg("参数异常！");
 					return j;
 				}
-				CvcCheckingAccountOrderEntity  checkingAccountOrderEntity = cvcCheckingAccountOrderService.get(id,orderId);
+				CvcCheckingAccountOrderEntity  checkingAccountOrderEntity = cvcCheckingAccountOrderService.getById(id);
 				if(checkingAccountOrderEntity == null) {
 					j.setSuccess(false);
 					j.setMsg("该订单不存在！");
@@ -261,7 +279,7 @@ public class CvcCheckingAccountOrderController extends BaseController{
 					j.setMsg("该订单已结算，不能删除！");
 					return j;
 				}
-				cvcCheckingAccountOrderService.delete(orderId+"");
+				cvcCheckingAccountOrderService.delete(checkingAccountOrderEntity.getId()+"");
 				j.setMsg("删除成功");
 			} catch (Exception e) {
 			    log.info(e.getMessage());

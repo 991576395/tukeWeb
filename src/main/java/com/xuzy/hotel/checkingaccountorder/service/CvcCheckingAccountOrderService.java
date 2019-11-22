@@ -15,6 +15,7 @@ import com.xuzy.hotel.checkingaccountorder.entity.CvcCheckingAccountOrderEntity;
 public interface CvcCheckingAccountOrderService {
 	
 	CvcCheckingAccountOrderEntity get(int checkingAccountId,int orderId);
+	CvcCheckingAccountOrderEntity getById(int id);
 
 	public int update(CvcCheckingAccountOrderEntity cvcCheckingAccountOrder);
 
