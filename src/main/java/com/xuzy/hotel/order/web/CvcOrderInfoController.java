@@ -237,6 +237,24 @@ public class CvcOrderInfoController extends BaseController {
 				e.printStackTrace();
 			}
 		}
+		if(StringUtils.isNotEmpty(entity.getGetTimeStart())) {
+			try {
+				Date date1 = DateUtils.parseDate(entity.getGetTimeStart(),new String[] {"yyyyMMdd"}) ;
+				entity.setGetTimeStart(String.valueOf(PhpDateUtils.getTime(date1)));
+			} catch (ParseException e) {
+				entity.setGetTimeStart("");
+			}
+		}
+		
+		if(StringUtils.isNotEmpty(entity.getGetTimeEnd())) {
+			try {
+				Date date1 = DateUtils.parseDate(entity.getGetTimeEnd(),new String[] {"yyyyMMdd"}) ;
+				entity.setGetTimeEnd(String.valueOf(PhpDateUtils.getTime(date1)));
+			} catch (ParseException e) {
+				entity.setGetTimeEnd("");
+			}
+		}
+		
 		List<CvcOrderInfoEntity> entitys = cvcOrderInfoService.getExcelAll(entity);
 		modelMap.put(NormalExcelConstants.FILE_NAME,DateFormatUtils.format(Calendar.getInstance(), "yyyyMMddHHmmss"));
 		modelMap.put(NormalExcelConstants.CLASS,CvcOrderInfoEntity.class);
@@ -291,6 +309,25 @@ public class CvcOrderInfoController extends BaseController {
 				e.printStackTrace();
 			}
 		}
+		
+		if(StringUtils.isNotEmpty(query.getGetTimeStart())) {
+			try {
+				Date date1 = DateUtils.parseDate(query.getGetTimeStart(),new String[] {"yyyyMMdd"}) ;
+				query.setGetTimeStart(String.valueOf(PhpDateUtils.getTime(date1)));
+			} catch (ParseException e) {
+				query.setGetTimeStart("");
+			}
+		}
+		
+		if(StringUtils.isNotEmpty(query.getGetTimeEnd())) {
+			try {
+				Date date1 = DateUtils.parseDate(query.getGetTimeEnd(),new String[] {"yyyyMMdd"}) ;
+				query.setGetTimeEnd(String.valueOf(PhpDateUtils.getTime(date1)));
+			} catch (ParseException e) {
+				query.setGetTimeEnd("");
+			}
+		}
+		
 		
 		if(query.getExceptionStatus() != null && query.getExceptionStatus() > 0) {
 			//查询有异常订单
@@ -849,35 +886,27 @@ public class CvcOrderInfoController extends BaseController {
 				}
 			}else if("getOrderWuliu".equals(tkOrderStatus)) {
 				//获取物流信息，并同步
-				if(cvcOrderInfoEntity.getOrderStatus() == 3
-						|| cvcOrderInfoEntity.getOrderStatus() == 4
-						|| cvcOrderInfoEntity.getOrderStatus() == 24
-						 ) {
-					
-					CvcShippingEntity cvcShipping = new CvcShippingEntity();
-					cvcShipping.setEnabled(1);
-					cvcShipping.setShippingName(cvcOrderInfoEntity.getShippingName());
-					//查询快递公司
-					MiniDaoPage<CvcShippingEntity> daoPage = cvcShippingService.getAll(cvcShipping, 1, 1);
-					CvcShippingEntity cvcShippingEntity = null;
-					if(CollectionUtils.isEmpty(daoPage.getResults())) {
-						j.setSuccess(false);
-						j.setMsg("该快递公司不存在！");
-						return j;
-					}else {
-						cvcShippingEntity = daoPage.getResults().get(0);
-					}
-					String result = ConmentHttp.getOrderWuliu(cvcShippingEntity.getShippingCode(), cvcOrderInfoEntity.getInvoiceNo(), cvcOrderInfoEntity.getTel());
-					log.info("手动获取物流："+result);
-					if(StringUtils.isNotEmpty(result) && result.contains("\"message\":\"ok\"")) {
-						ConmentHttp.postMyErrorOrder(result);
-					}else {
-						j.setSuccess(false);
-						j.setMsg("同步失败:未查询到物流信息！");
-					}
-				}else {
+				CvcShippingEntity cvcShipping = new CvcShippingEntity();
+				cvcShipping.setEnabled(1);
+				cvcShipping.setShippingName(cvcOrderInfoEntity.getShippingName());
+				// 查询快递公司
+				MiniDaoPage<CvcShippingEntity> daoPage = cvcShippingService.getAll(cvcShipping, 1, 1);
+				CvcShippingEntity cvcShippingEntity = null;
+				if (CollectionUtils.isEmpty(daoPage.getResults())) {
 					j.setSuccess(false);
-					j.setMsg("同步失败:只能同步 完成反仓/配送中/离港状态订单！");
+					j.setMsg("该快递公司不存在！");
+					return j;
+				} else {
+					cvcShippingEntity = daoPage.getResults().get(0);
+				}
+				String result = ConmentHttp.getOrderWuliuAll(cvcShippingEntity.getShippingCode(),
+						cvcOrderInfoEntity.getInvoiceNo(), cvcOrderInfoEntity.getTel());
+				log.info("手动获取物流：" + result);
+				if (StringUtils.isNotEmpty(result) && result.contains("\"message\":\"ok\"")) {
+					ConmentHttp.postMyErrorOrder(result);
+				} else {
+					j.setSuccess(false);
+					j.setMsg("同步失败:未查询到物流信息！");
 				}
 			}else if("signFailureGo".equals(tkOrderStatus)) {
 				//签收失败

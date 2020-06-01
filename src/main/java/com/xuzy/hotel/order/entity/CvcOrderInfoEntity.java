@@ -393,6 +393,7 @@ public class CvcOrderInfoEntity implements Serializable{
 	/**
 	 *订单备注
 	 */
+	@Excel(name="订单备注",width=40,orderNum="18")
 	private String remark;
 	/**
 	 *抓单批次号
@@ -445,6 +446,10 @@ public class CvcOrderInfoEntity implements Serializable{
 	 */
 	@Excel(name="抓单时间",width=20,orderNum="4")
 	private String getTime;
+	private String getTimeStart;
+	private String getTimeEnd;
+	
+	
 	/**
 	 *退货原因（0：无；1：包裹损坏；2：地址不详；3：退积分）
 	 */
@@ -486,8 +491,22 @@ public class CvcOrderInfoEntity implements Serializable{
 	 * 最近一条物流信息
 	 */
 	private String newDeleveryInfo;
+		
 	
 	
+	
+	public String getGetTimeStart() {
+		return getTimeStart;
+	}
+	public void setGetTimeStart(String getTimeStart) {
+		this.getTimeStart = getTimeStart;
+	}
+	public String getGetTimeEnd() {
+		return getTimeEnd;
+	}
+	public void setGetTimeEnd(String getTimeEnd) {
+		this.getTimeEnd = getTimeEnd;
+	}
 	public String getNewDeleveryInfo() {
 		return newDeleveryInfo;
 	}

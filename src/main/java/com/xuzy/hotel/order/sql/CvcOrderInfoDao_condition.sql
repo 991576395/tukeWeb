@@ -71,5 +71,18 @@
 		    /* 用户id */
 			and coi.is_show = :cvcOrderInfo.isShow
 		</#if>
+		<#if ( cvcOrderInfo.goodsSn )?? && cvcOrderInfo.goodsSn ?length gt 0>
+		    /* 商品编号 */
+			and good.goods_sn = :cvcOrderInfo.goodsSn
+		</#if>
+		<#if ( cvcOrderInfo.getTimeStart )?? && cvcOrderInfo.getTimeStart ?length gt 0>
+		    /* 抓单时间 */
+			and coi.get_time >= :cvcOrderInfo.getTimeStart
+		</#if>
+		<#if ( cvcOrderInfo.getTimeEnd )?? && cvcOrderInfo.getTimeEnd ?length gt 0>
+		    /* 抓单时间 */
+			and coi.get_time <= :cvcOrderInfo.getTimeEnd
+		</#if>
+		
 		
 		

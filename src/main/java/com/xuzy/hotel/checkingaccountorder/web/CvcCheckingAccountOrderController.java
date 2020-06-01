@@ -273,7 +273,9 @@ public class CvcCheckingAccountOrderController extends BaseController{
 					j.setMsg("该订单已上传，不能删除！");
 					return j;
 				}
-				CvcCheckingAccountEntity cvcCheckingAccountEntity = cvcCheckingAccountService.get(id+"");
+				
+				
+				CvcCheckingAccountEntity cvcCheckingAccountEntity = cvcCheckingAccountService.get(checkingAccountOrderEntity.getCheckingAccountId()+"");
 				if(cvcCheckingAccountEntity.getIsBalance() == 1) {
 					j.setSuccess(false);
 					j.setMsg("该订单已结算，不能删除！");

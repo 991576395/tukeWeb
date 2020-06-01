@@ -5,7 +5,7 @@
   <div region="center" style="padding:0px;border:0px">
   <t:datagrid name="tOrderList" title="菜名维护" actionUrl="cvcOrderInfo.do?datagrid"  queryMode="group" pageSize="15" idField="id" fit="true">
    <t:dgCol title="订单批次" field="batchNo"  queryMode="single" query="true" defaultVal="${batchNo}"  width="80"></t:dgCol>
-   <t:dgCol title="礼品编号" field="goodsSn"   width="80"></t:dgCol>
+   <t:dgCol title="礼品编号" field="goodsSn"  query="true"  width="80"></t:dgCol>
    <t:dgCol title="订单号" field="id" queryMode="single"  query="true"   width="80"></t:dgCol>
    <t:dgCol title="收货人" field="consignee"   width="70"></t:dgCol>
    <t:dgCol title="订单状态" field="orderStatus" queryMode="single" dictionary="OStatus" defaultVal="${orderStatus}"  query="true"  width="100"></t:dgCol>
@@ -20,7 +20,7 @@
    <t:dgCol title="结算标识" field="isBalance"  queryMode="single" dictionary="is_balance"   query="true"  width="70"></t:dgCol>
    <t:dgCol title="积分账户" field="userName" queryMode="single" dictionary="atType"   query="true"  width="60"></t:dgCol>
    <t:dgCol title="订单来源" field="orderSourceName"    query="false"  width="60"></t:dgCol>
-
+	
 <%--    <c:if test="${orderStatus == 7}"> --%>
    		<t:dgCol title="退货原因" field="returnReason" queryMode="single" dictionary="rtReason"  query="true"  width="120"></t:dgCol>
 <%--    </c:if> --%>
@@ -37,8 +37,9 @@
    <t:dgToolBar title="推送至签收" icon="icon-edit" url="cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=signin"  funname="toUpdate"></t:dgToolBar>
    <t:dgToolBar title="推送至签收失败" icon="icon-edit" url="cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=signFailure"  funname="toUpdate"></t:dgToolBar>
   	<t:dgToolBar title="取消订单" icon="icon-edit" url="cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=quitOrder"  funname="toUpdate"></t:dgToolBar>
-	<t:dgToolBar title="同步物流" icon="icon-edit" url="cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=getOrderWuliu"  funname="toUpdate"></t:dgToolBar> 
-  </t:datagrid>
+	 <t:dgToolBar title="同步物流" icon="icon-edit" url="cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=getOrderWuliu"  funname="toUpdate"></t:dgToolBar> 
+   
+ </t:datagrid>
   </div>
   
   <script type="text/javascript">
@@ -52,7 +53,7 @@
 				shade: 0.3,
 				yes:function(index){
 					request(url,function (d){
-						tOrderListSearch();
+						tOrderListsearch();
 					});
 				},
 				btn:['确定','取消'],
@@ -71,7 +72,7 @@
 				shade: 0.3,
 				yes:function(index){
 					request(url,function (d){
-						tOrderListSearch();
+						tOrderListsearch();
 					});
 				},
 				btn:['确定','取消'],
@@ -95,6 +96,8 @@
 			var isBalance =  $("select[name='isBalance']").val();
 			var userName =  $("select[name='userName']").val();
 			var returnReason =  $("select[name='returnReason']").val();
+			var getTimeStart =  $("input[name='getTimeStart']").val();
+			var getTimeEnd =  $("input[name='getTimeEnd']").val();
 			
 			var url = "cvcOrderInfo.do?exportXls";
 			if (batchNo != 'undefined' && batchNo.length > 0) {
@@ -133,6 +136,12 @@
 			if (returnReason != 'undefined' && returnReason.length > 0) {
 				url+="&returnReason="+returnReason;
 			}
+			if (getTimeStart != 'undefined' && getTimeStart.length > 0) {
+				url+="&getTimeStart="+getTimeStart;
+			}
+			if (getTimeEnd != 'undefined' && getTimeEnd.length > 0) {
+				url+="&getTimeEnd="+getTimeEnd;
+			}
 			window.location.href=url;
 		  }	  	
   
@@ -159,7 +168,7 @@
 					shade: 0.3,
 					yes:function(index){
 						request(url,function (d){
-							tOrderListSearch();
+							tOrderListsearch();
 						});
 					},
 					btn:['确定','取消'],
@@ -168,7 +177,25 @@
 					}
 				}); 
 			}
-  			
+  				
+		  function getOrderWuliu(id) {
+				layer.open({
+					title:"系统提示",
+					content:"确认操作？",
+					icon:7,
+					shade: 0.3,
+					yes:function(index){
+						request('cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=getOrderWuliu&id='+id,function (d){
+							tOrderListsearch();
+						});
+					},
+					btn:['确定','取消'],
+					btn2:function(index){
+						layer.close(index);
+					}
+				}); 
+			}
+		  
 		  	//请求
 			function request(url,fn){
 				 $.ajax({
@@ -253,6 +280,10 @@
 						$("#allocateOrder").show();
 					}
 				});
+			     
+			    //添加抓单日期区间
+				$("#tOrderListForm  span:first").append("<span style=\"display:-moz-inline-box;display:inline-block;margin-bottom:2px;text-align:justify;\"><span style=\"vertical-align:middle;display:-moz-inline-box;display:inline-block;width: 90px;text-align:right;text-overflow:ellipsis;-o-text-overflow:ellipsis; overflow: hidden;white-space:nowrap; \" title=\"抓单日期\">抓单日期：</span> <input onkeypress=\"EnterPress(event)\" onkeydown=\"EnterPress()\" type=\"text\" name=\"getTimeStart\" style=\"width: 55px\" class=\"inuptxt\">- <input onkeypress=\"EnterPress(event)\" onkeydown=\"EnterPress()\" type=\"text\" name=\"getTimeEnd\" style=\"width: 55px\" class=\"inuptxt\"></span>");
+			     
 			});
 			
 		</script>
