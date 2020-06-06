@@ -1,13 +1,22 @@
 package org.jeecgframework.test.demo;
 
 import java.io.File;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateFormatUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.jeecgframework.AbstractUnitTest;
 import org.jeecgframework.core.util.PasswordUtil;
+import org.jeecgframework.minidao.pojo.MiniDaoPage;
 import org.jeecgframework.web.system.pojo.base.TSUser;
 import org.jeecgframework.web.system.service.SystemService;
 import org.jeecgframework.web.system.service.UserService;
@@ -20,16 +29,24 @@ import org.springframework.web.client.RestTemplate;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.util.PHPAndJavaSerialize;
+import com.util.PhpDateUtils;
 import com.xuzy.hotel.checkingaccount.entity.CvcCheckingAccountEntity;
 import com.xuzy.hotel.checkingaccount.service.CvcCheckingAccountService;
 import com.xuzy.hotel.checkingaccountorder.service.CvcCheckingAccountOrderService;
+import com.xuzy.hotel.deliveryinfo.entity.CvcDeliveryInfoEntity;
+import com.xuzy.hotel.deliveryinfo.service.CvcDeliveryInfoService;
 import com.xuzy.hotel.inventory.service.CvcInventoryTableServiceI;
 import com.xuzy.hotel.order.entity.CvcOrderInfoEntity;
 import com.xuzy.hotel.order.module.CallBaseRequest;
+import com.xuzy.hotel.order.module.Data;
 import com.xuzy.hotel.order.service.CvcOrderInfoService;
 import com.xuzy.hotel.order.web.CvcOrderInfoController;
 import com.xuzy.hotel.order.web.OrderCallBack;
+import com.xuzy.hotel.shipping.entity.CvcShippingEntity;
+import com.xuzy.hotel.shipping.service.CvcShippingService;
 import com.xuzy.hotel.ylrequest.ConmentHttp;
+import com.xuzy.hotel.ylrequest.OrderCheckTask;
 import com.xuzy.hotel.ylrequest.WuliuCheckTask;
 
 /**
@@ -58,6 +75,15 @@ public class UserRestfulTest extends AbstractUnitTest {
 	
 	@Resource
 	SystemService systemService;
+	
+	@Autowired
+	OrderCheckTask orderCheckTask;
+	
+	
+	
+	@Autowired
+	private CvcDeliveryInfoService cvcDeliveryInfoService;
+	
 	  
 	// 测试get单个用户
 	// @Test
@@ -152,6 +178,8 @@ public class UserRestfulTest extends AbstractUnitTest {
 	@Autowired
 	private CvcInventoryTableServiceI cvcInventoryTableService;
 	
+	@Autowired
+	private CvcShippingService cvcShippingService;
 	//测试del
 	@Test
 	public void testDelete() throws Exception {
@@ -160,9 +188,27 @@ public class UserRestfulTest extends AbstractUnitTest {
 //		headers.setContentType(MediaType.APPLICATION_JSON);
 //		template.delete("http://localhost:8080/jeecg/rest/user/{id}","111111");
 		
+//		CvcOrderInfoEntity cvcOrderInfo = new CvcOrderInfoEntity();
+//		cvcOrderInfo.setId(14556995);
+//		MiniDaoPage<CvcOrderInfoEntity> cvcOrderInfoEntities = cvcOrderInfoService.getAll(cvcOrderInfo, 1, 1);
+		
 //		List<CvcOrderInfoEntity> cvcOrderInfoEntities = cvcOrderInfoService.getTogezelWuliuList();
-//		for (CvcOrderInfoEntity cvcOrderInfoEntity : cvcOrderInfoEntities) {
-//			System.out.println(cvcOrderInfoEntity.getId());
+//		for (CvcOrderInfoEntity cvcOrderInfoEntity : cvcOrderInfoEntities.getResults()) {
+//			CvcShippingEntity cvcShipping = new CvcShippingEntity();
+//			cvcShipping.setEnabled(1);
+//			cvcShipping.setShippingName(cvcOrderInfoEntity.getShippingName());
+//			//查询快递公司
+//			MiniDaoPage<CvcShippingEntity> daoPage = cvcShippingService.getAll(cvcShipping, 1, 1);
+//			CvcShippingEntity cvcShippingEntity = null;
+//			if(CollectionUtils.isEmpty(daoPage.getResults())) {
+//				continue;
+//			}else {
+//				cvcShippingEntity = daoPage.getResults().get(0);
+//			}
+//			String result = ConmentHttp.getOrderWuliu(cvcShippingEntity.getShippingCode(), cvcOrderInfoEntity.getInvoiceNo(), cvcOrderInfoEntity.getTel());
+//			if(StringUtils.isNotEmpty(result) && result.contains("\"message\":\"ok\"")) {
+//				ConmentHttp.postMyErrorOrder(result);
+//			}
 //		}
 //		wuliuCheckTask.run();
 		
@@ -185,12 +231,12 @@ public class UserRestfulTest extends AbstractUnitTest {
 //		}
 //		
 //		Thread.sleep(1000*60*60*10);
-		
-		systemService.initAllTypeGroups();
-		
-		CallBaseRequest baseRequest = ConmentHttp.postShentongValue("773001633635405",FileUtils.readFileToString(new File("/Users/zmeng/Documents/ceshi"), "utf-8"));
-		ConmentHttp.postMyErrorOrder(baseRequest);
-		orderCallBack.runByRequest(baseRequest);
+//		
+//		systemService.initAllTypeGroups();
+//		orderCheckTask.run();
+//		CallBaseRequest baseRequest = ConmentHttp.postShentongValue("773017398093081",FileUtils.readFileToString(new File("/Users/zmeng/Documents/ceshi"), "utf-8"));
+//		ConmentHttp.postMyErrorOrder(baseRequest);
+//		orderCallBack.runByRequest(baseRequest);
 //		发送物流
 //		CvcCheckingAccountEntity cvcCheckingAccount = cvcCheckingAccountService.get("854");
 //		List<CvcOrderInfoEntity> cvcOrderInfoEntities = cvcOrderInfoService.getAccountOrderList("", cvcCheckingAccount.getStartTime(), cvcCheckingAccount.getEndTime());
@@ -207,7 +253,75 @@ public class UserRestfulTest extends AbstractUnitTest {
 //			//退货
 //			cvcOrderInfoService.updateStatusByOrderId(id, 8);
 //		}
+		
+		//插入一条物流记录
+		String values =	"ZL7ZVZGX4ZJS7S1,VZ7QX95BGWZZZ7V,ZG8ZR7V1KX2EZZ7,ZL7ZVZGXAZCA741,FZG5ZXX77DZZ1VC,VZ71XU77GCZZZ7A,1VZZ7GMZ15T7EZX,1ZFNV7Z7MZGZUXM";
+		for(String value:values.split(",")) {
+			CvcDeliveryInfoEntity cvcDeliveryInfo = new CvcDeliveryInfoEntity();
+			cvcDeliveryInfo.setNumber(value);
+			cvcDeliveryInfo.setMessage("ok");
+			
+			List<Data> datas = new ArrayList<>();
+			Data data = new Data();
+			data.setFtime(DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
+			data.setTime(DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
+			data.setContext("产品已经以短信的形式发送到您兑换的手机号上，请注意查收，如有疑问请致电010-67537412（工作日10:00-18:00）。");
+			data.setShentongStatus("签收");
+			datas.add(data);
+			cvcDeliveryInfo.setData(PHPAndJavaSerialize.serialize(datas));
+			cvcDeliveryInfo.setState(5);
+			cvcDeliveryInfo.setCreateDate(DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
+			//快递信息
+			cvcDeliveryInfoService.insert(cvcDeliveryInfo);
+		}
+	}
 	
+	
+	
+	//测试del
+	@Test
+	public void addOrder() throws Exception {
+//		CvcCheckingAccountEntity cvcCheckingAccount = cvcCheckingAccountService.get("904");
+//		CvcOrderInfoEntity cvcOrderInfo = new CvcOrderInfoEntity();
+//		cvcOrderInfo.setId(14431131);
+//		MiniDaoPage<CvcOrderInfoEntity> cvcOrderInfoEntities = cvcOrderInfoService.getAll(cvcOrderInfo, 1, 1);
+//		cvcCheckingAccountService.update(cvcCheckingAccount,904,cvcOrderInfoEntities.getResults());
+		CvcOrderInfoEntity query = new CvcOrderInfoEntity();
+		query.setGetTimeStart("20200401");
+		query.setGetTimeEnd("20200410");
+		if(StringUtils.isNotEmpty(query.getGetTimeStart())) {
+			try {
+				Date date1 = DateUtils.parseDate(query.getGetTimeStart(),new String[] {"yyyyMMdd"}) ;
+				query.setGetTimeStart(String.valueOf(PhpDateUtils.getTime(date1)));
+			} catch (ParseException e) {
+				query.setGetTimeStart("");
+			}
+		}
+		
+		if(StringUtils.isNotEmpty(query.getGetTimeEnd())) {
+			try {
+				Date date1 = DateUtils.parseDate(query.getGetTimeEnd(),new String[] {"yyyyMMdd"}) ;
+				query.setGetTimeEnd(String.valueOf(PhpDateUtils.getTime(date1)));
+			} catch (ParseException e) {
+				query.setGetTimeEnd("");
+			}
+		}
+		
+		MiniDaoPage<CvcOrderInfoEntity> list = cvcOrderInfoService.getAll(query, 1, 30);
+		if(CollectionUtils.isNotEmpty(list.getResults())) {
+			for (CvcOrderInfoEntity entity : list.getResults()) {
+				entity.setAddTime(PhpDateUtils.parseDate(Long.parseLong(entity.getAddTime()), "yyyy-MM-dd HH:mm:ss"));
+				entity.setGetTime(PhpDateUtils.parseDate(Long.parseLong(entity.getGetTime()), "yyyy-MM-dd HH:mm:ss"));
+				
+				String value = (0 == entity.getExceptionStatus())?"无异常":"有异常";
+				if(0 != entity.getExceptionStatus()) {
+					value += (entity.getIsShow() == 1)?"(未处理)":"(已处理)";
+				}
+				
+				entity.setExceptionStatusString(value);
+			}
+		}
+		System.out.println(list.toString());
 	}
 }
 
