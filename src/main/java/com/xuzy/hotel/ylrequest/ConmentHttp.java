@@ -483,6 +483,37 @@ public class ConmentHttp {
     }
     
     /**
+     * 物流状态监听
+     * @param company 
+     * @param number 
+     * @throws Exception 
+     */
+    public static String getOrderWuliuAll(String company, String number,String phone) throws Exception { 
+    	String param ="{\"com\":\""+company+"\",\"num\":\""+number+"\"";
+    	if(!StringUtils.isEmpty(phone)) {
+    		param +=",\"phone\":\""+phone+"\"";
+    	}
+    	param += "}";
+		String customer ="ABF71AF3D23EF47F16FBF79D965042AC";
+		String key = KEY;
+		String sign = md5(param+key+customer).toUpperCase();
+		
+		try {
+			// 开始请求
+			Request request = new Request.Builder().url("https://poll.kuaidi100.com/poll/query.do")
+					.post(new FormBody.Builder().add("param", param)
+							.add("sign",sign)
+							.add("customer",customer).build())
+	                .build();
+	        Response response  = okHttpClient.newCall(request).execute();
+			return response.body().string();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+    }
+    
+    /**
      * MD5方法
      * 
      * @param text 明文

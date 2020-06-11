@@ -245,16 +245,17 @@ public class CvcOrderInfoController extends BaseController {
 				entity.setGetTimeStart("");
 			}
 		}
-		
 		if(StringUtils.isNotEmpty(entity.getGetTimeEnd())) {
 			try {
-				Date date1 = DateUtils.parseDate(entity.getGetTimeEnd(),new String[] {"yyyyMMdd"}) ;
-				entity.setGetTimeEnd(String.valueOf(PhpDateUtils.getTime(date1)));
+				Date date1 = DateUtils.parseDate(entity.getGetTimeEnd(),new String[] {"yyyyMMdd"});
+				Calendar calendar = Calendar.getInstance();
+				calendar.setTime(date1);
+				calendar.add(Calendar.DAY_OF_YEAR, 1);
+				entity.setGetTimeEnd(String.valueOf(PhpDateUtils.getTime(calendar.getTime())));
 			} catch (ParseException e) {
 				entity.setGetTimeEnd("");
 			}
 		}
-		
 		List<CvcOrderInfoEntity> entitys = cvcOrderInfoService.getExcelAll(entity);
 		modelMap.put(NormalExcelConstants.FILE_NAME,DateFormatUtils.format(Calendar.getInstance(), "yyyyMMddHHmmss"));
 		modelMap.put(NormalExcelConstants.CLASS,CvcOrderInfoEntity.class);
@@ -321,12 +322,16 @@ public class CvcOrderInfoController extends BaseController {
 		
 		if(StringUtils.isNotEmpty(query.getGetTimeEnd())) {
 			try {
-				Date date1 = DateUtils.parseDate(query.getGetTimeEnd(),new String[] {"yyyyMMdd"}) ;
-				query.setGetTimeEnd(String.valueOf(PhpDateUtils.getTime(date1)));
+				Date date1 = DateUtils.parseDate(query.getGetTimeEnd(),new String[] {"yyyyMMdd"});
+				Calendar calendar = Calendar.getInstance();
+				calendar.setTime(date1);
+				calendar.add(Calendar.DAY_OF_YEAR, 1);
+				query.setGetTimeEnd(String.valueOf(PhpDateUtils.getTime(calendar.getTime())));
 			} catch (ParseException e) {
 				query.setGetTimeEnd("");
 			}
 		}
+		
 		
 		
 		if(query.getExceptionStatus() != null && query.getExceptionStatus() > 0) {
