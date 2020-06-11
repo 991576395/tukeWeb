@@ -36,8 +36,14 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.appinterface.app.base.exception.XuException;
+import com.util.PHPAndJavaSerialize;
 import com.util.PhpDateUtils;
+import com.xuzy.hotel.deliveryinfo.entity.CvcDeliveryInfoEntity;
+import com.xuzy.hotel.deliveryinfo.service.CvcDeliveryInfoService;
+import com.xuzy.hotel.deliveryorder.entity.CvcDeliveryOrderEntity;
 import com.xuzy.hotel.order.entity.CvcOrderInfoEntity;
+import com.xuzy.hotel.order.module.Data;
+import com.xuzy.hotel.order.module.DeliveryInfoPojo;
 import com.xuzy.hotel.order.service.CvcOrderInfoService;
 import com.xuzy.hotel.shippingbatch.entity.CvcShippingBatchEntity;
 import com.xuzy.hotel.shippingbatch.service.CvcShippingBatchService;
@@ -58,9 +64,11 @@ public class CvcShippingBatchController extends BaseController{
 	@Autowired
 	private CvcOrderInfoService cvcOrderInfoService;
 	
-	 @Autowired
-	 private CvcShippingBatchOrderService cvcShippingBatchOrderService;
-  
+	@Autowired
+	private CvcShippingBatchOrderService cvcShippingBatchOrderService;
+
+	@Autowired
+	private CvcDeliveryInfoService cvcDeliveryInfoService;
   
   /**
 	 * Logger for this class
@@ -106,6 +114,77 @@ public class CvcShippingBatchController extends BaseController{
 //		return new ModelAndView("com/xuzy/hotel/shippingbatch/uploadfile");
 		return new ModelAndView("com/xuzy/hotel/shippingbatch/uploadfileCom");
 	}
+	
+	/**
+	 * 发送物流页面
+	 * 
+	 * @return
+	 */
+	@RequestMapping(params = "addWuliuView", method = { RequestMethod.GET, RequestMethod.POST })
+	public ModelAndView addWuliuView(HttpServletRequest request) throws Exception {
+		return new ModelAndView("com/xuzy/hotel/shippingbatch/addwuliu");
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(params = "addWuliu", method = RequestMethod.POST)
+	@ResponseBody
+	public AjaxJson addWuliu(HttpServletRequest request, HttpServletResponse response) {
+		AjaxJson j = new AjaxJson();
+		StringBuffer errorMsp = new StringBuffer(); 
+		errorMsp.append("文件导入失败:原因");
+		
+		
+		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+		Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
+		for (Map.Entry<String, MultipartFile> entity : fileMap.entrySet()) {
+			MultipartFile file = entity.getValue();// 获取上传文件对象
+			ImportParams params = new ImportParams();
+			params.setTitleRows(0);
+			params.setHeadRows(4);
+			params.setNeedSave(true);
+			try {
+				List<CvcOrderInfoEntity> batchOrderEntities = ExcelImportUtil.importExcel(file.getInputStream(),
+						CvcOrderInfoEntity.class, params);
+				if (CollectionUtils.isNotEmpty(batchOrderEntities)) {
+					for(CvcOrderInfoEntity cvcOrderInfoEntity:batchOrderEntities) {
+						
+					}
+					j.setMsg("文件导入成功！");
+				}else {
+					errorMsp.append(file.getOriginalFilename()+"识别内容为空");
+					j.setSuccess(false);
+				}
+			} catch (XuException e) {
+				j.setSuccess(false);
+				errorMsp.append(e.getMessage()+",");
+				logger.error(ExceptionUtil.getExceptionMessage(e));
+			} catch (Exception e) {
+				j.setSuccess(false);
+				errorMsp.append(file.getOriginalFilename()+",");
+				logger.error(ExceptionUtil.getExceptionMessage(e));
+			} finally {
+				try {
+					file.getInputStream().close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			try {
+				Thread.sleep(100);
+				//防止多文件上传 生成发货编号相同
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		if(!j.isSuccess()) {
+			j.setMsg(errorMsp.toString());
+		}
+		return j;
+	}
+	
+	
+	
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(params = "importExcel", method = RequestMethod.POST)

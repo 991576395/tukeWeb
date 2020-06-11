@@ -16,7 +16,8 @@
    <t:dgDelOpt title="删除" url="cvcShippingBatch.do?doDel&batchNo={batchNo}" urlclass="ace_button"  urlfont="fa-trash-o"/>
    <t:dgFunOpt title="查看详情"   urlclass="ace_button" urlfont="fa-search"  funname="goLook(batchNo)"/>
    
-  <t:dgToolBar title="上传发货excel" icon="icon-put" url="cvcShippingBatch.do?toUpload" width="600" height="300" funname="add" ></t:dgToolBar>
+  	<t:dgToolBar title="上传发货excel" icon="icon-put" url="cvcShippingBatch.do?toUpload" width="600" height="300" funname="add" ></t:dgToolBar>
+  	<t:dgToolBar title="上传插入物流excel" icon="icon-put" url="cvcShippingBatch.do?toUpload" width="600" height="300" funname="add" ></t:dgToolBar>
   </t:datagrid>
   </div>
   
