@@ -148,9 +148,33 @@ public class CvcShippingBatchController extends BaseController{
 						CvcOrderInfoEntity.class, params);
 				if (CollectionUtils.isNotEmpty(batchOrderEntities)) {
 					for(CvcOrderInfoEntity cvcOrderInfoEntity:batchOrderEntities) {
-						
+						CvcDeliveryInfoEntity cvcDeliveryInfoEntity = cvcDeliveryInfoService
+								.getDeliveryInfosByInvoiceNo(cvcOrderInfoEntity.getInvoiceNo());
+						List<Data> deliveryInfos = new ArrayList<>();
+						if (cvcDeliveryInfoEntity != null && StringUtils.isNotEmpty(cvcDeliveryInfoEntity.getData())) {
+							deliveryInfos = PHPAndJavaSerialize.unserializePHParray(cvcDeliveryInfoEntity.getData(), Data.class);
+						}
+						if(deliveryInfos.size() == 0) {
+							//为空添加
+							CvcDeliveryInfoEntity cvcDeliveryInfo = new CvcDeliveryInfoEntity();
+							cvcDeliveryInfo.setNumber(cvcOrderInfoEntity.getInvoiceNo());
+							cvcDeliveryInfo.setMessage("ok");
+							
+							List<Data> datas = new ArrayList<>();
+							Data data = new Data();
+							data.setFtime(DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
+							data.setTime(DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
+							data.setContext("产品已经以短信的形式发送到您兑换的手机号上，请注意查收，如有疑问请致电010-67537412（工作日10:00-18:00）。");
+							data.setShentongStatus("签收");
+							datas.add(data);
+							cvcDeliveryInfo.setData(PHPAndJavaSerialize.serialize(datas));
+							cvcDeliveryInfo.setState(5);
+							cvcDeliveryInfo.setCreateDate(DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
+							//快递信息
+							cvcDeliveryInfoService.insert(cvcDeliveryInfo);
+						}
 					}
-					j.setMsg("文件导入成功！");
+					j.setMsg("插入成功！");
 				}else {
 					errorMsp.append(file.getOriginalFilename()+"识别内容为空");
 					j.setSuccess(false);

@@ -147,10 +147,6 @@ public class OrderCallBack extends BaseController {
 							break;
 					}
 					cvcDeliveryInfoNewService.saveOrUpdate(cvcDeliveryInfoNewEntity);
-//					if("2".equals(callbaseRequest.getType())) {
-//						//测试申通阶段不做处理
-//						return;
-//					}
 				} catch (Exception e) {
 					LOG.error("新物流记录表更新失败！", e);
 				}

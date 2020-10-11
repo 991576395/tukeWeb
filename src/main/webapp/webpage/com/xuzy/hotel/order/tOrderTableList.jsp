@@ -98,6 +98,7 @@
 			var returnReason =  $("select[name='returnReason']").val();
 			var getTimeStart =  $("input[name='getTimeStart']").val();
 			var getTimeEnd =  $("input[name='getTimeEnd']").val();
+			var goodsSn =  $("input[name='goodsSn']").val();
 			
 			var url = "cvcOrderInfo.do?exportXls";
 			if (batchNo != 'undefined' && batchNo.length > 0) {
@@ -141,6 +142,9 @@
 			}
 			if (getTimeEnd != 'undefined' && getTimeEnd.length > 0) {
 				url+="&getTimeEnd="+getTimeEnd;
+			}
+			if (goodsSn != 'undefined' && goodsSn.length > 0) {
+				url+="&goodsSn="+goodsSn;
 			}
 			window.location.href=url;
 		  }	  	

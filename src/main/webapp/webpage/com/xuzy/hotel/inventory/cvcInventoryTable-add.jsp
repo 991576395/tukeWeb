@@ -25,18 +25,6 @@
 							<label class="Validform_label" style="display: none;">商品编号</label>
 						</td>
 				</tr>
-				<!-- <tr>
-					<td align="right">
-						<label class="Validform_label">
-							商品总量:
-						</label>
-					</td>
-					<td class="value">
-					     	 <input id="goodTotleSize" name="goodTotleSize" type="text" style="width: 150px" class="inputxt"  datatype="n"  ignore="ignore" />
-							<span class="Validform_checktip"></span>
-							<label class="Validform_label" style="display: none;">商品总量</label>
-						</td>
-				</tr> -->
 				<tr>
 					<td align="right">
 						<label class="Validform_label">
@@ -47,6 +35,30 @@
 					     	 <input id="goodSize" name="goodSize" type="text" style="width: 150px" class="inputxt"  datatype="n"  ignore="ignore" />
 							<span class="Validform_checktip"></span>
 							<label class="Validform_label" style="display: none;">商品剩余数量</label>
+						</td>
+				</tr>
+				<tr>
+					<td align="right">
+						<label class="Validform_label">
+							商品名称:
+						</label>
+					</td>
+					<td class="value">
+					     	 <input id="goodName" name="goodName" type="text" style="width: 150px" class="inputxt"  ignore="ignore" />
+							<span class="Validform_checktip"></span>
+							<label class="Validform_label" style="display: none;">商品名称</label>
+						</td>
+				</tr>
+				<tr>
+					<td align="right">
+						<label class="Validform_label">
+							公司商品编码:
+						</label>
+					</td>
+					<td class="value">
+					     	 <input id="companyGoodNumber" name="companyGoodNumber" type="text" style="width: 150px" class="inputxt"  ignore="ignore" />
+							<span class="Validform_checktip"></span>
+							<label class="Validform_label" style="display: none;">公司商品编码</label>
 						</td>
 				</tr>
 				

@@ -96,11 +96,7 @@ public final class ExcelExportUtil {
 	 */
 	public static Workbook exportExcel(List<Map<String, Object>> list, String type) {
 		Workbook workbook;
-		if (ExcelType.HSSF.equals(type)) {
-			workbook = new HSSFWorkbook();
-		} else {
-			workbook = new XSSFWorkbook();
-		}
+		workbook = new HSSFWorkbook();
 		for (Map<String, Object> map : list) {
 			ExcelExportServer server = new ExcelExportServer();
 			server.createSheet(workbook, (ExportParams) map.get("title"), (Class<?>) map.get("entity"), (Collection<?>) map.get("data"));

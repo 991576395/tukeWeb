@@ -1,6 +1,7 @@
 SELECT  distinct coi.order_id id,
 coi.batch_no batchNo,coi.order_source_name orderSourceName,
 good.goods_sn goodsSn,
+good.goods_name goodName,
  coi.consignee consignee, 
  coi.user_name userName, 
  coi.tk_order_status orderStatus, 

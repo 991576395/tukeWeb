@@ -169,7 +169,6 @@ public class ExcelExportServer extends ExcelExportBase {
 
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
-			LOGGER.error(e.getMessage(), e);
 			throw new ExcelExportException(ExcelExportEnum.EXPORT_ERROR, e.getCause());
 		}
 	}

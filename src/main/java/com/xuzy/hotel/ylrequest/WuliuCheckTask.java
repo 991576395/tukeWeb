@@ -44,9 +44,9 @@ public class WuliuCheckTask implements Job{
 	private ThreadPoolTaskExecutor taskExecutor;
 	
 	public void run() {
-//		if(true) {
-//			return;
-//		}
+		if(Config.ISDEBUG) {
+			return;
+		}
 		long start = System.currentTimeMillis();
 		org.jeecgframework.core.util.LogUtil.info("===================物流校验定时任务开始===================");
 		

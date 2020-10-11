@@ -129,7 +129,19 @@ public interface CvcOrderInfoDao{
 	 @Sql("SELECT action_user FROM cvc_order_action WHERE order_id = :orderId group by action_user limit 1")
 	 public String getActionUserByOrderId(@Param("orderId") int orderId);
 	
-	
+	/**
+	 * 
+	 * d_o.shipping_name,
+ d_o.invoice_no,
+ coi.address,
+ coi.consignee,
+ coi.mobile,
+ d_o.signin_date,
+	 * @param userName
+	 * @param startTime
+	 * @param endTime
+	 * @return
+	 */
 	@ResultType(CvcOrderInfoEntity.class)
 	List<CvcOrderInfoEntity> getAccountOrders(@Param("userName")  String userName,
 			@Param("startTime") String startTime,@Param("endTime") String endTime);

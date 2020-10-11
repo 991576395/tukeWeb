@@ -22,7 +22,7 @@ import org.jeecgframework.poi.excel.annotation.Excel;
  * @Title: Entity
  * @Description: 商品库存表
  * @author onlineGenerator
- * @date 2019-01-01 07:17:49
+ * @date 2020-10-11 21:30:59
  * @version V1.0   
  *
  */
@@ -62,7 +62,13 @@ public class CvcInventoryTableEntity implements java.io.Serializable {
 	@Excel(name="商品剩余数量",width=15)
 	private java.lang.Integer goodSize;
 	/**修改版本*/
-	private java.lang.Integer uodateVersion = 0;
+	private java.lang.Integer uodateVersion;
+	/**商品名称*/
+	@Excel(name="商品名称",width=15)
+	private java.lang.String goodName;
+	/**公司商品编码*/
+	@Excel(name="公司商品编码",width=15)
+	private java.lang.String companyGoodNumber;
 	
 	/**
 	 *方法: 取得java.lang.String
@@ -304,5 +310,39 @@ public class CvcInventoryTableEntity implements java.io.Serializable {
 	 */
 	public void setUodateVersion(java.lang.Integer uodateVersion){
 		this.uodateVersion = uodateVersion;
+	}
+	/**
+	 *方法: 取得java.lang.String
+	 *@return: java.lang.String  商品名称
+	 */
+
+	@Column(name ="GOOD_NAME",nullable=true,length=50)
+	public java.lang.String getGoodName(){
+		return this.goodName;
+	}
+
+	/**
+	 *方法: 设置java.lang.String
+	 *@param: java.lang.String  商品名称
+	 */
+	public void setGoodName(java.lang.String goodName){
+		this.goodName = goodName;
+	}
+	/**
+	 *方法: 取得java.lang.String
+	 *@return: java.lang.String  公司商品编码
+	 */
+
+	@Column(name ="COMPANY_GOOD_NUMBER",nullable=true,length=50)
+	public java.lang.String getCompanyGoodNumber(){
+		return this.companyGoodNumber;
+	}
+
+	/**
+	 *方法: 设置java.lang.String
+	 *@param: java.lang.String  公司商品编码
+	 */
+	public void setCompanyGoodNumber(java.lang.String companyGoodNumber){
+		this.companyGoodNumber = companyGoodNumber;
 	}
 }

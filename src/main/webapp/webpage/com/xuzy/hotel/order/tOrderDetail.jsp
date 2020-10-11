@@ -228,7 +228,7 @@
 				<c:forEach var="goods" items="${goods_list}">
 					<tr>
 						<td style="text-indent: 2.5em">
-							<div id="suit_${goods.goodsId}">${goods.goodsSn}</div>
+							<div id="suit_${goods.goodsName}">${goods.goodsName}</div>
 						</td>
 						<td align="center">${goods.goodsSn}</td>
 						<td align="center">${goods.goodsNumber}</td>

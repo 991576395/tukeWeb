@@ -117,13 +117,13 @@ public class ConmentHttp {
      * @param number 
      */
     public static Kuaidi100Response postorder(String company, String number) { 
-    	if("shentong".equals(company)) {
-    		//申通不需要订阅
-    		Kuaidi100Response kuaidi100Response = new Kuaidi100Response();
-    		kuaidi100Response.setResult(true);
-    		kuaidi100Response.setMessage("");
-    		return kuaidi100Response;
-    	}
+//    	if("shentong".equals(company)) {
+//    		//申通不需要订阅
+//    		Kuaidi100Response kuaidi100Response = new Kuaidi100Response();
+//    		kuaidi100Response.setResult(true);
+//    		kuaidi100Response.setMessage("");
+//    		return kuaidi100Response;
+//    	}
     	
     	Kuaidi100Request kuaidi100Request = new Kuaidi100Request();
     	kuaidi100Request.setCompany(company);

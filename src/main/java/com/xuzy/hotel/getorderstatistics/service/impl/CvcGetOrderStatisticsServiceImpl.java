@@ -6,10 +6,12 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.jeecgframework.minidao.pojo.MiniDaoPage;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +19,8 @@ import com.util.PhpDateUtils;
 import com.xuzy.hotel.getorderstatistics.dao.CvcGetOrderStatisticsDao;
 import com.xuzy.hotel.getorderstatistics.entity.CvcGetOrderStatisticsEntity;
 import com.xuzy.hotel.getorderstatistics.service.CvcGetOrderStatisticsService;
+import com.xuzy.hotel.inventory.entity.CvcInventoryTableEntity;
+import com.xuzy.hotel.inventory.service.CvcInventoryTableServiceI;
 import com.xuzy.hotel.order.dao.CvcOrderInfoDao;
 import com.xuzy.hotel.order.entity.CvcOrderInfoEntity;
 import com.xuzy.hotel.ordergoods.dao.CvcOrderGoodsDao;
@@ -41,6 +45,9 @@ public class CvcGetOrderStatisticsServiceImpl implements CvcGetOrderStatisticsSe
 	
 	@Resource
 	private CvcOrderGoodsDao cvcOrderGoodsDao;
+	
+	@Autowired
+	private CvcInventoryTableServiceI cvcInventoryTableService;
 
 	@Override
 	public CvcGetOrderStatisticsEntity get(String id) {
@@ -125,6 +132,11 @@ public class CvcGetOrderStatisticsServiceImpl implements CvcGetOrderStatisticsSe
 					cvcOrderGoods.setOrderId(exchangeOrder.getID());
 					cvcOrderGoods.setGoodsId(exchangeOrderDetail.getProduct());
 					cvcOrderGoods.setGoodsSn(exchangeOrderDetail.getProduct());
+					
+					List<CvcInventoryTableEntity> inventoryTableEntities = cvcInventoryTableService.findHql("from CvcInventoryTableEntity where goodNumber = ?", exchangeOrderDetail.getProduct());
+					if(CollectionUtils.isNotEmpty(inventoryTableEntities)) {
+						cvcOrderGoods.setGoodsName(inventoryTableEntities.get(0).getGoodName());
+					}
 					cvcOrderGoods.setGoodsNumber(exchangeOrderDetail.getBookQuantity());
 					cvcOrderGoodsDao.insert(cvcOrderGoods);
 				}

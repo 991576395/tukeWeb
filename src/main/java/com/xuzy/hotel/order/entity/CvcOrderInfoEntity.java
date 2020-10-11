@@ -466,6 +466,12 @@ public class CvcOrderInfoEntity implements Serializable{
 	 */
 	@Excel(name="礼品编号",orderNum="7")
 	private String goodsSn;
+	
+	/**
+	 * 礼品名称
+	 */
+	@Excel(name="礼品名称",orderNum="7")
+	private String goodName;
 		
 	@Excel(name="礼品数量",orderNum="8")
 	private int goodsNumber;
@@ -491,10 +497,14 @@ public class CvcOrderInfoEntity implements Serializable{
 	 * 最近一条物流信息
 	 */
 	private String newDeleveryInfo;
-		
 	
 	
-	
+	public String getGoodName() {
+		return goodName;
+	}
+	public void setGoodName(String goodName) {
+		this.goodName = goodName;
+	}
 	public String getGetTimeStart() {
 		return getTimeStart;
 	}

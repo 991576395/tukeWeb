@@ -35,7 +35,7 @@
 			
 			//导出文件
 			function excelOut(unifiedBatchNo){
-				var url = "cvcOrderInfo.do?exportXls";
+				var url = "cvcOrderInfo.do?exportXlsByGoodType";
 				if (unifiedBatchNo != 'undefined' && unifiedBatchNo.length > 0) {
 					url+="&batchNo="+unifiedBatchNo;
 				}

@@ -41,7 +41,7 @@ public class ExceptionCheckTask implements Job{
 	
 	/*@Scheduled(cron="0 0/1 * * * ?")*/
 	public void run() {
-		if(true) {
+		if(Config.ISDEBUG) {
 			return;
 		}
 		long start = System.currentTimeMillis();

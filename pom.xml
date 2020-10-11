@@ -1028,6 +1028,7 @@
 		<url>www.jeecg.org</url>
 	</organization>
 	<build>
+	
 		<plugins>
 			<!-- 多war开发Maven支持-->
 			<!--  
@@ -1188,5 +1189,4 @@
 			</testResource>
 		</testResources>
 	</build>
-	
 </project>

@@ -14,6 +14,8 @@ public class Config implements Serializable{
 	public static final String ConfigRedis = "tuke_Config";
 	
 	
+	public static final boolean ISDEBUG = false;
+	
     public static final String USERNAME = "DeliverAnonymous";//"DeliverPBH";//CRMIF.LoginEx_ForDeliver接口所需账号参数
     public static final String PASSWORD = "DeliverAnonymous123!";//"pinbohui123!";//CRMIF.LoginEx_ForDeliver接口所需密码参数
     public static final String DEVICECODE = "1C-65-9D-EE-E6-7B";

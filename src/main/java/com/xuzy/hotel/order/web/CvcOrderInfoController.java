@@ -1,12 +1,19 @@
 package com.xuzy.hotel.order.web;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -14,14 +21,21 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.jeecgframework.core.common.model.json.DataGrid;
 import org.jeecgframework.core.util.ResourceUtil;
 import org.jeecgframework.minidao.pojo.MiniDaoPage;
 import org.jeecgframework.p3.core.common.utils.AjaxJson;
 import org.jeecgframework.p3.core.page.SystemTools;
 import org.jeecgframework.p3.core.web.BaseController;
+import org.jeecgframework.poi.excel.ExcelExportUtil;
 import org.jeecgframework.poi.excel.entity.ExportParams;
+import org.jeecgframework.poi.excel.entity.TemplateExportParams;
+import org.jeecgframework.poi.excel.entity.vo.MapExcelConstants;
 import org.jeecgframework.poi.excel.entity.vo.NormalExcelConstants;
+import org.jeecgframework.poi.excel.entity.vo.TemplateExcelConstants;
+import org.jeecgframework.poi.util.ExcelUtil;
 import org.jeecgframework.tag.core.easyui.TagUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -263,6 +277,85 @@ public class CvcOrderInfoController extends BaseController {
 			"导出信息"));
 		modelMap.put(NormalExcelConstants.DATA_LIST,entitys);
 		return NormalExcelConstants.JEECG_EXCEL_VIEW;
+	}
+	
+	protected static final String HSSF = ".xls";
+	protected static final String XSSF = ".xlsx";
+	/**
+	 * 导出excel  通过商品分sheet
+	 * @param request
+	 * @param response
+	 */
+	@RequestMapping(params = "exportXlsByGoodType")
+	public void exportXlsByGoodType(CvcOrderInfoEntity entity,HttpServletRequest request,HttpServletResponse response
+			, DataGrid dataGrid,ModelMap modelMap) {
+		List<CvcOrderInfoEntity> entitys = cvcOrderInfoService.getExcelAll(entity);
+		
+		Map<String, List<CvcOrderInfoEntity>> sheetOrder = new HashMap<String, List<CvcOrderInfoEntity>>();
+		Set<String> keys = new HashSet<>();
+		for (CvcOrderInfoEntity cvcOrderInfoEntity : entitys) {
+			String key = cvcOrderInfoEntity.getGoodName() + "("+ cvcOrderInfoEntity.getGoodsSn() +")";
+			if(sheetOrder.containsKey(key)) {
+				sheetOrder.get(key).add(cvcOrderInfoEntity);
+			}else {
+				List<CvcOrderInfoEntity> cvcOrderInfoEntities = new ArrayList<>();
+				cvcOrderInfoEntities.add(cvcOrderInfoEntity);
+				sheetOrder.put(key, cvcOrderInfoEntities);
+				keys.add(key);
+			}
+		}
+		//
+		//多个Map key title 对应表格Title key entity 对应表格对应实体 key data
+		List<Map<String, Object>> sheetOrderList = new ArrayList<>(); 
+		
+		for (Map.Entry<String, List<CvcOrderInfoEntity>> map: sheetOrder.entrySet()) {
+			Map<String, Object> exMap = new HashMap<>();
+			
+			exMap.put("title", new ExportParams(null, null,map.getKey()));
+			exMap.put("entity", CvcOrderInfoEntity.class);
+			exMap.put("data", map.getValue());
+			sheetOrderList.add(exMap);
+		}
+		
+		Workbook workbook = ExcelExportUtil.exportExcel(sheetOrderList,"");
+		String codedFileName = DateFormatUtils.format(Calendar.getInstance(), "yyyyMMddHHmmss");
+		if (workbook instanceof HSSFWorkbook) {
+			codedFileName += HSSF;
+		} else {
+			codedFileName += XSSF;
+		}
+		try {
+			if (isIE(request)) {
+				codedFileName = java.net.URLEncoder.encode(codedFileName, "UTF8");
+			} else {
+				codedFileName = new String(codedFileName.getBytes("UTF-8"), "ISO-8859-1");
+			}
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		response.setHeader("content-disposition", "attachment;filename=" + codedFileName);
+		ServletOutputStream out;
+		try {
+			out = response.getOutputStream();
+			workbook.write(out);
+			out.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+//		modelMap.put(NormalExcelConstants.FILE_NAME,DateFormatUtils.format(Calendar.getInstance(), "yyyyMMddHHmmss"));
+//		modelMap.put(NormalExcelConstants.CLASS,CvcOrderInfoEntity.class);
+//		TemplateExportParams exportParams = new TemplateExportParams();
+//		exportParams.setTemplateUrl(path);
+//		exportParams.setScanAllsheet(true);
+//		exportParams.setSheetName(keys.toArray(new String[keys.size()]));
+//		modelMap.put(NormalExcelConstants.PARAMS,new ExportParams(null, null,
+//				"导出信息"));
+//		modelMap.put(MapExcelConstants.MAP_LIST,sheetOrderList);
+//		return MapExcelConstants.JEECG_MAP_EXCEL_VIEW;
+	}
+	public boolean isIE(HttpServletRequest request) {
+		return (request.getHeader("USER-AGENT").toLowerCase().indexOf("msie") > 0 || request.getHeader("USER-AGENT").toLowerCase().indexOf("rv:11.0") > 0) ? true : false;
 	}
 	
 	/**
