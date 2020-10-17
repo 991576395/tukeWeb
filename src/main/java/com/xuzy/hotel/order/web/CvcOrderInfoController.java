@@ -294,7 +294,7 @@ public class CvcOrderInfoController extends BaseController {
 		Map<String, List<CvcOrderInfoEntity>> sheetOrder = new HashMap<String, List<CvcOrderInfoEntity>>();
 		Set<String> keys = new HashSet<>();
 		for (CvcOrderInfoEntity cvcOrderInfoEntity : entitys) {
-			String key = cvcOrderInfoEntity.getGoodName() + "("+ cvcOrderInfoEntity.getGoodsSn() +")";
+			String key = cvcOrderInfoEntity.getGoodName();
 			if(sheetOrder.containsKey(key)) {
 				sheetOrder.get(key).add(cvcOrderInfoEntity);
 			}else {

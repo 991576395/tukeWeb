@@ -136,6 +136,7 @@ public class CvcGetOrderStatisticsServiceImpl implements CvcGetOrderStatisticsSe
 					List<CvcInventoryTableEntity> inventoryTableEntities = cvcInventoryTableService.findHql("from CvcInventoryTableEntity where goodNumber = ?", exchangeOrderDetail.getProduct());
 					if(CollectionUtils.isNotEmpty(inventoryTableEntities)) {
 						cvcOrderGoods.setGoodsName(inventoryTableEntities.get(0).getGoodName());
+						cvcOrderGoods.setExtensionCode(inventoryTableEntities.get(0).getCompanyGoodNumber());
 					}
 					cvcOrderGoods.setGoodsNumber(exchangeOrderDetail.getBookQuantity());
 					cvcOrderGoodsDao.insert(cvcOrderGoods);

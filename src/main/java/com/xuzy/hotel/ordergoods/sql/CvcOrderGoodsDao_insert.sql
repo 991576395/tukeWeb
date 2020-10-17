@@ -4,12 +4,16 @@ INSERT  INTO
       order_id                       
       ,goods_id                       
       ,goods_sn                       
-      ,goods_number                   
+      ,goods_number
+      ,goods_name
+      ,extension_code
       ) 
 values
       (
       :cvcOrderGoods.orderId                       
       ,:cvcOrderGoods.goodsId                       
       ,:cvcOrderGoods.goodsSn                       
-      ,:cvcOrderGoods.goodsNumber                   
+      ,:cvcOrderGoods.goodsNumber  
+      ,:cvcOrderGoods.goodsName     
+      ,:cvcOrderGoods.extensionCode     
       )

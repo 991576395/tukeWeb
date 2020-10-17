@@ -468,6 +468,12 @@ public class CvcOrderInfoEntity implements Serializable{
 	private String goodsSn;
 	
 	/**
+	 * 礼品编号
+	 * 
+	 */
+	@Excel(name="公司唯一编号",orderNum="7")
+	private String goodsCompanyNum;
+	/**
 	 * 礼品名称
 	 */
 	@Excel(name="礼品名称",orderNum="7")
@@ -497,8 +503,16 @@ public class CvcOrderInfoEntity implements Serializable{
 	 * 最近一条物流信息
 	 */
 	private String newDeleveryInfo;
+		
 	
 	
+	
+	public String getGoodsCompanyNum() {
+		return goodsCompanyNum;
+	}
+	public void setGoodsCompanyNum(String goodsCompanyNum) {
+		this.goodsCompanyNum = goodsCompanyNum;
+	}
 	public String getGoodName() {
 		return goodName;
 	}
