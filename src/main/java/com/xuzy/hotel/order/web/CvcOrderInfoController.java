@@ -84,7 +84,7 @@ import com.xuzy.hotel.ylrequest.module.RequestSignInExchangeOrderJson;
 
 /**
  * 描述：订单表
- * 
+ *
  * @author: www.jeecg.org
  * @since：2018年10月28日 18时23分43秒 星期日
  * @version:1.0
@@ -94,44 +94,44 @@ import com.xuzy.hotel.ylrequest.module.RequestSignInExchangeOrderJson;
 public class CvcOrderInfoController extends BaseController {
 	@Autowired
 	private CvcOrderInfoService cvcOrderInfoService;
-	
+
 	@Autowired
 	private CvcOrderGoodsService cvcOrderGoodsService;
-	
+
 	@Autowired
 	private CvcDeliveryOrderService cvcDeliveryOrderService;
-	
+
 	@Autowired
 	private CvcRevokeGoodsService cvcRevokeGoodsService;
-	
+
 	@Autowired
 	private CvcOrderActionService cvcOrderActionService;
-	
+
 	@Autowired
 	private CvcShippingService cvcShippingService;
-	
+
 	@Autowired
 	private CvcDeliveryInfoService cvcDeliveryInfoService;
-	
+
 	@Autowired
 	private CvcInventoryTableServiceI cvcInventoryTableService;
-	
+
 	@Autowired
 	private CvcYlDeliveryInfoService cvcYlDeliveryInfoService;
-	
+
 	/**
 	 * 页面跳转
-	 * 
+	 *
 	 * @return
 	 */
 	@RequestMapping(params = "exceptionOrderList")
 	public ModelAndView exceptionOrderList(HttpServletRequest request) {
 		return new ModelAndView("com/xuzy/hotel/order/tExceptionOrderTableList");
 	}
-	
+
 	/**
 	 * easyui AJAX请求数据
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 * @param dataGrid
@@ -155,7 +155,7 @@ public class CvcOrderInfoController extends BaseController {
 		dataGrid.setTotal(cvcOrderInfoService.getExceptionOrderCount(query));
 		TagUtil.datagrid(response, dataGrid);
 	}
-	
+
 	/**
 	 * 签收超时订单列表
 	 * @param request
@@ -165,8 +165,8 @@ public class CvcOrderInfoController extends BaseController {
 	public ModelAndView timeOutOrderList(HttpServletRequest request) {
 		return new ModelAndView("com/xuzy/hotel/order/tTimeOutOrderTableList");
 	}
-	
-	
+
+
 	@RequestMapping(params = "timeOutOrderListDatagrid")
 	public void timeOutOrderListDatagrid(CvcOrderInfoEntity query,HttpServletRequest request, HttpServletResponse response, DataGrid dataGrid) {
 		MiniDaoPage<CvcOrderInfoEntity> list = cvcOrderInfoService.getTimeOutOrderList(dataGrid.getPage(), dataGrid.getRows());
@@ -178,7 +178,7 @@ public class CvcOrderInfoController extends BaseController {
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}
-				
+
 				CvcDeliveryInfoEntity cvcDeliveryInfoEntity = cvcDeliveryInfoService
 						.getDeliveryInfosByInvoiceNo(entity.getInvoiceNo());
 				List<Data> deliveryInfos = new ArrayList<>();
@@ -194,10 +194,10 @@ public class CvcOrderInfoController extends BaseController {
 		dataGrid.setTotal(cvcOrderInfoService.getTimeOutOrderCount());
 		TagUtil.datagrid(response, dataGrid);
 	}
-	
+
 	/**
 	 * 页面跳转
-	 * 
+	 *
 	 * @return
 	 */
 	@RequestMapping(params = "toPushOrder")
@@ -210,7 +210,7 @@ public class CvcOrderInfoController extends BaseController {
 	}
 	/**
 	 * 页面跳转
-	 * 
+	 *
 	 * @return
 	 */
 	@RequestMapping(params = "list")
@@ -225,7 +225,7 @@ public class CvcOrderInfoController extends BaseController {
 		request.setAttribute("isShow", isShow);
 		return new ModelAndView("com/xuzy/hotel/order/tOrderTableList");
 	}
-	
+
 	/**
 	 * 导出excel
 	 * @param request
@@ -242,7 +242,7 @@ public class CvcOrderInfoController extends BaseController {
 				e.printStackTrace();
 			}
 		}
-		
+
 		if(StringUtils.isNotEmpty(entity.getAddTime_end2())) {
 			try {
 				Date date1 = DateUtils.parseDate(entity.getAddTime_end2(),new String[] {"yyyy-MM-dd HH:mm:ss"}) ;
@@ -278,7 +278,7 @@ public class CvcOrderInfoController extends BaseController {
 		modelMap.put(NormalExcelConstants.DATA_LIST,entitys);
 		return NormalExcelConstants.JEECG_EXCEL_VIEW;
 	}
-	
+
 	protected static final String HSSF = ".xls";
 	protected static final String XSSF = ".xlsx";
 	/**
@@ -290,7 +290,7 @@ public class CvcOrderInfoController extends BaseController {
 	public void exportXlsByGoodType(CvcOrderInfoEntity entity,HttpServletRequest request,HttpServletResponse response
 			, DataGrid dataGrid,ModelMap modelMap) {
 		List<CvcOrderInfoEntity> entitys = cvcOrderInfoService.getExcelAll(entity);
-		
+
 		Map<String, List<CvcOrderInfoEntity>> sheetOrder = new HashMap<String, List<CvcOrderInfoEntity>>();
 		Set<String> keys = new HashSet<>();
 		for (CvcOrderInfoEntity cvcOrderInfoEntity : entitys) {
@@ -306,17 +306,17 @@ public class CvcOrderInfoController extends BaseController {
 		}
 		//
 		//多个Map key title 对应表格Title key entity 对应表格对应实体 key data
-		List<Map<String, Object>> sheetOrderList = new ArrayList<>(); 
-		
+		List<Map<String, Object>> sheetOrderList = new ArrayList<>();
+
 		for (Map.Entry<String, List<CvcOrderInfoEntity>> map: sheetOrder.entrySet()) {
 			Map<String, Object> exMap = new HashMap<>();
-			
+
 			exMap.put("title", new ExportParams(null, null,map.getKey()));
 			exMap.put("entity", CvcOrderInfoEntity.class);
 			exMap.put("data", map.getValue());
 			sheetOrderList.add(exMap);
 		}
-		
+
 		Workbook workbook = ExcelExportUtil.exportExcel(sheetOrderList,"");
 		String codedFileName = DateFormatUtils.format(Calendar.getInstance(), "yyyyMMddHHmmss");
 		if (workbook instanceof HSSFWorkbook) {
@@ -342,7 +342,7 @@ public class CvcOrderInfoController extends BaseController {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 //		modelMap.put(NormalExcelConstants.FILE_NAME,DateFormatUtils.format(Calendar.getInstance(), "yyyyMMddHHmmss"));
 //		modelMap.put(NormalExcelConstants.CLASS,CvcOrderInfoEntity.class);
 //		TemplateExportParams exportParams = new TemplateExportParams();
@@ -357,7 +357,7 @@ public class CvcOrderInfoController extends BaseController {
 	public boolean isIE(HttpServletRequest request) {
 		return (request.getHeader("USER-AGENT").toLowerCase().indexOf("msie") > 0 || request.getHeader("USER-AGENT").toLowerCase().indexOf("rv:11.0") > 0) ? true : false;
 	}
-	
+
 	/**
 	 * 导出excel
 	 * @param request
@@ -374,10 +374,10 @@ public class CvcOrderInfoController extends BaseController {
 		modelMap.put(NormalExcelConstants.DATA_LIST,entitys);
 		return NormalExcelConstants.JEECG_EXCEL_VIEW;
 	}
-	
+
 	/**
 	 * easyui AJAX请求数据
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 * @param dataGrid
@@ -394,7 +394,7 @@ public class CvcOrderInfoController extends BaseController {
 				e.printStackTrace();
 			}
 		}
-		
+
 		if(StringUtils.isNotEmpty(query.getAddTime_end2())) {
 			try {
 				Date date1 = DateUtils.parseDate(query.getAddTime_end2(),new String[] {"yyyy-MM-dd HH:mm:ss"}) ;
@@ -403,7 +403,7 @@ public class CvcOrderInfoController extends BaseController {
 				e.printStackTrace();
 			}
 		}
-		
+
 		if(StringUtils.isNotEmpty(query.getGetTimeStart())) {
 			try {
 				Date date1 = DateUtils.parseDate(query.getGetTimeStart(),new String[] {"yyyyMMdd"}) ;
@@ -412,7 +412,7 @@ public class CvcOrderInfoController extends BaseController {
 				query.setGetTimeStart("");
 			}
 		}
-		
+
 		if(StringUtils.isNotEmpty(query.getGetTimeEnd())) {
 			try {
 				Date date1 = DateUtils.parseDate(query.getGetTimeEnd(),new String[] {"yyyyMMdd"});
@@ -424,9 +424,9 @@ public class CvcOrderInfoController extends BaseController {
 				query.setGetTimeEnd("");
 			}
 		}
-		
-		
-		
+
+
+
 		if(query.getExceptionStatus() != null && query.getExceptionStatus() > 0) {
 			//查询有异常订单
 			query.setExceptionStatusString("1");
@@ -434,18 +434,18 @@ public class CvcOrderInfoController extends BaseController {
 			//查询无异常订单
 			query.setExceptionStatusString("2");
 		}
-		
+
 		MiniDaoPage<CvcOrderInfoEntity> list = cvcOrderInfoService.getAll(query, dataGrid.getPage(), dataGrid.getRows());
 		if(CollectionUtils.isNotEmpty(list.getResults())) {
 			for (CvcOrderInfoEntity entity : list.getResults()) {
 				entity.setAddTime(PhpDateUtils.parseDate(Long.parseLong(entity.getAddTime()), "yyyy-MM-dd HH:mm:ss"));
 				entity.setGetTime(PhpDateUtils.parseDate(Long.parseLong(entity.getGetTime()), "yyyy-MM-dd HH:mm:ss"));
-				
+
 				String value = (0 == entity.getExceptionStatus())?"无异常":"有异常";
 				if(0 != entity.getExceptionStatus()) {
 					value += (entity.getIsShow() == 1)?"(未处理)":"(已处理)";
 				}
-				
+
 				entity.setExceptionStatusString(value);
 			}
 		}
@@ -453,12 +453,12 @@ public class CvcOrderInfoController extends BaseController {
 		dataGrid.setTotal(cvcOrderInfoService.getCount(query, dataGrid.getPage(), dataGrid.getRows()));
 		TagUtil.datagrid(response, dataGrid);
 	}
-	
+
 
 
 	/**
 	 * 查看详情
-	 * 
+	 *
 	 * @return
 	 */
 	@RequestMapping(params = "toDetail", method = RequestMethod.GET)
@@ -479,13 +479,13 @@ public class CvcOrderInfoController extends BaseController {
 			if (entity != null && StringUtils.isNotEmpty(entity.getData())) {
 				deliveryInfos = PHPAndJavaSerialize.unserializePHParray(entity.getData(), Data.class);
 			}
-			
+
 			DeliveryInfoPojo pojo = new DeliveryInfoPojo();
 			pojo.setInvoiceNo(deliveryOrder.getInvoiceNo());
 			pojo.setDeliveryInfos(deliveryInfos);
 			deliveryInfoPojos.add(pojo);
 		}
-		
+
 		///*异常订单类型*/
 //		1); // 疑难
 //		2); // 退签
@@ -499,7 +499,7 @@ public class CvcOrderInfoController extends BaseController {
 				add(3);
 			}
 		}.contains(cvcOrderInfoEntity.getExceptionStatus());
-		//是否展示异常区域	
+		//是否展示异常区域
 		request.setAttribute("is_show_exception", is_show_exception);
 		//订单状态
 		request.setAttribute("exception_status",cvcOrderInfoEntity.getExceptionStatus());
@@ -507,24 +507,24 @@ public class CvcOrderInfoController extends BaseController {
 		request.setAttribute("is_show_shipping_info", 5 == cvcOrderInfoEntity.getOrderStatus()); // 已签收订单
 		request.setAttribute("deliveryOrders", deliveryOrders);
 		request.setAttribute("deliveryInfoPojos", deliveryInfoPojos);
-		
+
 		//传递订单信息
 		request.setAttribute("cvcOrderInfoEntity", cvcOrderInfoEntity);
 		 /* 根据订单是否完成检查权限 */
 		// getOrderStatus  define('OS_CONFIRMED',              1); // 已确认
 		//getShippingStatus define('SS_SHIPPED',1); // 已发货
 		//define('SS_RECEIVED',2); // 已收货
-		//getPayStatus 
+		//getPayStatus
 		//define('PS_PAYING',                 1); // 付款中
 		//define('PS_PAYED',                  2); // 已付款
 		if(cvcOrderInfoEntity.getShippingStatus() == null) {
 			cvcOrderInfoEntity.setShippingStatus(0);
 		}
-		
+
 		if(cvcOrderInfoEntity.getPayStatus() == null) {
 			cvcOrderInfoEntity.setPayStatus(0);
 		}
-		
+
 	    if ( 1== cvcOrderInfoEntity.getOrderStatus() && (cvcOrderInfoEntity.getShippingStatus() == 1 || cvcOrderInfoEntity.getShippingStatus() == 2 )
 	    		&& (cvcOrderInfoEntity.getPayStatus()==2 || cvcOrderInfoEntity.getPayStatus()==1)) {
 	    	//检查权限
@@ -533,8 +533,8 @@ public class CvcOrderInfoController extends BaseController {
 	    //获取商品
 	    List<CvcOrderGoodsEntity> cvcOrderGoodsEntities = cvcOrderGoodsService.getAll(id);
 		request.setAttribute("goods_list", cvcOrderGoodsEntities);
-		
-		//发货情况 
+
+		//发货情况
 		List<CvcDeliveryOrderEntity> deliveryGoods = cvcDeliveryOrderService.getDeliveryCondition(id);
 		request.setAttribute("delivery_goods", deliveryGoods);
 		if(CollectionUtils.isNotEmpty(deliveryGoods)) {
@@ -544,20 +544,20 @@ public class CvcOrderInfoController extends BaseController {
 			MiniDaoPage<CvcShippingEntity> daoPage = cvcShippingService.getAll(cvcShipping, 1, 20);
 			request.setAttribute("shippingEntitys", daoPage.getResults());
 		}
-		
-		// 撤销商品情况 
+
+		// 撤销商品情况
 		List<CvcRevokeGoodsEntity> cvcRevokeGoodsEntities = cvcRevokeGoodsService.getByOrderId(id);
 		request.setAttribute("revoke_goods", cvcRevokeGoodsEntities);
-		
+
 		//取得订单操作记录
 		List<CvcOrderActionEntity> actionEntities = cvcOrderActionService.getNewByOrderId(id);
 		request.setAttribute("action_list", actionEntities);
 		return new ModelAndView("com/xuzy/hotel/order/tOrderDetail");
 	}
-	
+
 	/**
 	 * 更新签收时间
-	 * 
+	 *
 	 * @return
 	 */
 	@RequestMapping(params = "updateSigndate", method = { RequestMethod.GET, RequestMethod.POST })
@@ -569,19 +569,19 @@ public class CvcOrderInfoController extends BaseController {
 			j.setMsg("该订单号不存在！");
 			return j;
 		}
-		
+
 		if(StringUtils.isEmpty(signdate)) {
 			j.setSuccess(false);
 			j.setMsg("请选择时间！");
 			return j;
 		}
-		
+
 		try {
 			CvcOrderInfoEntity cvcOrderInfo = new CvcOrderInfoEntity();
 			cvcOrderInfo.setId(orderId);
 			CvcOrderInfoEntity cvcOrderInfo1 = cvcOrderInfoService.getOrder(cvcOrderInfo);
 			if(cvcOrderInfo1 != null) {
-				//请求伊利接口  
+				//请求伊利接口
 				RequestReNewExchangeSignDateJson dateJson = new RequestReNewExchangeSignDateJson();
 				dateJson.setOrderID(orderId);
 				dateJson.setSignDate(signdate);
@@ -607,12 +607,12 @@ public class CvcOrderInfoController extends BaseController {
 		}
 		return j;
 	}
-	
-	
-	
+
+
+
 	/**
 	 * 更新快递订单号
-	 * 
+	 *
 	 * @return
 	 */
 	@RequestMapping(params = "updateNu", method = { RequestMethod.GET, RequestMethod.POST })
@@ -625,13 +625,13 @@ public class CvcOrderInfoController extends BaseController {
 			j.setMsg("该订单号不存在！");
 			return j;
 		}
-		
+
 		if(StringUtils.isEmpty(shippingName) || StringUtils.isEmpty(invoiceNo)) {
 			j.setSuccess(false);
 			j.setMsg("请填写快递公司或快递单号！");
 			return j;
 		}
-		
+
 		try {
 			//获取快递公司
 			CvcShippingEntity cvcShipping = new CvcShippingEntity();
@@ -684,11 +684,11 @@ public class CvcOrderInfoController extends BaseController {
 		}
 		return j;
 	}
-	
-	
+
+
 	/**
 	 * 更新快递订单号
-	 * 
+	 *
 	 * @return
 	 */
 	@RequestMapping(params = "ship", method = { RequestMethod.GET, RequestMethod.POST })
@@ -717,15 +717,15 @@ public class CvcOrderInfoController extends BaseController {
 			j.setMsg("订单查询失败！");
 			return j;
 		}
-		
+
 		cvcOrderInfoEntity.setPreArrivalDate(preArrivalDate);
-		
+
 		if(StringUtils.isEmpty(preArrivalDate)) {
 			j.setSuccess(false);
 			j.setMsg("预计到达时间不能为空！");
 			return j;
 		}
-		
+
 		if(StringUtils.isEmpty(invoiceNo)) {
 			j.setSuccess(false);
 			j.setMsg("快递单号不能为空！");
@@ -741,14 +741,14 @@ public class CvcOrderInfoController extends BaseController {
 			j.setMsg("订单状态异常！");
 			return j;
 		}
-		
+
 		if (5 == cvcOrderInfoEntity.getOrderStatus()) {
 			// 检查权限
 			j.setSuccess(false);
 			j.setMsg("订单已发货！");
 			return j;
 		}
-		
+
 		try {
 			//发货
 			j = cvcOrderInfoService.sendOrder(cvcOrderInfoEntity,shippingName,"",invoiceNo,preArrivalDate);
@@ -759,13 +759,13 @@ public class CvcOrderInfoController extends BaseController {
 		}
 		return j;
 	}
-	
-	
-	
-	
+
+
+
+
 	/**
 	 * 跳转到发货页面
-	 * 
+	 *
 	 * @return
 	 */
 	@RequestMapping(params = "toShip", method = { RequestMethod.GET, RequestMethod.POST })
@@ -776,17 +776,17 @@ public class CvcOrderInfoController extends BaseController {
 		if(cvcOrderInfoEntity == null) {
 			throw new XuException("订单查询失败！");
 		}
-		
+
 		cvcOrderInfoEntity.setInvoiceNo((cvcOrderInfoEntity.getShippingStatus() != null  && cvcOrderInfoEntity.getShippingStatus() == 0 )
 				|| (cvcOrderInfoEntity.getShippingStatus() != null && cvcOrderInfoEntity.getShippingStatus() == 0) ? ResourceUtil.searchAllTypesByCode("0","sstatus"):
 					cvcOrderInfoEntity.getInvoiceNo());
 		 /* 查询：是否保价 */
-		
+
 		 /* 根据订单是否完成检查权限 */
 		// getOrderStatus  define('OS_CONFIRMED',              1); // 已确认
 		//getShippingStatus define('SS_SHIPPED',1); // 已发货
 		//define('SS_RECEIVED',2); // 已收货
-		//getPayStatus 
+		//getPayStatus
 		//define('PS_PAYING',                 1); // 付款中
 		//define('PS_PAYED',                  2); // 已付款
 	    if ( 1== cvcOrderInfoEntity.getOrderStatus() && (cvcOrderInfoEntity.getShippingStatus() == 1 || cvcOrderInfoEntity.getShippingStatus() == 2 )
@@ -794,26 +794,26 @@ public class CvcOrderInfoController extends BaseController {
 	    	//检查权限
 	    	throw new XuException("订单状态异常！");
 	    }
-		
+
 	    //获取商品
 	    List<CvcOrderGoodsEntity> cvcOrderGoodsEntities = cvcOrderGoodsService.getAll(orderId);
 		request.setAttribute("goods_list", cvcOrderGoodsEntities);
-	    
-		
+
+
 		CvcShippingEntity cvcShipping = new CvcShippingEntity();
 		cvcShipping.setEnabled(1);
 		//查询快递公司
 		MiniDaoPage<CvcShippingEntity> daoPage = cvcShippingService.getAll(cvcShipping, 1, 20);
 		request.setAttribute("shippingEntitys", daoPage.getResults());
-		
+
 		//传递订单信息
 		request.setAttribute("cvcOrderInfoEntity", cvcOrderInfoEntity);
 		return new ModelAndView("com/xuzy/hotel/order/tOrderShip");
 	}
-	
+
 	/**
 	 * 修改状态
-	 * 
+	 *
 	 * @param ids
 	 * @return
 	 */
@@ -836,10 +836,10 @@ public class CvcOrderInfoController extends BaseController {
 				j.setMsg("操作订单不存在");
 				return j;
 			}
-			
-			
+
+
 			if("offharbour".equals(tkOrderStatus)) {
-				//推送至离港 
+				//推送至离港
 				RequestOFFHarbourExchangeOrderJson  requestBody = new RequestOFFHarbourExchangeOrderJson();
 				requestBody.setOrderID(id);
 				requestBody.setEMSCompany(cvcOrderInfoEntity.getShippingName());
@@ -857,7 +857,7 @@ public class CvcOrderInfoController extends BaseController {
 					j.setMsg("订单离港失败 原因:"+responseHead.getReturnInfo());
 				}
 			} else if("send".equals(tkOrderStatus)) {
-				//推送至配送中 
+				//推送至配送中
 				RequestDeliveryExchangeOrderJson  requestBody = new RequestDeliveryExchangeOrderJson();
 				requestBody.setOrderID(id);
 				requestBody.setDeliveryingDate(DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
@@ -885,7 +885,7 @@ public class CvcOrderInfoController extends BaseController {
 					j.setMsg("暂未查询到物流信息");
 					return j;
 				}
-				//推送至签收 
+				//推送至签收
 				RequestSignInExchangeOrderJson  requestBody = new RequestSignInExchangeOrderJson();
 				requestBody.setOrderID(id);
 				requestBody.setSignInMan("");
@@ -1020,6 +1020,72 @@ public class CvcOrderInfoController extends BaseController {
 					cvcOrderInfoService.updateStatusByOrderId(id, 6);
 					j.setMsg("订单签收失败成功！ 伊利接口失败 原因:"+head.getReturnInfo());
 				}
+			}else if("offharbourFailureGo".equals(tkOrderStatus)){
+				//推送至离港
+				RequestOFFHarbourExchangeOrderJson  requestBody = new RequestOFFHarbourExchangeOrderJson();
+				requestBody.setOrderID(id);
+				requestBody.setEMSCompany(cvcOrderInfoEntity.getShippingName());
+				requestBody.setEMSOdd(cvcOrderInfoEntity.getInvoiceNo());
+				requestBody.setPreArrivalDate(cvcOrderInfoEntity.getPreArrivalDate());
+				ResponseHead responseHead = ConmentHttp.sendHttp(new TukeRequestBody.Builder()
+						.setSequence(2)
+						.setServiceCode("CRMIF.OFFHarbourExchangeOrderJson")
+						.setParams(requestBody).builder(), null);
+				if(responseHead.getReturn() >= 0) {
+					cvcOrderInfoService.updateStatusByOrderId(id, 3);
+					j.setMsg("订单离港成功");
+				}else {
+					cvcOrderInfoService.updateStatusByOrderId(id, 3);
+					j.setMsg("订单离港失败 原因:"+responseHead.getReturnInfo());
+				}
+			}else if("sendFailureGo".equals(tkOrderStatus)) {
+				//推送至配送中
+				RequestDeliveryExchangeOrderJson  requestBody = new RequestDeliveryExchangeOrderJson();
+				requestBody.setOrderID(id);
+				requestBody.setDeliveryingDate(DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
+				ResponseHead responseHead = ConmentHttp.sendHttp(new TukeRequestBody.Builder()
+						.setSequence(2)
+						.setServiceCode("CRMIF.DeliveryExchangeOrderJson")
+						.setParams(requestBody).builder(), null);
+				if(responseHead.getReturn() >= 0) {
+					cvcOrderInfoService.updateStatusByOrderId(id, 4);
+					j.setMsg("订单配送成功");
+				}else {
+					cvcOrderInfoService.updateStatusByOrderId(id, 4);
+					j.setMsg("订单配送失败 原因:"+responseHead.getReturnInfo());
+				}
+			}else if("signinFailureGo".equals(tkOrderStatus)) {
+				CvcDeliveryInfoEntity cvcDeliveryInfoEntity = cvcDeliveryInfoService.getDeliveryInfosByInvoiceNo(cvcOrderInfoEntity.getInvoiceNo());
+				if(cvcDeliveryInfoEntity == null) {
+					j.setSuccess(false);
+					j.setMsg("暂未查询到物流信息");
+					return j;
+				}
+				List<Data> datas = PHPAndJavaSerialize.unserializePHParray(cvcDeliveryInfoEntity.getData(),DelivetyJson.class);
+				if(CollectionUtils.isEmpty(datas)) {
+					j.setSuccess(false);
+					j.setMsg("暂未查询到物流信息");
+					return j;
+				}
+				//推送至签收
+				RequestSignInExchangeOrderJson  requestBody = new RequestSignInExchangeOrderJson();
+				requestBody.setOrderID(id);
+				requestBody.setSignInMan("");
+//				requestBody.setSignInMan(datas.get(0).getContext());
+				requestBody.setSignInDate(datas.get(0).getFtime() );
+				ResponseHead responseHead = ConmentHttp.sendHttp(new TukeRequestBody.Builder()
+						.setSequence(2)
+						.setServiceCode("CRMIF.SignInExchangeOrderJson")
+						.setParams(requestBody).builder(), null);
+				if(responseHead.getReturn() >= 0) {
+					cvcOrderInfoService.updateStatusByOrderId(id, 5);
+					cvcDeliveryOrderService.updateSignDate(datas.get(0).getFtime(),cvcOrderInfoEntity.getInvoiceNo());
+					j.setMsg("订单签收成功");
+				}else {
+					cvcOrderInfoService.updateStatusByOrderId(id, 5);
+					cvcDeliveryOrderService.updateSignDate(datas.get(0).getFtime(),cvcOrderInfoEntity.getInvoiceNo());
+					j.setMsg("订单签收失败 原因:"+responseHead.getReturnInfo());
+				}
 			}
 		} catch (Exception e) {
 			log.info(e.getMessage());
@@ -1029,13 +1095,13 @@ public class CvcOrderInfoController extends BaseController {
 		return j;
 	}
 
-	
-	
+
+
 
 
 	/**
 	 * 编辑
-	 * 
+	 *
 	 * @return
 	 */
 	@RequestMapping(params = "epUpdate", method = { RequestMethod.GET, RequestMethod.POST })
@@ -1055,7 +1121,7 @@ public class CvcOrderInfoController extends BaseController {
 
 	/**
 	 * 删除
-	 * 
+	 *
 	 * @return
 	 */
 	@RequestMapping(params = "doDelete", method = RequestMethod.GET)
@@ -1064,9 +1130,9 @@ public class CvcOrderInfoController extends BaseController {
 		AjaxJson j = new AjaxJson();
 		try {
 //			cvcOrderInfoService.doErrorList();
-//			final CountDownLatch countDownLatch = new CountDownLatch(100); 
+//			final CountDownLatch countDownLatch = new CountDownLatch(100);
 //			Runnable Runnable = new Runnable() {
-//				
+//
 //				@Override
 //				public void run() {
 //					try {
@@ -1074,7 +1140,7 @@ public class CvcOrderInfoController extends BaseController {
 //					} catch (InterruptedException e) {
 //						e.printStackTrace();
 //					}
-//					
+//
 //					int reulst = cvcInventoryTableService.subInventory("qqqq111",1, 0);
 //					synchronized (ConmentHttp.size) {
 //						if(reulst == 1) {
@@ -1089,13 +1155,13 @@ public class CvcOrderInfoController extends BaseController {
 //				thread.run();
 //				countDownLatch.countDown();
 //			}
-			
+
 //			j.setMsg("删除成功");
 //			while(true) {
-				
+
 //			}
-			
-			
+
+
 			CvcOrderInfoEntity query = new CvcOrderInfoEntity();
 			query.setOrderStatus(3);
 			MiniDaoPage<CvcOrderInfoEntity> list = cvcOrderInfoService.getAll(query, 1, 5000);
@@ -1108,7 +1174,7 @@ public class CvcOrderInfoController extends BaseController {
 				CvcShippingEntity cvcShippingEntity = daoPage.getResults().get(0);
 				ConmentHttp.postorder(cvcShippingEntity.getShippingCode(), entity.getInvoiceNo());
 			}
-			
+
 			query = new CvcOrderInfoEntity();
 			query.setOrderStatus(4);
 			list = cvcOrderInfoService.getAll(query, 1, 5000);
@@ -1129,7 +1195,7 @@ public class CvcOrderInfoController extends BaseController {
 		}
 		return j;
 	}
-	
+
 	/**
 	 * 同步订单物流轨迹
 	 * @param entity
@@ -1151,7 +1217,7 @@ public class CvcOrderInfoController extends BaseController {
 				e.printStackTrace();
 			}
 		}
-		
+
 		if(StringUtils.isNotEmpty(entity.getAddTime_end2())) {
 			try {
 				Date date1 = DateUtils.parseDate(entity.getAddTime_end2(),new String[] {"yyyy-MM-dd HH:mm:ss"}) ;
@@ -1174,7 +1240,7 @@ public class CvcOrderInfoController extends BaseController {
 					if (entity1 != null && StringUtils.isNotEmpty(entity1.getData())) {
 						deliveryInfos = PHPAndJavaSerialize.unserializePHParray(entity1.getData(), Data.class);
 					}
-					
+
 					List<CvcYlDeliveryInfoEntity> ylDeliveryInfoEntitys =cvcYlDeliveryInfoService.getList(cvcOrderInfoEntity.getId(),deliveryOrder.getInvoiceNo());
 					for(Data data:deliveryInfos) {
 						if(ylDeliveryInfoEntitys == null || !ylDeliveryInfoEntitys.contains(new CvcYlDeliveryInfoEntity(cvcOrderInfoEntity.getId(),deliveryOrder.getInvoiceNo(),data.getFtime()))) {
@@ -1200,7 +1266,7 @@ public class CvcOrderInfoController extends BaseController {
 								}
 							} catch (IOException e) {
 								e.printStackTrace();
-							} 
+							}
 						}
 					}
 				}
@@ -1208,11 +1274,11 @@ public class CvcOrderInfoController extends BaseController {
 		}
 		return j;
 	}
-	
-	
+
+
 	/**
 	 * 批量删除数据
-	 * 
+	 *
 	 * @param ids
 	 * @return
 	 */
@@ -1230,5 +1296,98 @@ public class CvcOrderInfoController extends BaseController {
 		}
 		return j;
 	}
+	
+	
+	
+	/**
+	 * 批量同步物流
+	 * @param request
+	 * @param response
+	 */
+	@RequestMapping(params = "batchTogetherWuliu")
+	@ResponseBody
+	public AjaxJson batchTogetherWuliu(CvcOrderInfoEntity entity,HttpServletRequest request,HttpServletResponse response
+			, DataGrid dataGrid,ModelMap modelMap) {
+		if(StringUtils.isNotEmpty(entity.getAddTime_begin1())) {
+			try {
+				Date date1 = DateUtils.parseDate(entity.getAddTime_begin1(),new String[] {"yyyy-MM-dd HH:mm:ss"}) ;
+				entity.setAddTimeBegin((int)PhpDateUtils.getTime(date1));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
+
+		if(StringUtils.isNotEmpty(entity.getAddTime_end2())) {
+			try {
+				Date date1 = DateUtils.parseDate(entity.getAddTime_end2(),new String[] {"yyyy-MM-dd HH:mm:ss"}) ;
+				entity.setAddTimeEnd((int)PhpDateUtils.getTime(date1));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
+		if(StringUtils.isNotEmpty(entity.getGetTimeStart())) {
+			try {
+				Date date1 = DateUtils.parseDate(entity.getGetTimeStart(),new String[] {"yyyyMMdd"}) ;
+				entity.setGetTimeStart(String.valueOf(PhpDateUtils.getTime(date1)));
+			} catch (ParseException e) {
+				entity.setGetTimeStart("");
+			}
+		}
+		if(StringUtils.isNotEmpty(entity.getGetTimeEnd())) {
+			try {
+				Date date1 = DateUtils.parseDate(entity.getGetTimeEnd(),new String[] {"yyyyMMdd"});
+				Calendar calendar = Calendar.getInstance();
+				calendar.setTime(date1);
+				calendar.add(Calendar.DAY_OF_YEAR, 1);
+				entity.setGetTimeEnd(String.valueOf(PhpDateUtils.getTime(calendar.getTime())));
+			} catch (ParseException e) {
+				entity.setGetTimeEnd("");
+			}
+		}
+		List<CvcOrderInfoEntity> entitys = cvcOrderInfoService.getExcelAll(entity);
+		AjaxJson j = new AjaxJson();
+		try {
+			if (CollectionUtils.isEmpty(entitys)) {
+				j.setMsg("无可同步订单");
+				j.setSuccess(false);
+				return j;
+			}
+
+			if (entitys.size() >= 100) {
+				j.setMsg("最多同时同步100条，请修改查询条件");
+				j.setSuccess(false);
+				return j;
+			}
+
+			for (CvcOrderInfoEntity cvcOrderInfoEntity : entitys) {
+				// 获取物流信息，并同步
+				CvcShippingEntity cvcShipping = new CvcShippingEntity();
+				cvcShipping.setEnabled(1);
+				cvcShipping.setShippingName(cvcOrderInfoEntity.getShippingName());
+				// 查询快递公司
+				MiniDaoPage<CvcShippingEntity> daoPage = cvcShippingService.getAll(cvcShipping, 1, 1);
+				CvcShippingEntity cvcShippingEntity = null;
+				if (CollectionUtils.isEmpty(daoPage.getResults())) {
+					j.setSuccess(false);
+					j.setMsg(cvcOrderInfoEntity.getShippingName() + "快递公司不存在！");
+					return j;
+				} else {
+					cvcShippingEntity = daoPage.getResults().get(0);
+				}
+				String result = ConmentHttp.getOrderWuliuAll(cvcShippingEntity.getShippingCode(),
+						cvcOrderInfoEntity.getInvoiceNo(), cvcOrderInfoEntity.getTel());
+				if (StringUtils.isNotEmpty(result) && result.contains("\"message\":\"ok\"")) {
+					ConmentHttp.postMyErrorOrder(result);
+				}
+			}
+			j.setMsg("批量同步成功");
+		} catch (Exception e) {
+			log.info(e.getMessage());
+			j.setSuccess(false);
+			j.setMsg("批量同步失败");
+		}
+		return j;
+	}
+	
 
 }

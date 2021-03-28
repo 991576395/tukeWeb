@@ -22,16 +22,19 @@
 
 		<div class="form-group">
 			<div class="col-sm-offset-2 col-sm-10">
-				<input name="delivery_confirmed" type="button" value="推送至离港"
+				<input name="delivery_confirmed" type="button" value="强制推送推送至离港"
 					class="btn btn-primary btn-sm"
-					onclick="toUpdate('cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=offharbour')" />
-				<input name="delivery_confirmed" type="button" value="推送至配送中"
+					onclick="toUpdate('cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=offharbourFailureGo')" />
+				<input name="delivery_confirmed" type="button" value="强制推送推送至配送中"
 					class="btn btn-primary btn-sm"
-					onclick="toUpdate('cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=send')" />
-				<input name="delivery_confirmed" type="button" value="推送至签收"
+					onclick="toUpdate('cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=sendFailureGo')" />
+				<input name="delivery_confirmed" type="button" value="强制推送推送至签收"
 					class="btn btn-primary btn-sm"
-					onclick="toUpdate('cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=signin')" />
+					onclick="toUpdate('cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=signinFailureGo')" />
 				<input name="delivery_confirmed" type="button" value="强制推送至签收失败"
+					class="btn btn-primary btn-sm"
+					onclick="toUpdate('cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=signFailureGo')" />
+				<input name="delivery_confirmed" type="button" value="批量同步物流记录"
 					class="btn btn-primary btn-sm"
 					onclick="toUpdate('cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=signFailureGo')" />
 			</div>

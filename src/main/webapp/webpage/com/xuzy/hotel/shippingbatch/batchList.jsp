@@ -15,32 +15,33 @@
 	<t:dgCol title="操作" field="opt" width="150"></t:dgCol>
    <t:dgDelOpt title="删除" url="cvcShippingBatch.do?doDel&batchNo={batchNo}" urlclass="ace_button"  urlfont="fa-trash-o"/>
    <t:dgFunOpt title="查看详情"   urlclass="ace_button" urlfont="fa-search"  funname="goLook(batchNo)"/>
-   
+
   	<t:dgToolBar title="上传发货excel" icon="icon-put" url="cvcShippingBatch.do?toUpload" width="600" height="300" funname="add" ></t:dgToolBar>
   	<t:dgToolBar title="上传插入物流excel" icon="icon-put" url="cvcShippingBatch.do?addWuliuView" width="600" height="300" funname="add" ></t:dgToolBar>
+  	<t:dgToolBar title="上传修改物流excel(附件格式同发货单)" icon="icon-put" url="cvcShippingBatch.do?updateWuliuView" width="600" height="300" funname="add" ></t:dgToolBar>
   </t:datagrid>
   </div>
-  
+
   <script type="text/javascript">
 			function goLook(batchNo) {
 				var url = 'cvcShippingBatchOrder.do?toList&batchNo='+batchNo;
 				toLoadNewTab("批量发货订单列表",url);
 			}
-			
+
 			/* function toUpload(){
 				var url = 'cvcShippingBatchOrder.do?toUpload';
 				toLoadNewTab("上传发货excel",url);
 			} */
-			
+
 			function toLoadNewTab(title,url) {
 				var label = title;
 				var h = url,
 				m = 0;
 				parent.addIframeMy(h,m,label);
 			}
-			
-			
-			
-			
+
+
+
+
 		</script>
  </div>

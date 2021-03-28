@@ -36,9 +36,9 @@
    <t:dgToolBar title="推送至配送中" icon="icon-edit" url="cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=send"  funname="toUpdate"></t:dgToolBar>
    <t:dgToolBar title="推送至签收" icon="icon-edit" url="cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=signin"  funname="toUpdate"></t:dgToolBar>
    <t:dgToolBar title="推送至签收失败" icon="icon-edit" url="cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=signFailure"  funname="toUpdate"></t:dgToolBar>
-  	<t:dgToolBar title="取消订单" icon="icon-edit" url="cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=quitOrder"  funname="toUpdate"></t:dgToolBar>
-	 <t:dgToolBar title="同步物流" icon="icon-edit" url="cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=getOrderWuliu"  funname="toUpdate"></t:dgToolBar> 
-   
+   <t:dgToolBar title="取消订单" icon="icon-edit" url="cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=quitOrder"  funname="toUpdate"></t:dgToolBar>
+   <t:dgToolBar title="同步物流" icon="icon-edit" url="cvcOrderInfo.do?orderStatusUpdate&tkOrderStatus=getOrderWuliu"  funname="toUpdate"></t:dgToolBar> 
+   <t:dgToolBar title="批量同步物流" icon="icon-edit" funname="batchTogetherWuliu"></t:dgToolBar>
  </t:datagrid>
   </div>
   
@@ -289,6 +289,77 @@
 				$("#tOrderListForm  span:first").append("<span style=\"display:-moz-inline-box;display:inline-block;margin-bottom:2px;text-align:justify;\"><span style=\"vertical-align:middle;display:-moz-inline-box;display:inline-block;width: 90px;text-align:right;text-overflow:ellipsis;-o-text-overflow:ellipsis; overflow: hidden;white-space:nowrap; \" title=\"抓单日期\">抓单日期：</span> <input onkeypress=\"EnterPress(event)\" onkeydown=\"EnterPress()\" type=\"text\" name=\"getTimeStart\" style=\"width: 55px\" class=\"inuptxt\">- <input onkeypress=\"EnterPress(event)\" onkeydown=\"EnterPress()\" type=\"text\" name=\"getTimeEnd\" style=\"width: 55px\" class=\"inuptxt\"></span>");
 			     
 			});
+			
+			
+			  function batchTogetherWuliu() {
+				var batchNo =  $("input[name='batchNo']").val();
+				var id =  $("input[name='id']").val();
+				var orderStatus =  $("select[name='orderStatus']").val();
+				var ylOrderStatus =  $("select[name='ylOrderStatus']").val();
+				var shippingId =  $("select[name='shippingId']").val();
+				var invoiceNo =  $("input[name='invoiceNo']").val();
+				var exceptionStatus =  $("select[name='exceptionStatus']").val();
+				var addTime_begin1 =  $("input[name='addTime_begin1']").val();
+				var addTime_end2 =  $("input[name='addTime_end2']").val();
+				var isBalance =  $("select[name='isBalance']").val();
+				var userName =  $("select[name='userName']").val();
+				var returnReason =  $("select[name='returnReason']").val();
+				var getTimeStart =  $("input[name='getTimeStart']").val();
+				var getTimeEnd =  $("input[name='getTimeEnd']").val();
+				var goodsSn =  $("input[name='goodsSn']").val();
+				
+				var url = "cvcOrderInfo.do?batchTogetherWuliu";
+				if (batchNo != 'undefined' && batchNo.length > 0) {
+					url+="&batchNo="+batchNo;
+				}
+				if (id != 'undefined' && id.length > 0) {
+					url+="&id="+id;
+				}
+				if (orderStatus != 'undefined' && orderStatus.length > 0) {
+					url+="&orderStatus="+orderStatus;
+				}
+				if (ylOrderStatus != 'undefined' && ylOrderStatus.length > 0) {
+					url+="&ylOrderStatus="+ylOrderStatus;
+				}
+				if (shippingId != 'undefined' && shippingId.length > 0) {
+					url+="&shippingId="+shippingId;
+				}
+				if (invoiceNo != 'undefined' && invoiceNo.length > 0) {
+					url+="&invoiceNo="+invoiceNo;
+				}
+				if (exceptionStatus != 'undefined' && exceptionStatus.length > 0) {
+					url+="&exceptionStatus="+exceptionStatus;
+				}
+				if (addTime_begin1 != 'undefined' && addTime_begin1.length > 0) {
+					url+="&addTime_begin1="+addTime_begin1;
+				}
+				if (addTime_end2 != 'undefined' && addTime_end2.length > 0) {
+					url+="&addTime_end2="+addTime_end2;
+				}
+				if (isBalance != 'undefined' && isBalance.length > 0) {
+					url+="&isBalance="+isBalance;
+				}
+				if (userName != 'undefined' && userName.length > 0) {
+					url+="&userName="+userName;
+				}
+				if (returnReason != 'undefined' && returnReason.length > 0) {
+					url+="&returnReason="+returnReason;
+				}
+				if (getTimeStart != 'undefined' && getTimeStart.length > 0) {
+					url+="&getTimeStart="+getTimeStart;
+				}
+				if (getTimeEnd != 'undefined' && getTimeEnd.length > 0) {
+					url+="&getTimeEnd="+getTimeEnd;
+				}
+				if (goodsSn != 'undefined' && goodsSn.length > 0) {
+					url+="&goodsSn="+goodsSn;
+				}
+				
+				request(url,function (d){
+					tOrderListsearch();
+				});
+			  }	 
+			
 			
 		</script>
  </div>

@@ -422,12 +422,10 @@ public class CvcOrderInfoServiceImpl implements CvcOrderInfoService {
 	@Override
 	public List<CvcOrderInfoEntity> getTogezelWuliuList() {
 		Calendar calendar = Calendar.getInstance();
-		//3天前
-		calendar.add(Calendar.DAY_OF_YEAR, -3);
-		String startTime = DateFormatUtils.format(calendar, "yyyyMMddHHmmssSSS");
-		calendar.add(Calendar.DAY_OF_YEAR, 2);
-		calendar.add(Calendar.HOUR_OF_DAY, 24);
 		String endTime = DateFormatUtils.format(calendar, "yyyyMMddHHmmssSSS");
+		//3天前
+		calendar.add(Calendar.DAY_OF_YEAR, -30);
+		String startTime = DateFormatUtils.format(calendar, "yyyyMMddHHmmssSSS");
 		return cvcOrderInfoDao.getTogezelWuliuList(startTime, endTime);
 	}
 	

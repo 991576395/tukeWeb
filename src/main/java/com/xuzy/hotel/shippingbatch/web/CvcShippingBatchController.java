@@ -16,6 +16,7 @@ import org.apache.log4j.Logger;
 import org.apache.velocity.VelocityContext;
 import org.jeecgframework.core.common.model.json.DataGrid;
 import org.jeecgframework.core.util.ExceptionUtil;
+import org.jeecgframework.core.util.ResourceUtil;
 import org.jeecgframework.minidao.pojo.MiniDaoPage;
 import org.jeecgframework.p3.core.common.utils.AjaxJson;
 import org.jeecgframework.p3.core.page.SystemTools;
@@ -41,19 +42,26 @@ import com.util.PhpDateUtils;
 import com.xuzy.hotel.deliveryinfo.entity.CvcDeliveryInfoEntity;
 import com.xuzy.hotel.deliveryinfo.service.CvcDeliveryInfoService;
 import com.xuzy.hotel.deliveryorder.entity.CvcDeliveryOrderEntity;
+import com.xuzy.hotel.deliveryorder.service.CvcDeliveryOrderService;
 import com.xuzy.hotel.order.entity.CvcOrderInfoEntity;
 import com.xuzy.hotel.order.module.Data;
 import com.xuzy.hotel.order.module.DeliveryInfoPojo;
 import com.xuzy.hotel.order.service.CvcOrderInfoService;
+import com.xuzy.hotel.shipping.entity.CvcShippingEntity;
+import com.xuzy.hotel.shipping.service.CvcShippingService;
 import com.xuzy.hotel.shippingbatch.entity.CvcShippingBatchEntity;
 import com.xuzy.hotel.shippingbatch.service.CvcShippingBatchService;
 import com.xuzy.hotel.shippingbatchorder.entity.CvcShippingBatchOrderEntity;
 import com.xuzy.hotel.shippingbatchorder.service.CvcShippingBatchOrderService;
+import com.xuzy.hotel.ylrequest.ConmentHttp;
+import com.xuzy.hotel.ylrequest.ResponseHead;
+import com.xuzy.hotel.ylrequest.TukeRequestBody;
+import com.xuzy.hotel.ylrequest.module.RequestReNewExchangeEMSJson;
 
  /**
  * 描述：批量发货表
  * @author: www.jeecg.org
- * @since：2018年11月20日 20时41分17秒 星期二 
+ * @since：2018年11月20日 20时41分17秒 星期二
  * @version:1.0
  */
 @Controller
@@ -63,28 +71,35 @@ public class CvcShippingBatchController extends BaseController{
   private CvcShippingBatchService cvcShippingBatchService;
 	@Autowired
 	private CvcOrderInfoService cvcOrderInfoService;
-	
+
 	@Autowired
 	private CvcShippingBatchOrderService cvcShippingBatchOrderService;
 
 	@Autowired
 	private CvcDeliveryInfoService cvcDeliveryInfoService;
-  
+	
+	@Autowired
+	private CvcShippingService cvcShippingService;
+	
+	@Autowired
+	private CvcDeliveryOrderService cvcDeliveryOrderService;
+	
+
   /**
 	 * Logger for this class
 	 */
 	private static final Logger logger = Logger.getLogger(CvcShippingBatchController.class);
-  
+
 	/**
 	 * 列表页面
-	 * 
+	 *
 	 * @return
 	 */
 	@RequestMapping(params = "toList", method = { RequestMethod.GET, RequestMethod.POST })
 	public ModelAndView list(HttpServletRequest request) throws Exception {
 		return new ModelAndView("com/xuzy/hotel/shippingbatch/batchList");
 	}
-	
+
 	@RequestMapping(params = "datagrid")
 	public void datagrid(CvcShippingBatchEntity query,HttpServletRequest request, HttpServletResponse response, DataGrid dataGrid) {
 		MiniDaoPage<CvcShippingBatchEntity> list = cvcShippingBatchService.getAll(query, dataGrid.getPage(), dataGrid.getRows());
@@ -103,10 +118,10 @@ public class CvcShippingBatchController extends BaseController{
 		TagUtil.datagrid(response, dataGrid);
 	}
 
-	
+
 	/**
 	 * 列表页面
-	 * 
+	 *
 	 * @return
 	 */
 	@RequestMapping(params = "toUpload", method = { RequestMethod.GET, RequestMethod.POST })
@@ -114,27 +129,27 @@ public class CvcShippingBatchController extends BaseController{
 //		return new ModelAndView("com/xuzy/hotel/shippingbatch/uploadfile");
 		return new ModelAndView("com/xuzy/hotel/shippingbatch/uploadfileCom");
 	}
-	
+
 	/**
 	 * 发送物流页面
-	 * 
+	 *
 	 * @return
 	 */
 	@RequestMapping(params = "addWuliuView", method = { RequestMethod.GET, RequestMethod.POST })
 	public ModelAndView addWuliuView(HttpServletRequest request) throws Exception {
 		return new ModelAndView("com/xuzy/hotel/shippingbatch/addwuliu");
 	}
-	
-	
+
+
 	@SuppressWarnings("unchecked")
 	@RequestMapping(params = "addWuliu", method = RequestMethod.POST)
 	@ResponseBody
 	public AjaxJson addWuliu(HttpServletRequest request, HttpServletResponse response) {
 		AjaxJson j = new AjaxJson();
-		StringBuffer errorMsp = new StringBuffer(); 
+		StringBuffer errorMsp = new StringBuffer();
 		errorMsp.append("文件导入失败:原因");
-		
-		
+
+
 		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
 		Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
 		for (Map.Entry<String, MultipartFile> entity : fileMap.entrySet()) {
@@ -159,7 +174,7 @@ public class CvcShippingBatchController extends BaseController{
 							CvcDeliveryInfoEntity cvcDeliveryInfo = new CvcDeliveryInfoEntity();
 							cvcDeliveryInfo.setNumber(cvcOrderInfoEntity.getInvoiceNo());
 							cvcDeliveryInfo.setMessage("ok");
-							
+
 							List<Data> datas = new ArrayList<>();
 							Data data = new Data();
 							data.setFtime(DateFormatUtils.format(Calendar.getInstance(), "yyyy-MM-dd HH:mm:ss"));
@@ -206,10 +221,121 @@ public class CvcShippingBatchController extends BaseController{
 		}
 		return j;
 	}
-	
-	
-	
-	
+
+
+
+	 /**
+	  * 发送物流页面
+	  *
+	  * @return
+	  */
+	 @RequestMapping(params = "updateWuliuView", method = { RequestMethod.GET, RequestMethod.POST })
+	 public ModelAndView updateWuliuView(HttpServletRequest request) throws Exception {
+		 return new ModelAndView("com/xuzy/hotel/shippingbatch/updateWuliu");
+	 }
+
+
+	 @SuppressWarnings("unchecked")
+	 @RequestMapping(params = "updateWuliu", method = RequestMethod.POST)
+	 @ResponseBody
+	 public AjaxJson updateWuliu(HttpServletRequest request, HttpServletResponse response) {
+		 AjaxJson j = new AjaxJson();
+		 StringBuffer errorMsp = new StringBuffer();
+		 errorMsp.append("文件导入失败:原因");
+
+
+		 MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+			Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
+			for (Map.Entry<String, MultipartFile> entity : fileMap.entrySet()) {
+				MultipartFile file = entity.getValue();// 获取上传文件对象
+				ImportParams params = new ImportParams();
+				params.setTitleRows(0);
+				params.setHeadRows(4);
+				params.setNeedSave(true);
+				try {
+					List<CvcShippingBatchOrderEntity> batchOrderEntities = ExcelImportUtil.importExcel(file.getInputStream(),
+							CvcShippingBatchOrderEntity.class, params);
+					if (CollectionUtils.isNotEmpty(batchOrderEntities)) {
+						
+						for (CvcShippingBatchOrderEntity cvcShippingBatchOrderEntity : batchOrderEntities) {
+							try {
+								//获取快递公司
+								CvcShippingEntity cvcShipping = new CvcShippingEntity();
+								cvcShipping.setEnabled(1);
+								cvcShipping.setShippingName(cvcShippingBatchOrderEntity.getShippingName().trim());
+								//查询快递公司
+								MiniDaoPage<CvcShippingEntity> daoPage = cvcShippingService.getAll(cvcShipping, 1, 1);
+								CvcShippingEntity cvcShippingEntity = null;
+								if(CollectionUtils.isEmpty(daoPage.getResults())) {
+									j.setSuccess(false);
+									j.setMsg(cvcShippingBatchOrderEntity.getShippingName() + ",快递公司不存在！");
+									return j;
+								}else {
+									cvcShippingEntity = daoPage.getResults().get(0);
+								}
+								CvcOrderInfoEntity cvcOrderInfo = new CvcOrderInfoEntity();
+								cvcOrderInfo.setId(Integer.parseInt(cvcShippingBatchOrderEntity.getOrderId().trim()));
+								CvcOrderInfoEntity cvcOrderInfo1 = cvcOrderInfoService.getOrder(cvcOrderInfo);
+								if(cvcOrderInfo1 != null) {
+									//请求伊利接口  CRMIF.ReNewExchangeEMSJson
+									RequestReNewExchangeEMSJson emsJson = new RequestReNewExchangeEMSJson();
+									emsJson.setOrderID(cvcOrderInfo.getId());
+									emsJson.setEMSCompany(cvcShippingBatchOrderEntity.getShippingName().trim());
+									emsJson.setEMSOdd(cvcShippingBatchOrderEntity.getInvoiceNo().trim());
+									ResponseHead head = ConmentHttp.sendHttp(new TukeRequestBody.Builder().setSequence(2)
+											.setParams(emsJson).setServiceCode("CRMIF.ReNewExchangeEMSJson").builder(), null);
+									if(head.getReturn() >= 0) {
+										ConmentHttp.postorder(cvcShippingEntity.getShippingCode(), cvcShippingBatchOrderEntity.getInvoiceNo().trim());
+										cvcDeliveryOrderService.updateNu(cvcOrderInfo.getId(), cvcShippingEntity.getShippingId(),cvcShippingEntity.getShippingName(),cvcShippingBatchOrderEntity.getInvoiceNo().trim());
+										if(cvcOrderInfo1.getExceptionStatus() != null &&
+												4 ==cvcOrderInfo1.getExceptionStatus()|| 5 == cvcOrderInfo1.getExceptionStatus()) {
+											//更新异常订单
+											cvcOrderInfoService.updateHandle(cvcOrderInfo1.getId(),1,(int)PhpDateUtils.getTime(),ResourceUtil.getSessionUser().getUserName());
+										}
+									}
+								}
+								j.setMsg("导入成功");
+							} catch (Exception e) {
+								log.info(e.getMessage());
+								j.setSuccess(false);
+								j.setMsg("更新失败");
+							}
+						}
+						j.setMsg("文件导入成功！");
+					}else {
+						errorMsp.append(file.getOriginalFilename()+"识别内容为空");
+						j.setSuccess(false);
+					}
+				} catch (XuException e) {
+					j.setSuccess(false);
+					errorMsp.append(e.getMessage()+",");
+					logger.error(ExceptionUtil.getExceptionMessage(e));
+				} catch (Exception e) {
+					j.setSuccess(false);
+					errorMsp.append(file.getOriginalFilename()+",");
+					logger.error(ExceptionUtil.getExceptionMessage(e));
+				} finally {
+					try {
+						file.getInputStream().close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+				try {
+					Thread.sleep(100);
+					//防止多文件上传 生成发货编号相同
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+			
+		 if(!j.isSuccess()) {
+			 j.setMsg(errorMsp.toString());
+		 }
+		 return j;
+	 }
+
+
 	@SuppressWarnings("unchecked")
 	@RequestMapping(params = "importExcel", method = RequestMethod.POST)
 	@ResponseBody
@@ -221,11 +347,11 @@ public class CvcShippingBatchController extends BaseController{
 			j.setMsg("订单批次号不能为空！");
 			return j;
 		}
-			
-		StringBuffer errorMsp = new StringBuffer(); 
+
+		StringBuffer errorMsp = new StringBuffer();
 		errorMsp.append("文件导入失败:原因");
-		
-		
+
+
 		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
 		Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
 		for (Map.Entry<String, MultipartFile> entity : fileMap.entrySet()) {
@@ -271,7 +397,7 @@ public class CvcShippingBatchController extends BaseController{
 		}
 		return j;
 	}
-	
+
 	 /**
 	  * 详情
 	  * @return
@@ -366,7 +492,7 @@ public class CvcShippingBatchController extends BaseController{
 			}
 			return j;
 	}
-	
+
 	/**
 	 * 批量删除数据
 	 * @param ids
