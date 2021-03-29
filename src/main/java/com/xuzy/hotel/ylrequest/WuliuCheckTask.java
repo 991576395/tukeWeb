@@ -71,7 +71,7 @@ public class WuliuCheckTask implements Job{
 		
 		org.jeecgframework.core.util.LogUtil.info("===================申通物流校验定时任务开始===================");
 		//执行申通接口
-		cvcOrderInfoService.shengtongSearch();
+//		cvcOrderInfoService.shengtongSearch();
 		
 		List<CvcOrderInfoEntity> results =cvcOrderInfoService.getTogezelWuliuList();
 		doOrderArrays(results);

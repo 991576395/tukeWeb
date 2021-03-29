@@ -1,11 +1,17 @@
 package org.jeecgframework.test.demo;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
@@ -14,10 +20,16 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.apache.log4j.Logger;
 import org.jeecgframework.AbstractUnitTest;
+import org.jeecgframework.CityModule;
+import org.jeecgframework.CityUtils;
+import org.jeecgframework.core.util.ExceptionUtil;
 import org.jeecgframework.core.util.PasswordUtil;
 import org.jeecgframework.core.util.ResourceUtil;
 import org.jeecgframework.minidao.pojo.MiniDaoPage;
+import org.jeecgframework.poi.excel.ExcelImportUtil;
+import org.jeecgframework.poi.excel.entity.ImportParams;
 import org.jeecgframework.web.system.pojo.base.TSUser;
 import org.jeecgframework.web.system.service.SystemService;
 import org.jeecgframework.web.system.service.UserService;
@@ -28,6 +40,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import com.alibaba.fastjson.JSONArray;
+import com.appinterface.app.base.exception.XuException;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.util.PHPAndJavaSerialize;
@@ -42,6 +56,7 @@ import com.xuzy.hotel.deliverygoods.dao.CvcDeliveryGoodsDao;
 import com.xuzy.hotel.deliveryinfo.entity.CvcDeliveryInfoEntity;
 import com.xuzy.hotel.deliveryinfo.service.CvcDeliveryInfoService;
 import com.xuzy.hotel.deliveryorder.dao.CvcDeliveryOrderDao;
+import com.xuzy.hotel.deliveryorder.entity.CvcDeliveryOrderEntity;
 import com.xuzy.hotel.deliveryorder.service.CvcDeliveryOrderService;
 import com.xuzy.hotel.inventory.entity.CvcInventoryTableEntity;
 import com.xuzy.hotel.inventory.service.CvcInventoryTableServiceI;
@@ -49,6 +64,7 @@ import com.xuzy.hotel.order.dao.CvcOrderInfoDao;
 import com.xuzy.hotel.order.entity.CvcOrderInfoEntity;
 import com.xuzy.hotel.order.module.CallBaseRequest;
 import com.xuzy.hotel.order.module.Data;
+import com.xuzy.hotel.order.module.DeliveryInfoPojo;
 import com.xuzy.hotel.order.service.CvcOrderInfoService;
 import com.xuzy.hotel.order.web.CvcOrderInfoController;
 import com.xuzy.hotel.order.web.OrderCallBack;
@@ -104,6 +120,11 @@ public class UserRestfulTest extends AbstractUnitTest {
 	@Autowired
 	private CvcDeliveryInfoService cvcDeliveryInfoService;
 	
+	
+	 /**
+		 * Logger for this class
+		 */
+		private static final Logger logger = Logger.getLogger(UserRestfulTest.class);
 	  
 	// 测试get单个用户
 	 @Test
@@ -471,14 +492,14 @@ public class UserRestfulTest extends AbstractUnitTest {
 //			}
 //		}
 		query.setOrderStatus(3);
-		MiniDaoPage<CvcOrderInfoEntity> list = cvcOrderInfoService.getAll(query, 1, 10000);
+		MiniDaoPage<CvcOrderInfoEntity> list = cvcOrderInfoService.getAll(query, 1, 6000);
 		if(CollectionUtils.isNotEmpty(list.getResults())) {
 			for (CvcOrderInfoEntity entity : list.getResults()) {
-//				CvcShippingEntity cvcShippingEntity = cvcShippingDao.get(entity.getShippingName());
+				CvcShippingEntity cvcShippingEntity = cvcShippingDao.get(entity.getShippingName());
 //					// 未订阅物流信息 开始订阅
-//					Kuaidi100Response kuaidi100Response = ConmentHttp.postorder(cvcShippingEntity.getShippingCode(),
-//							entity.getInvoiceNo());
-//					System.out.println(kuaidi100Response.toString());
+					Kuaidi100Response kuaidi100Response = ConmentHttp.postorder(cvcShippingEntity.getShippingCode(),
+							entity.getInvoiceNo());
+					System.out.println(kuaidi100Response.toString());
 //				entity.setAddTime(PhpDateUtils.parseDate(Long.parseLong(entity.getAddTime()), "yyyy-MM-dd HH:mm:ss"));
 //				entity.setGetTime(PhpDateUtils.parseDate(Long.parseLong(entity.getGetTime()), "yyyy-MM-dd HH:mm:ss"));
 //				
@@ -490,16 +511,16 @@ public class UserRestfulTest extends AbstractUnitTest {
 //				entity.setExceptionStatusString(value);
 				
 				//获取物流信息，并同步
-				CvcShippingEntity cvcShipping = new CvcShippingEntity();
-				cvcShipping.setEnabled(1);
-				cvcShipping.setShippingName(entity.getShippingName());
+//				CvcShippingEntity cvcShipping = new CvcShippingEntity();
+//				cvcShipping.setEnabled(1);
+//				cvcShipping.setShippingName(entity.getShippingName());
 				// 查询快递公司
-				MiniDaoPage<CvcShippingEntity> daoPage = cvcShippingService.getAll(cvcShipping, 1, 1);
-				CvcShippingEntity cvcShippingEntity = null;
-				if (CollectionUtils.isEmpty(daoPage.getResults())) {
-				} else {
-					cvcShippingEntity = daoPage.getResults().get(0);
-				}
+//				MiniDaoPage<CvcShippingEntity> daoPage = cvcShippingService.getAll(cvcShipping, 1, 1);
+//				CvcShippingEntity cvcShippingEntity = null;
+//				if (CollectionUtils.isEmpty(daoPage.getResults())) {
+//				} else {
+//					cvcShippingEntity = daoPage.getResults().get(0);
+//				}
 				String result = ConmentHttp.getOrderWuliuAll(cvcShippingEntity.getShippingCode(),
 						entity.getInvoiceNo(), entity.getTel());
 				if (StringUtils.isNotEmpty(result) && result.contains("\"message\":\"ok\"")) {
@@ -518,6 +539,176 @@ public class UserRestfulTest extends AbstractUnitTest {
 		List<CvcInventoryTableEntity> inventoryTableEntities = cvcInventoryTableService.findHql("from CvcInventoryTableEntity where goodNumber = ?", "爱得利奶嘴B59");
 		System.out.println(inventoryTableEntities.toString());
 	}
+	
+	@Test
+	public void update() throws Exception {
+		List<String> order = FileUtils.readLines(new File("/Users/zmeng/Downloads/orders.txt"),"UTF-8");
+		List<String> gongsi = FileUtils.readLines(new File("/Users/zmeng/Downloads/gongsi.txt"),"UTF-8");
+		List<String> wuliu = FileUtils.readLines(new File("/Users/zmeng/Downloads/wuliu.txt"),"UTF-8");
+		System.out.println(order.size());
+		System.out.println(gongsi.size());
+		System.out.println(wuliu.size());
+		if(order.size() == gongsi.size() && gongsi.size() == wuliu.size()) {
+			for (int i = 0; i < order.size(); i++) {
+				int orderId = Integer.parseInt(order.get(i));
+				String shippingName = gongsi.get(i);
+				String invoiceNo = wuliu.get(i);
+				
+					System.out.println("运行到："+orderId);
+					//获取快递公司
+					CvcShippingEntity cvcShipping = new CvcShippingEntity();
+					cvcShipping.setEnabled(1);
+					cvcShipping.setShippingName(shippingName);
+					//查询快递公司
+					MiniDaoPage<CvcShippingEntity> daoPage = cvcShippingService.getAll(cvcShipping, 1, 1);
+					CvcShippingEntity cvcShippingEntity = null;
+						cvcShippingEntity = daoPage.getResults().get(0);
+					CvcOrderInfoEntity cvcOrderInfo = new CvcOrderInfoEntity();
+					cvcOrderInfo.setId(orderId);
+					CvcOrderInfoEntity cvcOrderInfo1 = cvcOrderInfoService.getOrder(cvcOrderInfo);
+					if(cvcOrderInfo1 != null) {
+						//请求伊利接口  CRMIF.ReNewExchangeEMSJson
+						RequestReNewExchangeEMSJson emsJson = new RequestReNewExchangeEMSJson();
+						emsJson.setOrderID(orderId);
+						emsJson.setEMSCompany(shippingName);
+						emsJson.setEMSOdd(invoiceNo);
+						ResponseHead head = ConmentHttp.sendHttp(new TukeRequestBody.Builder().setSequence(2)
+								.setParams(emsJson).setServiceCode("CRMIF.ReNewExchangeEMSJson").builder(), null);
+						if(head.getReturn() >= 0) {
+							ConmentHttp.postorder(cvcShippingEntity.getShippingCode(), invoiceNo);
+							cvcDeliveryOrderService.updateNu(orderId, cvcShippingEntity.getShippingId(),cvcShippingEntity.getShippingName(),invoiceNo);
+							if(cvcOrderInfo1.getExceptionStatus() != null &&
+									4 ==cvcOrderInfo1.getExceptionStatus()|| 5 == cvcOrderInfo1.getExceptionStatus()) {
+								//更新异常订单
+								cvcOrderInfoService.updateHandle(cvcOrderInfo1.getId(),1,(int)PhpDateUtils.getTime(),"pbh_ldn");
+							}
+						}
+					}
+				
+		}
+		}
+
+	}
+	
+	
+	
+	@Test
+	public void parseWuliu()  throws Exception {
+		CvcOrderInfoEntity query = new CvcOrderInfoEntity();
+		query.setGetTimeStart("20200101");
+		query.setGetTimeEnd("20210301");
+		if(StringUtils.isNotEmpty(query.getGetTimeStart())) {
+			try {
+				Date date1 = DateUtils.parseDate(query.getGetTimeStart(),new String[] {"yyyyMMdd"}) ;
+				query.setGetTimeStart(String.valueOf(PhpDateUtils.getTime(date1)));
+			} catch (ParseException e) {
+				query.setGetTimeStart("");
+			}
+		}
+		
+		if(StringUtils.isNotEmpty(query.getGetTimeEnd())) {
+			try {
+				Date date1 = DateUtils.parseDate(query.getGetTimeEnd(),new String[] {"yyyyMMdd"}) ;
+				query.setGetTimeEnd(String.valueOf(PhpDateUtils.getTime(date1)));
+			} catch (ParseException e) {
+				query.setGetTimeEnd("");
+			}
+		}
+		query.setOrderStatus(5);
+		
+		MiniDaoPage<CvcOrderInfoEntity> list = cvcOrderInfoService.getAll(query, 1, 1000000);
+		for(CvcOrderInfoEntity cvcOrderInfoEntity:list.getResults()) {
+			List<CvcDeliveryOrderEntity> deliveryOrders = cvcOrderInfoService.getDeliveryOrderByOrderId(cvcOrderInfoEntity.getId());
+			List<DeliveryInfoPojo> deliveryInfoPojos = new ArrayList<>();
+			for (CvcDeliveryOrderEntity deliveryOrder : deliveryOrders) {
+				CvcDeliveryInfoEntity entity = cvcDeliveryInfoService
+						.getDeliveryInfosByInvoiceNo(deliveryOrder.getInvoiceNo());
+				List<Data> deliveryInfos = new ArrayList<>();
+				if (entity != null && StringUtils.isNotEmpty(entity.getData())) {
+					deliveryInfos = PHPAndJavaSerialize.unserializePHParray(entity.getData(), Data.class);
+				}
+				
+				Map<String,String> map = CityUtils.addressResolution(cvcOrderInfoEntity.getAddress());
+				
+				DeliveryInfoPojo pojo = new DeliveryInfoPojo();
+				pojo.setInvoiceNo(deliveryOrder.getInvoiceNo());
+				pojo.setDeliveryInfos(deliveryInfos);
+				deliveryInfoPojos.add(pojo);
+//				System.out.println("start ================ 订单："+cvcOrderInfoEntity.getId());
+				List<String> cityModules = new ArrayList<>();
+				boolean ifgo = false;
+				for(Data data:deliveryInfos) {
+					if("【深圳市】广东深圳公司敖东逊电子-KH分部 已揽收".equals(data.getContext())) {
+						continue;
+					}
+					
+					Pattern pattern = Pattern.compile("\\[(.*?)]");
+					Matcher matcher = pattern.matcher(data.getContext());
+					if(matcher.find()) {
+						String one = matcher.group(1);
+//						System.out.println(one);
+						//获取所在一级省
+						CityModule cityModule = CityUtils.getProvince(one);
+						if(cityModule != null && !cityModules.contains(cityModule.getName())) {
+//							System.out.println(cityModule.toString());
+							if(CollectionUtils.isNotEmpty(cityModules)) {
+								//标记出省
+								ifgo = true;
+							}
+							cityModules.add(cityModule.getName());
+						}else {
+							if(ifgo && cityModule != null && cityModules.get(0).equals(cityModule.getName())) {
+								System.out.println("订单："+cvcOrderInfoEntity.getId());
+								//判断地址是否为签收地址
+								boolean provinceFlag = map.get("province") != null && map.get("province").equals(cityModule.getName());
+								boolean cityFlag = map.get("city") != null && map.get("city").equals(cityModule.getName());
+								if(!provinceFlag && !cityFlag) {
+									//出省后又回来
+									logger.info("订单异常："+cvcOrderInfoEntity.getId());
+								}
+							}
+						}
+					}else {
+						pattern = Pattern.compile("\\【(.*?)】");
+						matcher = pattern.matcher(data.getContext());
+						if(matcher.find()) {
+							String one = matcher.group(1);
+//							System.out.println(one);
+							//获取所在一级省
+							CityModule cityModule = CityUtils.getProvince(one);
+							if(cityModule != null && !cityModules.contains(cityModule.getName())) {
+//								System.out.println(cityModule.toString());
+								if(CollectionUtils.isNotEmpty(cityModules)) {
+									//标记出省
+									ifgo = true;
+								}
+								cityModules.add(cityModule.getName());
+							}else {
+								if(ifgo && cityModule != null && cityModules.get(0).equals(cityModule.getName())) {
+//									System.out.println("订单："+cvcOrderInfoEntity.getId());
+									//判断地址是否为签收地址
+									boolean provinceFlag = map.get("province") != null && map.get("province").equals(cityModule.getName());
+									boolean cityFlag = map.get("city") != null && map.get("city").equals(cityModule.getName());
+									if(!provinceFlag && !cityFlag) {
+										//出省后又回来
+										logger.info("订单异常："+cvcOrderInfoEntity.getId());
+									}
+								}
+							}
+						}else {
+//							logger.info("no find:"+data.getContext());
+						}
+					}
+				}
+			}
+		}
+		
+	}
+	
+	
+	
+	
+	
 }
 
 

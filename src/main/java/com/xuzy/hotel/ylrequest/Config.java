@@ -1,3 +1,4 @@
+
 package com.xuzy.hotel.ylrequest;
 
 import java.io.Serializable;
